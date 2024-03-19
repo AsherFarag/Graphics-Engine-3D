@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{9d8577ae-b181-4d3d-965a-342a88ba3038}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Transforms">
+      <UniqueIdentifier>{330cbefb-fcef-4d38-a0a3-49c6add44dcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Transforms\Actors">
+      <UniqueIdentifier>{4b46ed95-8816-43b5-b236-2d10f9d707e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Resources">
+      <UniqueIdentifier>{dd872194-c373-4655-a511-3d3135f23ff8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Managers">
+      <UniqueIdentifier>{4ffb596a-3b07-4e05-a61b-48b0e35b1b12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Components">
+      <UniqueIdentifier>{442d3f7b-20ca-4891-9f48-98210883b2c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Components\RigidBody">
+      <UniqueIdentifier>{cd1ac555-0626-4208-907b-9bdb44ce8d52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Components\Colliders">
+      <UniqueIdentifier>{35f4f8c2-1c61-427a-b76b-eef1ef6a138b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Components\Renderers">
+      <UniqueIdentifier>{b023259e-ee81-41aa-a6ff-16e76f4658cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{8dd4a1af-bc20-490d-aaae-ff6beaf64249}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Managers">
+      <UniqueIdentifier>{28beca35-8836-459b-9010-1457e3a6b3a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Resources">
+      <UniqueIdentifier>{616d6e3b-418f-419f-bd03-908f0d3923a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Transforms">
+      <UniqueIdentifier>{d9934b5b-ab60-41f0-afa6-f337295a965b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Transforms\Actors">
+      <UniqueIdentifier>{3916c4e9-7566-4990-b9b2-a5fcac8ec4ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Components">
+      <UniqueIdentifier>{05fe086e-1705-488a-9822-d264d4b1adc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Components\Colliders">
+      <UniqueIdentifier>{2e56262b-5a04-4668-ad11-9e878d518a6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Components\Renderers">
+      <UniqueIdentifier>{e46a494b-c6c4-4cde-92e2-d3bddd85d245}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Components\RigidBodies">
+      <UniqueIdentifier>{29d5e40d-2e4c-402a-9440-3ad60d3ea4ac}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AABB.cpp">
+      <Filter>Source Files\Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxRB.cpp">
+      <Filter>Source Files\Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="CircleRB.cpp">
+      <Filter>Source Files\Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Source Files\Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaneRB.cpp">
+      <Filter>Source Files\Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="SpringRB.cpp">
+      <Filter>Source Files\Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>Source Files\Engine\Components\RigidBodies</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Source Files\Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files\Engine\Components\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsManager.cpp">
+      <Filter>Source Files\Engine\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager.cpp">
+      <Filter>Source Files\Engine\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderingManager.cpp">
+      <Filter>Source Files\Engine\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsMaterial.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Source Files\Engine\Transforms</Filter>
+    </ClCompile>
+    <ClCompile Include="ASoftBody.cpp">
+      <Filter>Source Files\Engine\Transforms\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="AActor.cpp">
+      <Filter>Source Files\Engine\Transforms\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsObject.cpp">
+      <Filter>Source Files\Engine\Components\RigidBodies</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngine2DApp.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files\Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsMaterial.h">
+      <Filter>Header Files\Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>Header Files\Engine\Components\RigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxRB.h">
+      <Filter>Header Files\Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="CircleRB.h">
+      <Filter>Header Files\Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files\Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="SpringRB.h">
+      <Filter>Header Files\Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaneRB.h">
+      <Filter>Header Files\Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files\Engine\Components\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsObject.h">
+      <Filter>Header Files\Engine\Components\RigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager.h">
+      <Filter>Header Files\Engine\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsManager.h">
+      <Filter>Header Files\Engine\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderingManager.h">
+      <Filter>Header Files\Engine\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="AActor.h">
+      <Filter>Header Files\Engine\Transforms\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Header Files\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Header Files\Engine\Transforms</Filter>
+    </ClInclude>
+    <ClInclude Include="ASoftBody.h">
+      <Filter>Header Files\Engine\Transforms\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="AABB.h">
+      <Filter>Header Files\Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngine2DApp.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticQuadTree.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+</Project>

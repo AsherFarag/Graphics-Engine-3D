@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{2867a8fc-0187-4ef0-ad43-4c4537b0fca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{d6717472-2c77-492a-b451-05f4d5e925a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Objects">
+      <UniqueIdentifier>{5c177ae0-143c-4b95-bfef-1decb30385fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Objects\Components">
+      <UniqueIdentifier>{04abbeeb-c8da-4107-b0fe-1646da9f46fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Provided">
+      <UniqueIdentifier>{8713d3c4-48b7-4d53-9964-8ac05db1905d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Objects\Rendering">
+      <UniqueIdentifier>{d1bb4ef8-89f2-4823-9b0d-6e3c8b47285a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\MathF">
+      <UniqueIdentifier>{51d2bb1e-9285-4005-accd-671c41177508}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects">
+      <UniqueIdentifier>{41228c60-37d3-44ff-af12-7ed1800223f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Provided">
+      <UniqueIdentifier>{f90fde0e-2db5-4fee-8387-cf9e3c982d05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects\Rendering">
+      <UniqueIdentifier>{788cb70f-4168-4a57-805c-2498c2a0f9ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects\Cameras">
+      <UniqueIdentifier>{647c176f-a0db-40c7-806a-c132e567d017}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects\Components">
+      <UniqueIdentifier>{53af1c31-d1cb-4c1a-a6be-1795ce8d928f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects\Actors">
+      <UniqueIdentifier>{05a4c662-c2fd-4987-9e6e-dbca9df03773}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Objects\Actors">
+      <UniqueIdentifier>{0e817203-d8d6-4678-8bcf-49114f7a9dec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Resources">
+      <UniqueIdentifier>{3fcb7e6f-9e90-4330-b05a-d775f0197ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Resources">
+      <UniqueIdentifier>{bbd5e7b0-f854-4101-b131-17bb0983a356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{64ca5872-d97d-47bf-80b2-3b6a8b01644e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Engine\Objects\Actors\Cameras">
+      <UniqueIdentifier>{0f5de61a-cd33-4767-b1f5-0c5f41037b84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Objects\Actors\Common">
+      <UniqueIdentifier>{29a066af-d769-453a-b1ac-189898d51c6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects\Components\Lights">
+      <UniqueIdentifier>{f542eae4-4350-47c6-8544-86d041f178f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Objects\Actors\Lights">
+      <UniqueIdentifier>{d36bb72e-aac5-48db-8512-a7a64b4d3c63}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsEngine3DApp.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="OBJMesh.cpp">
+      <Filter>Source Files\Engine\Provided</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTarget.cpp">
+      <Filter>Source Files\Engine\Provided</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files\Engine\Provided</Filter>
+    </ClCompile>
+    <ClCompile Include="UBaseObject.cpp">
+      <Filter>Source Files\Engine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderingManager.cpp">
+      <Filter>Source Files\Engine\Objects\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="UBaseComponent.cpp">
+      <Filter>Source Files\Engine\Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AOrbitCamera.cpp">
+      <Filter>Source Files\Engine\Objects\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="ACamera.cpp">
+      <Filter>Source Files\Engine\Objects\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="AFlyCamera.cpp">
+      <Filter>Source Files\Engine\Objects\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="AActor.cpp">
+      <Filter>Source Files\Engine\Objects\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="RResource.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="RMesh.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="RMaterial.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="AStaticMesh.cpp">
+      <Filter>Source Files\Engine\Objects\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UMeshRenderer.cpp">
+      <Filter>Source Files\Engine\Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="URenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ALight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GraphicsEngine3DApp.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="OBJMesh.h">
+      <Filter>Header Files\Engine\Provided</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTarget.h">
+      <Filter>Header Files\Engine\Provided</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\Engine\Provided</Filter>
+    </ClInclude>
+    <ClInclude Include="tiny_obj_loader.h">
+      <Filter>Header Files\Engine\Provided</Filter>
+    </ClInclude>
+    <ClInclude Include="UBaseObject.h">
+      <Filter>Header Files\Engine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderingManager.h">
+      <Filter>Header Files\Engine\Objects\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="UBaseComponent.h">
+      <Filter>Header Files\Engine\Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AActor.h">
+      <Filter>Header Files\Engine\Objects\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="ACamera.h">
+      <Filter>Header Files\Engine\Objects\Actors\Cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="AFlyCamera.h">
+      <Filter>Header Files\Engine\Objects\Actors\Cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="MathF.h">
+      <Filter>Header Files\Engine\MathF</Filter>
+    </ClInclude>
+    <ClInclude Include="AOrbitCamera.h">
+      <Filter>Header Files\Engine\Objects\Actors\Cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="RResource.h">
+      <Filter>Header Files\Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="RMesh.h">
+      <Filter>Header Files\Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="UMeshRenderer.h">
+      <Filter>Header Files\Engine\Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RMaterial.h">
+      <Filter>Header Files\Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="URenderer.h">
+      <Filter>Header Files\Engine\Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AStaticMesh.h">
+      <Filter>Header Files\Engine\Objects\Actors\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files\Engine\Objects\Actors\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="ALight.h">
+      <Filter>Header Files\Engine\Objects\Actors\Lights</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\bin\shaders\simple.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\bin\shaders\simple.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\bin\shaders\Phong.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\bin\shaders\Phong.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="GraphicsEngine.cd" />
+  </ItemGroup>
+</Project>

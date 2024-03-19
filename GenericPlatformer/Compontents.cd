@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Component">
+    <Position X="12.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQgAAAAACCAEgAAAABAAAAAAAAAAAAAAABAAAQAAAA=</HashCode>
+      <FileName>Component.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CircleRB" Collapsed="true">
+    <Position X="9.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAIAgAAEQAAAEAAAAAAAACAAAAAAAoBAAA=</HashCode>
+      <FileName>CircleRB.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BoxRB" Collapsed="true">
+    <Position X="12" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ARQAAAAAAAAAAgAAAQAAAEJAAAAAAAAAAABAAEAAACA=</HashCode>
+      <FileName>BoxRB.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlaneRB" Collapsed="true">
+    <Position X="7.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAACAAAAAAAgAAAAAAAAAAAAAgCAAABAAAAAAAAAA=</HashCode>
+      <FileName>PlaneRB.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Renderer" Collapsed="true">
+    <Position X="14" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQgAQAAABAAAgAAAAAAAAAAARQAAgAAAACAAAIAAAA=</HashCode>
+      <FileName>Renderer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpringRB" Collapsed="true">
+    <Position X="12" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAEAAAAIAgAAACQAAACAABAAAAAAgBwAAAwAAAA=</HashCode>
+      <FileName>SpringRB.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RigidBody" Collapsed="true">
+    <Position X="9.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ALQAAC6EAKCHQEiBKQTACFAMYwIBQ2SABkAAEGCAGDA=</HashCode>
+      <FileName>RigidBody.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PhysicsObject">
+    <Position X="9.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQhAAQAAAAAAgICAACAAAAIARQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PhysicsObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
