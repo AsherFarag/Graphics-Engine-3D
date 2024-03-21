@@ -21,7 +21,9 @@ public:
     RenderingManager();
     ~RenderingManager();
 
+    bool StartUp();
     void Draw();
+    bool End();
 
 protected:
     list<URenderer*> m_Renderers;
@@ -30,10 +32,25 @@ protected:
 
     ACamera* m_RenderCamera;
 
+    #pragma region  --- Lights --- 
+
+protected:
     int m_NumOfLights = 0;
     vector<ALight*> m_Lights;
+    ALight* m_AmbientLight = nullptr;
+
+    int GetActiveNumOfLights();
     vector<vec3> GetPointLightPositions();
     vector<vec3> GetPointLightColours();
+    vector<float> GetPointLightFallOffs();
+
+public:
+    bool AddLight(ALight* a_Light);
+    bool RemoveLight(ALight* a_Light);
+
+    void SetAmbientLight(ALight* a_AmbientLight);
+
+    #pragma endregion
 
 public:
     bool AddRenderer(URenderer* a_Renderer);
@@ -41,11 +58,10 @@ public:
 
     void SetRenderCamera(ACamera* a_NewRenderCamera);
 
-    bool AddLight(ALight* a_Light);
-
 
     // TEMP
 public:
-    ALight* m_AmbientLight = nullptr;
+
+
 };
 

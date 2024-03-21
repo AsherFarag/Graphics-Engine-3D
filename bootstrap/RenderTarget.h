@@ -25,6 +25,8 @@ public:
 	const Texture&	getTarget(unsigned int target) const { return m_targets[target]; }
     void            bindDepthTarget(unsigned int index) const;
 
+	void rescaleFrameBuffer(unsigned int target, float width, float height);
+
 protected:
 
 	unsigned int	m_width;

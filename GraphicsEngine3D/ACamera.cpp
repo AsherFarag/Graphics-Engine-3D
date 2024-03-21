@@ -18,16 +18,34 @@ ACamera::~ACamera()
 
 void ACamera::Update()
 {
+	if (m_RenderTarget)
+		SetAspectRatio(m_RenderTarget->getWidth(), m_RenderTarget->getHeight());
+	else
+		SetAspectRatio(Engine->getWindowWidth(), Engine->getWindowHeight());
+
 	SetViewMatrix();
-	SetAspectRatio(Engine->getWindowWidth(), Engine->getWindowHeight());
+}
+
+void ACamera::BeginRender()
+{
+	if (m_RenderTarget)
+	{
+		// Bind our Render
+		m_RenderTarget->bind();
+	}
+}
+
+void ACamera::EndRender()
+{
+	if (m_RenderTarget)
+	{
+		m_RenderTarget->unbind();
+	}
 }
 
 void ACamera::SetViewMatrix()
-{
-	float ThetaR = radians(m_Theta);
-	float PhiR = radians(m_Phi);
-	vec3 Forward(cos(PhiR) * cos(ThetaR), sin(PhiR), cos(PhiR) * sin(ThetaR));
-	m_ViewTransform = lookAt(m_Position, m_Position + Forward, vec3(0, 1, 0));
+{	
+	m_ViewTransform = lookAt(m_Position, m_Position + GetForward(), vec3(0, 1, 0));
 }
 
 void ACamera::UpdateProjectionMatrix()
@@ -59,6 +77,13 @@ void ACamera::SetAspectRatio(float a_AspectRatio)
 void ACamera::SetAspectRatio(float a_Width, float a_Height)
 {
 	SetAspectRatio(a_Width / a_Height);
+}
+
+vec3 ACamera::GetForward()
+{
+	float ThetaR = radians(m_Theta);
+	float PhiR = radians(m_Phi);
+	return vec3(cos(PhiR) * cos(ThetaR), sin(PhiR), cos(PhiR) * sin(ThetaR));
 }
 
 void ACamera::OnDraw_ImGui()

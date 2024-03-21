@@ -26,4 +26,6 @@ IMGUI_API void        ImGui_ScrollCallback(GLFWwindow* window, double xoffset, d
 IMGUI_API void        ImGui_KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 IMGUI_API void        ImGui_CharCallback(GLFWwindow* window, unsigned int c);
 
+IMGUI_API void        ImGui_RenderDrawLists(ImDrawData* draw_data);
+
 } // namespace aie

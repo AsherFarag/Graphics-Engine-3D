@@ -1,6 +1,9 @@
 #pragma once
 #include "AActor.h"
 
+// --- AIE ---
+#include "RenderTarget.h"
+
 // --- GLM ---
 #include "glm/trigonometric.hpp"
 
@@ -12,6 +15,12 @@ public:
     virtual ~ACamera();
 
     virtual void Update() override;
+    // Binds m_RenderTarget. If m_RenderTarget is nullptr, then draw straight to the window
+    void BeginRender();
+    // Unbinds m_RenderTarget
+    void EndRender();
+
+    void SetRenderTarget(aie::RenderTarget* a_RenderTarget) { m_RenderTarget = a_RenderTarget; }
 
 protected:
     vec2 m_LastMousePosition;
@@ -26,6 +35,8 @@ protected:
 
     mat4 m_ViewTransform;
     mat4 m_ProjectionViewTransform;
+
+    aie::RenderTarget* m_RenderTarget = nullptr;
 
 // === Getter Functions ===
 public:
@@ -44,6 +55,7 @@ public:
     void SetAspectRatio(float a_AspectRatio);
     void SetAspectRatio(float a_Width, float a_Height);
 
+    vec3 GetForward();
 
 #pragma region ImGui
 

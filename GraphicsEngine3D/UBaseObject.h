@@ -30,7 +30,7 @@ protected:
 	bool m_Valid = true;
 	virtual void OnDestroyed() {};
 
-	size_t ID;
+	int32 ID;
 
 public:
 	World* GetWorld() const;

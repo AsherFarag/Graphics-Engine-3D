@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Input.h"
 #include "imgui_glfw3.h"
+#include "RenderTarget.h"
 
 namespace aie {
 
@@ -77,6 +78,9 @@ void Application::run(const char* title, int width, int height, bool fullscreen)
 		unsigned int frames = 0;
 		double fpsInterval = 0;
 
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
 		// loop while game is running
 		while (!m_gameOver) {
 
@@ -114,8 +118,37 @@ void Application::run(const char* title, int width, int height, bool fullscreen)
 
 			draw();
 
+			//m_RenderTarget.getTarget(0).bind(0);
+			//ImGui::Begin("Viewport");
+
+			//// we access the ImGui window size
+			//const float window_width = ImGui::GetContentRegionAvail().x;
+			//const float window_height = ImGui::GetContentRegionAvail().y;
+
+			////m_RenderTarget.initialise(1, window_width, window_height);
+			//m_RenderTarget.rescaleFrameBuffer(0, window_width, window_height);
+
+			//// we rescale the framebuffer to the actual window size here and reset the glViewport 
+			////rescale_framebuffer(window_width, window_height);
+			//glViewport(0, 0, window_width, window_height);
+
+			//// we get the screen position of the window
+			//ImVec2 pos = ImGui::GetCursorScreenPos();
+
+			//// and here we can add our created texture as image to ImGui
+			//// unfortunately we need to use the cast to void* or I didn't find another way tbh
+			//ImGui::Image(
+			//	(ImTextureID)m_RenderTarget.getTarget(0).getHandle(),
+			//	ImGui::GetContentRegionAvail(),
+			//	ImVec2(0, 1),
+			//	ImVec2(1, 0)
+			//);
+
+			//ImGui::End();
+			
 			// draw IMGUI last
 			ImGui::Render();
+			aie::ImGui_RenderDrawLists( ImGui::GetDrawData() );
 
 			//present backbuffer to the monitor
 			glfwSwapBuffers(m_window);
@@ -150,7 +183,8 @@ void Application::setShowCursor(bool visible) {
 	ShowCursor(visible);
 }
 
-unsigned int Application::getWindowWidth() const {
+unsigned int Application::getWindowWidth() const
+{
 	int w = 0, h = 0;
 	glfwGetWindowSize(m_window, &w, &h);
 	return w;

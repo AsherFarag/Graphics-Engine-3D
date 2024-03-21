@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Application.h"
 
 // --- GLM ---
@@ -19,16 +18,11 @@ class World;
 
 #define IS_DEBUG true
 
-#pragma region Error Message Macros
-
-#define LOG_WARNING "Warning: "
-#define LOG_ERROR	"ERROR: "
-
 #pragma endregion
 
-#pragma endregion
-
-class GraphicsEngine3DApp : public aie::Application {
+class GraphicsEngine3DApp
+	: public aie::Application
+{
 protected:
 
 	GraphicsEngine3DApp();
@@ -44,18 +38,6 @@ public:
 
 protected:
 	World* m_World;
-
-	//static constexpr void GenerateResourcePath()
-	//{
-	//	if (IS_DEBUG)
-	//	{
-	//		ResourcePath = "./Resources/";
-	//	}
-	//	else
-	//	{
-	//		ResourcePath = "./Resources/";
-	//	}
-	//}
 
 public:
 

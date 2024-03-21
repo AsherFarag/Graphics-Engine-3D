@@ -16,33 +16,60 @@ RenderingManager::~RenderingManager()
 
 }
 
+bool RenderingManager::StartUp()
+{
+    return true;
+}       
+
 void RenderingManager::Draw()
 {
     if (m_RenderCamera == nullptr)
         return;
 
+    // Begin Render
+    m_RenderCamera->BeginRender();
+
+    // Calculate the Projected View Matrix of the Render Camera
     mat4 ProjectedView = m_RenderCamera->GetProjectionMatrix() * m_RenderCamera->GetViewMatrix();
 
+    // Get Draw Order and Material buffers for batch rendering
     std::list<URenderer*> DrawOrderBuffer;
     std::list<RMaterial*> MaterialBuffer;
     CalculateDrawOrder(DrawOrderBuffer, MaterialBuffer);
 
-    vector<vec3> PointLightColours = GetPointLightColours();
-    vector<vec3> PointLightPositions = GetPointLightPositions();
+    // Get arrays of the lights values
+    int ActiveNumOfLights             = GetActiveNumOfLights();
+    vector<vec3> PointLightColours    = GetPointLightColours();
+    vector<vec3> PointLightPositions  = GetPointLightPositions();
+    vector<float> PointLightFallOffs  = GetPointLightFallOffs();
+
+    // ########################################################
+    //
+    // TODO: Fix up the batching because this doesnt even work
+    // 
+    // ########################################################
 
     for (auto Material : MaterialBuffer)
     {
         Material->m_Shader.bind();
         Material->m_Shader.bindUniform("CameraPosition", vec4(m_RenderCamera->GetPosition(), 1));
 
-        if (m_AmbientLight)
-            Material->m_Shader.bindUniform("AmbientLight",  m_AmbientLight->GetColour());
-
-        if (m_Lights.size() > 0)
+        if (m_AmbientLight && m_AmbientLight->IsEnabled())
         {
-            Material->m_Shader.bindUniform("NumOfLights", m_NumOfLights);
-            Material->m_Shader.bindUniform("PointLightColors", m_NumOfLights, &PointLightColours[0]);
-            Material->m_Shader.bindUniform("PointLightPositions", m_NumOfLights, &PointLightPositions[0]);
+            Material->m_Shader.bindUniform("AmbientLight", m_AmbientLight->GetColour());
+            //Material->m_Shader.bindUniform("AmbientLightDirection", normalize(m_AmbientLight->GetRotation()));
+        }
+        else
+        {
+            Material->m_Shader.bindUniform("AmbientLight", vec3());
+        }
+
+        Material->m_Shader.bindUniform("NumOfLights", ActiveNumOfLights);
+        if (ActiveNumOfLights > 0)
+        {
+            Material->m_Shader.bindUniform("PointLightColors", ActiveNumOfLights, &PointLightColours[0]);
+            Material->m_Shader.bindUniform("PointLightPositions", ActiveNumOfLights, &PointLightPositions[0]);
+            Material->m_Shader.bindUniform("PointLightFallOffs", ActiveNumOfLights, &PointLightFallOffs[0]);
         }
     }
 
@@ -51,10 +78,39 @@ void RenderingManager::Draw()
         Renderer->Draw(ProjectedView);
     }
 
+    if (m_AmbientLight && m_AmbientLight->IsEnabled())
+        aie::Gizmos::addSphere(m_AmbientLight->GetPosition(), m_AmbientLight->GetScale().x * 0.5f, 7, 7, vec4(m_AmbientLight->m_Colour, 0.75f));
+
     for (int i = 0; i < m_NumOfLights; i++)
     {
-        aie::Gizmos::addSphere(m_Lights[i]->GetPosition(), m_Lights[i]->m_Intensity * 0.1f, 7, 7, vec4(m_Lights[i]->m_Colour * m_Lights[i]->m_Intensity, 1));
+        if (m_Lights[i]->IsEnabled())
+            aie::Gizmos::addSphere(m_Lights[i]->GetPosition(), m_Lights[i]->GetScale().x * 0.5f, 7, 7, vec4(m_Lights[i]->m_Colour, 0.75f));
     }
+
+#pragma region Gizmos
+
+    // draw a simple grid with gizmos
+    vec4 white(1);
+    vec4 black(0, 0, 0, 1);
+    for (int i = 0; i < 21; ++i)
+    {
+        Gizmos::addLine(vec3(-10 + i, 0, 10),
+            vec3(-10 + i, 0, -10),
+            i == 10 ? white : black);
+        Gizmos::addLine(vec3(10, 0, -10 + i),
+            vec3(-10, 0, -10 + i),
+            i == 10 ? white : black);
+    }
+
+    // Draw Directional Light
+    //Gizmos::addSphere(m_DirectionalLight.m_Direction * 100.f, 10.f, 10, 10, vec4((m_DirectionalLight.m_Colour * 0.5f) * m_DirectionalLight.m_Intensity, 1));
+
+    Gizmos::draw(ProjectedView);
+
+#pragma endregion
+
+    // Finish Render
+    m_RenderCamera->EndRender();
 }
 
 void RenderingManager::CalculateDrawOrder(std::list<URenderer*>& OutDrawBuffer, std::list<RMaterial*>& OutMaterialBuffer)
@@ -72,11 +128,22 @@ void RenderingManager::CalculateDrawOrder(std::list<URenderer*>& OutDrawBuffer, 
     OutDrawBuffer.sort([&](URenderer* a, URenderer* b) -> bool { return a->GetMaterial() != b->GetMaterial(); });
 }
 
+int RenderingManager::GetActiveNumOfLights()
+{
+    int i = 0;
+    for (auto L : m_Lights)
+        if (L->IsEnabled())
+            i++;
+
+    return i;
+}
+
 vector<vec3> RenderingManager::GetPointLightPositions()
 {
     vector<vec3> PointLightPositions;
     for (auto L : m_Lights)
-        PointLightPositions.push_back(L->m_Position);
+        if (L->IsEnabled())
+         PointLightPositions.push_back(L->m_Position);
 
     return PointLightPositions;
 }
@@ -85,9 +152,20 @@ vector<vec3> RenderingManager::GetPointLightColours()
 {
     vector<vec3> PointLightColours;
     for (auto L : m_Lights)
-        PointLightColours.push_back(L->GetColour());
+        if (L->IsEnabled())
+            PointLightColours.push_back(L->GetColour());
 
     return PointLightColours;
+}
+
+vector<float> RenderingManager::GetPointLightFallOffs()
+{
+    vector<float> PointLightFallOffs;
+    for (auto L : m_Lights)
+        if (L->IsEnabled())
+            PointLightFallOffs.push_back(L->m_FallOff);
+
+    return PointLightFallOffs;
 }
 
 bool RenderingManager::AddRenderer(URenderer* a_Renderer)
@@ -126,6 +204,47 @@ bool RenderingManager::AddLight(ALight* a_Light)
     {
         m_NumOfLights++;
         m_Lights.push_back(a_Light);
+        return true;
+    }
+
+    a_Light->SetActive(false);
+
+    World::LogMessage(Debug::DebugMessage(true, "Light Limit Reached. Can not instantiate new light", Debug::Error));
+    
+    return false;
+}
+
+bool RenderingManager::RemoveLight(ALight* a_Light)
+{
+    if (m_NumOfLights > 0)
+    {
+        auto i = std::find(m_Lights.begin(), m_Lights.end(), a_Light);
+        if (i != m_Lights.end())
+        {
+            m_NumOfLights--;
+            m_Lights.erase(i);
+            return true;
+        }
     }
     return false;
+}
+
+void RenderingManager::SetAmbientLight(ALight* a_AmbientLight)
+{    
+    if (m_AmbientLight)
+    {
+        // Add old ambient light to pool of normal lights
+        m_AmbientLight->SetAmbient(false);
+        AddLight(m_AmbientLight);
+    }
+
+    if (a_AmbientLight == nullptr)
+    {
+        m_AmbientLight = nullptr;
+        return;
+    }
+
+    // Remove new ambient light from pool of normal lights
+    RemoveLight(a_AmbientLight);
+    m_AmbientLight = a_AmbientLight;
 }

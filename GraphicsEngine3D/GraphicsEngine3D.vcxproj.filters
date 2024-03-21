@@ -24,9 +24,6 @@
     <Filter Include="Header Files\Engine\Provided">
       <UniqueIdentifier>{8713d3c4-48b7-4d53-9964-8ac05db1905d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Engine\Objects\Rendering">
-      <UniqueIdentifier>{d1bb4ef8-89f2-4823-9b0d-6e3c8b47285a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Engine\MathF">
       <UniqueIdentifier>{51d2bb1e-9285-4005-accd-671c41177508}</UniqueIdentifier>
     </Filter>
@@ -35,12 +32,6 @@
     </Filter>
     <Filter Include="Source Files\Engine\Provided">
       <UniqueIdentifier>{f90fde0e-2db5-4fee-8387-cf9e3c982d05}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Objects\Rendering">
-      <UniqueIdentifier>{788cb70f-4168-4a57-805c-2498c2a0f9ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Objects\Cameras">
-      <UniqueIdentifier>{647c176f-a0db-40c7-806a-c132e567d017}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Engine\Objects\Components">
       <UniqueIdentifier>{53af1c31-d1cb-4c1a-a6be-1795ce8d928f}</UniqueIdentifier>
@@ -76,6 +67,27 @@
     <Filter Include="Header Files\Engine\Objects\Actors\Lights">
       <UniqueIdentifier>{d36bb72e-aac5-48db-8512-a7a64b4d3c63}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Objects\Actors\Lights">
+      <UniqueIdentifier>{16029ef2-9904-45ce-b93c-fd0ae917bb6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects\Actors\Common">
+      <UniqueIdentifier>{bd55bb20-5e90-4f3d-95ea-018cf0d48d59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects\Actors\Cameras">
+      <UniqueIdentifier>{647c176f-a0db-40c7-806a-c132e567d017}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Rendering">
+      <UniqueIdentifier>{788cb70f-4168-4a57-805c-2498c2a0f9ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Rendering">
+      <UniqueIdentifier>{d1bb4ef8-89f2-4823-9b0d-6e3c8b47285a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\ImGui">
+      <UniqueIdentifier>{232c1e73-4e0f-4705-b323-b7cfb6f0ef56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\ImGui">
+      <UniqueIdentifier>{be0c940c-b9dd-4dd9-a4e6-8e3be496166b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -87,9 +99,6 @@
     <ClCompile Include="OBJMesh.cpp">
       <Filter>Source Files\Engine\Provided</Filter>
     </ClCompile>
-    <ClCompile Include="RenderTarget.cpp">
-      <Filter>Source Files\Engine\Provided</Filter>
-    </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files\Engine\Provided</Filter>
     </ClCompile>
@@ -97,19 +106,19 @@
       <Filter>Source Files\Engine\Objects</Filter>
     </ClCompile>
     <ClCompile Include="RenderingManager.cpp">
-      <Filter>Source Files\Engine\Objects\Rendering</Filter>
+      <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="UBaseComponent.cpp">
       <Filter>Source Files\Engine\Objects\Components</Filter>
     </ClCompile>
     <ClCompile Include="AOrbitCamera.cpp">
-      <Filter>Source Files\Engine\Objects\Cameras</Filter>
+      <Filter>Source Files\Engine\Objects\Actors\Cameras</Filter>
     </ClCompile>
     <ClCompile Include="ACamera.cpp">
-      <Filter>Source Files\Engine\Objects\Cameras</Filter>
+      <Filter>Source Files\Engine\Objects\Actors\Cameras</Filter>
     </ClCompile>
     <ClCompile Include="AFlyCamera.cpp">
-      <Filter>Source Files\Engine\Objects\Cameras</Filter>
+      <Filter>Source Files\Engine\Objects\Actors\Cameras</Filter>
     </ClCompile>
     <ClCompile Include="AActor.cpp">
       <Filter>Source Files\Engine\Objects\Actors</Filter>
@@ -122,9 +131,6 @@
     </ClCompile>
     <ClCompile Include="RMaterial.cpp">
       <Filter>Source Files\Engine\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="AStaticMesh.cpp">
-      <Filter>Source Files\Engine\Objects\Actors</Filter>
     </ClCompile>
     <ClCompile Include="World.cpp">
       <Filter>Source Files\Engine</Filter>
@@ -139,7 +145,16 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ALight.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Engine\Objects\Actors\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="AStaticMesh.cpp">
+      <Filter>Source Files\Engine\Objects\Actors\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui_DebugLog.cpp">
+      <Filter>Source Files\Engine\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui_Window.cpp">
+      <Filter>Source Files\Engine\ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -152,9 +167,6 @@
     <ClInclude Include="OBJMesh.h">
       <Filter>Header Files\Engine\Provided</Filter>
     </ClInclude>
-    <ClInclude Include="RenderTarget.h">
-      <Filter>Header Files\Engine\Provided</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files\Engine\Provided</Filter>
     </ClInclude>
@@ -165,7 +177,7 @@
       <Filter>Header Files\Engine\Objects</Filter>
     </ClInclude>
     <ClInclude Include="RenderingManager.h">
-      <Filter>Header Files\Engine\Objects\Rendering</Filter>
+      <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="UBaseComponent.h">
       <Filter>Header Files\Engine\Objects\Components</Filter>
@@ -211,6 +223,12 @@
     </ClInclude>
     <ClInclude Include="ALight.h">
       <Filter>Header Files\Engine\Objects\Actors\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui_DebugLog.h">
+      <Filter>Header Files\Engine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui_Window.h">
+      <Filter>Header Files\Engine\ImGui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

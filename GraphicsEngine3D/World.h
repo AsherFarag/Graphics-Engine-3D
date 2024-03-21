@@ -6,10 +6,13 @@
 // --- STD ---
 #include <List>
 using std::list;
+#include <memory>
+using std::unique_ptr;
+using std::weak_ptr;
 
 // --- Engine ---
 #include "GraphicsEngine3DApp.h"
-#include "Light.h"
+#include "ImGui_DebugLog.h"
 class ALight;
 class UBaseObject;
 class AActor;
@@ -36,14 +39,14 @@ protected:
 	virtual void Draw();
 	virtual void End();
 
-	list<UBaseObject*> m_Objects;
-	list<AActor*> m_Actors;
+	list< UBaseObject* > m_Objects;
+	list< AActor* > m_Actors;
 
 	// Clears and deletes all objects inside every update
-	list<UBaseObject*> m_ObjectsPendingDestroy;
+	list< UBaseObject* > m_ObjectsPendingDestroy;
 
 	ACamera* m_MainCamera = nullptr;
-	std::shared_ptr< AActor> m_InspectedActor = nullptr;
+	AActor*  m_InspectedActor = nullptr;
 
 	float m_DeltaTime;
 
@@ -53,6 +56,7 @@ protected:
 public:
 
 	static float const DeltaTime() { return GetWorld()->m_DeltaTime; }
+	static void LogMessage(Debug::DebugMessage a_Message);
 
 	static World* GetWorld() { return GraphicsEngine3DApp::GetInstance()->m_World; }
 	static RenderingManager* GetRenderingManager() { return GraphicsEngine3DApp::GetInstance()->m_World->m_RenderingManager; }
@@ -69,7 +73,7 @@ public:
 	template <typename T, typename... Args>
 	T* InstatiateObject(Args&... a_Args)
 	{
-		T* Object = new T(std::forward< Args >(a_Args)...);
+		auto Object = new T(std::forward< Args >(a_Args)...);
 
 		AddObject(Object);
 
@@ -91,8 +95,9 @@ protected:
 	ALight* m_AmbientLight;
 
 	RMaterial* m_SoulspearMat;
-	AStaticMesh* m_StaticMesh;
 
 	AFlyCamera* m_FlyCamera;
+
+	Debug::ImGui_DebugLog m_DebugLog;
 };
 

@@ -120,11 +120,11 @@ void ImGui_RenderDrawLists(ImDrawData* draw_data) {
     glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
 }
 
-static const char* ImGui_GetClipboardText() {
+static const char* ImGui_GetClipboardText(void* user_data) {
     return glfwGetClipboardString(g_Window);
 }
 
-static void ImGui_SetClipboardText(const char* text) {
+static void ImGui_SetClipboardText(void* user_data, const char* text) {
     glfwSetClipboardString(g_Window, text);
 }
 
@@ -284,6 +284,8 @@ void ImGui_InvalidateDeviceObjects() {
 bool ImGui_Init(GLFWwindow* window, bool install_callbacks) {
     g_Window = window;
 
+    ImGui::SetCurrentContext(ImGui::CreateContext());
+
     ImGuiIO& io = ImGui::GetIO();
     io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;                         // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
     io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
@@ -306,11 +308,10 @@ bool ImGui_Init(GLFWwindow* window, bool install_callbacks) {
     io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
     io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
 
-    io.RenderDrawListsFn = ImGui_RenderDrawLists;       // Alternatively you can set this to NULL and call ImGui::GetDrawData() after ImGui::Render() to get the same ImDrawData pointer.
     io.SetClipboardTextFn = ImGui_SetClipboardText;
     io.GetClipboardTextFn = ImGui_GetClipboardText;
 #ifdef _WIN32
-    io.ImeWindowHandle = glfwGetWin32Window(g_Window);
+    //io.ImeWindowHandle = glfwGetWin32Window(g_Window);
 #endif
 
     if (install_callbacks) {
@@ -330,7 +331,7 @@ bool ImGui_Init(GLFWwindow* window, bool install_callbacks) {
 
 void ImGui_Shutdown() {
     ImGui_InvalidateDeviceObjects();
-    ImGui::Shutdown();
+    ImGui::DestroyContext();
 }
 
 void ImGui_NewFrame() {

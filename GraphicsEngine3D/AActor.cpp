@@ -69,11 +69,18 @@ void AActor::Draw_ImGui()
 
 	ImGui::SameLine();
 	// - Name -
-	//char Name[256];
-	//m_Name.copy(Name, m_Name.length());
-	//Name[m_Name.length()] = 0;
-	//if (ImGui::InputText("Name", Name, 256))
-	//	SetName(Name);
+	char Name[256];
+	m_Name.copy(Name, m_Name.length());
+	Name[m_Name.length()] = 0;
+	if (ImGui::InputText("Name", Name, 256))
+		SetName(Name);
+
+	if (ImGui::TreeNode("Info"))
+	{
+		ImGui::Text("ID: [%i]", GetId());
+
+		ImGui::TreePop();
+	}
 
 	#pragma region Transform
 

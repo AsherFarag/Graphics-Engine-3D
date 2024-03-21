@@ -18,8 +18,8 @@ UMeshRenderer::~UMeshRenderer()
 
 void UMeshRenderer::Draw(mat4 a_ProjectionViewMatrix)
 {
-	m_Material->m_Shader.bindUniform("ProjectionViewModel", a_ProjectionViewMatrix * *m_Owner->GetTransform());
 	// bind transforms for lighting
+	m_Material->m_Shader.bindUniform("ProjectionViewModel", a_ProjectionViewMatrix * *m_Owner->GetTransform());
 	m_Material->m_Shader.bindUniform("ModelMatrix", *m_Owner->GetTransform());
 
 	m_Mesh->draw(false);
@@ -38,6 +38,13 @@ void UMeshRenderer::Draw_ImGui()
 		if (m_Mesh)
 		{
 			ImGui::Text(m_Mesh->getFilename().c_str());
+
+			//char ShaderBuffer[256] = "Phong";
+			//if (ImGui::Button("Reload Shader"))
+
+
+			//ImGui::SameLine()
+			//ImGui::InputText()
 		}
 
 		ImGui::TreePop();

@@ -3,12 +3,13 @@
 
 
 // --- Engine ---
+#include "UBaseObject.h"
 #include "ACamera.h"
 #include "AFlyCamera.h"
-#include "UBaseObject.h"
-#include "RenderingManager.h"
 #include "AStaticMesh.h"
 #include "ALight.h"
+#include "RenderingManager.h"
+#include "ResourceManager.h"
 
 World::World()
 {
@@ -27,12 +28,10 @@ World::~World()
 bool World::Begin()
 {
     m_RenderingManager = new RenderingManager();
-    m_AmbientLight = new ALight();
-    m_AmbientLight->SetName("Ambient Light");
-    m_RenderingManager->m_AmbientLight = m_AmbientLight;
-
-    new ALight();
-    new ALight();
+    ALight* AmbientLight = new ALight();
+    AmbientLight->SetName("Ambient Light");
+    AmbientLight->SetAmbient(true);
+    m_RenderingManager->SetAmbientLight(AmbientLight);
 
     // Camera Set Up
     m_FlyCamera = new AFlyCamera();
@@ -46,7 +45,7 @@ bool World::Begin()
     m_SoulspearMat = new RMaterial();
     m_SoulspearMat->LoadShader("Phong");
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 1; i++)
     {
         int Rows = 32;
         int Cols = 32;
@@ -56,71 +55,60 @@ bool World::Begin()
         StaticMesh->GetMesh()->SetMaterial(m_SoulspearMat);
 
         StaticMesh->SetPosition(vec3(((i % Rows) * 2.f - i * 2) * 0.1f, 0, (i % Cols) * 2.f));
-
-        if (i == 0)
-            m_StaticMesh = StaticMesh;
     }
+
+    #pragma region ImGui
+
+    #pragma region Style
+
+    ImGui::GetStyle().WindowRounding = 0;
+
+    #pragma endregion
+
+    m_DebugLog = Debug::ImGui_DebugLog();
+    m_DebugLog.PrintMessage(Debug::DebugMessage(false, "===== Begin World =====", Debug::Default, ImVec4(0,1,0,1)));
+
+    #pragma endregion
 
     return true;
 }
 
 void World::Update()
 {
+    DestroyPendingObjects();
+
     for (auto Actor : m_Actors)
     {
         Actor->Update();
     }
-    DestroyPendingObjects();
 }
 
 void World::Draw()
 {
-    // wipe the gizmos clean for this frame
+    // Wipe the gizmos clean for this frame
     Gizmos::clear();
 
+    // Get the Rendering Manager to draw URenderers
     m_RenderingManager->Draw();
 
-    #pragma region Gizmos
+    auto EngineInstance = GraphicsEngine3DApp::GetInstance();
 
-    // draw a simple grid with gizmos
-    vec4 white(1);
-    vec4 black(0, 0, 0, 1);
-    for (int i = 0; i < 21; ++i)
+    ImGuiWindowFlags Window_Flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus;
+    ImGui::SetNextWindowPos(ImVec2(0, 20));
+    ImGui::SetNextWindowSize(ImVec2(EngineInstance->getWindowWidth(), EngineInstance->getWindowHeight()));
+    if (ImGui::Begin("Editor", nullptr, Window_Flags))
     {
-        Gizmos::addLine(vec3(-10 + i, 0, 10),
-            vec3(-10 + i, 0, -10),
-            i == 10 ? white : black);
-        Gizmos::addLine(vec3(10, 0, -10 + i),
-            vec3(-10, 0, -10 + i),
-            i == 10 ? white : black);
+        ImGuiID idWind = ImGui::GetID("Editor");
+
+        ImGui::DockSpace(idWind, ImVec2(0, 0));
     }
-
-    Gizmos::addTransform(*m_StaticMesh->GetTransform(), 1);
-
-    // Draw Directional Light
-    //Gizmos::addSphere(m_DirectionalLight.m_Direction * 100.f, 10.f, 10, 10, vec4((m_DirectionalLight.m_Colour * 0.5f) * m_DirectionalLight.m_Intensity, 1));
-
-    Gizmos::draw(m_MainCamera->GetProjectionMatrix() * m_MainCamera->GetViewMatrix());
-
-    #pragma endregion
-
+    ImGui::End();
     #pragma region ImGui
 
 #pragma region Scene Hierarchy
-
-    ImGui::Begin("Scene Hierarchy");
-
+    //ImGui::SetNextWindowPos(ImVec2(-1, 19));
+    ImGui::Begin("Scene Hierarchy", nullptr);
     ImGui::Text("Number of Actors: %i", m_Actors.size());
-
-    ImGui::SameLine();
-    if (ImGui::BeginMenu("Add Actor"))
-    {
-        if (ImGui::MenuItem("Light"))
-            new ALight();
-
-        ImGui::EndMenu();
-    }
-
 
     int i = 1;
     for (auto Actor : m_Actors)
@@ -128,8 +116,8 @@ void World::Draw()
         ImGui::Text("%i : ", i);
         ImGui::SameLine();
         ImGui::PushID(Actor->GetId());
-        if (ImGui::Button(Actor->GetName().c_str()))
-            m_InspectedActor = std::shared_ptr<AActor>(Actor);
+        if (ImGui::Button(Actor->GetName().c_str(), ImVec2(200, 15)))
+            m_InspectedActor = Actor;
         ImGui::PopID();
 
         i++;
@@ -139,11 +127,8 @@ void World::Draw()
 
 #pragma endregion
 
-
 #pragma region Inspector
-
     ImGui::Begin("Inspector");
-
     if (m_InspectedActor)
     {
         m_InspectedActor->Draw_ImGui();
@@ -153,10 +138,66 @@ void World::Draw()
             m_InspectedActor = nullptr;
         }
     }
+    ImGui::End();
+
+#pragma endregion
+
+    if (ImGui::BeginMainMenuBar())
+
+    {
+        if (ImGui::BeginMenu("Add Actor"))
+        {
+            AActor* NewActor = nullptr;
+            vec3 SpawnPos = vec3(0);
+            if (m_MainCamera)
+            {
+                SpawnPos = m_MainCamera->GetPosition() + m_MainCamera->GetForward() * 10.f;
+            }
+
+            if (ImGui::MenuItem("Light"))
+                NewActor = new ALight();
+
+            if (ImGui::MenuItem("SoulSpear"))
+            {
+                AStaticMesh* StaticMesh;
+                // Static Mesh Set Up
+                StaticMesh = new AStaticMesh("soulspear/soulspear.obj", true, true);
+                StaticMesh->GetMesh()->SetMaterial(m_SoulspearMat);
+
+                NewActor = StaticMesh;
+            }
+
+            if (NewActor)
+                NewActor->SetPosition(SpawnPos);
+
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
+
+
+
+
+#pragma region Shaders
+
+    ImGui::Begin("Shader");
+
+    if (ImGui::Button("Reload Shaders"))
+    {
+        m_SoulspearMat->LoadShader("Phong");
+        LogMessage(Debug::DebugMessage(true, " ---- Reloaded Shaders ---"));
+    }
 
     ImGui::End();
 
 #pragma endregion
+
+#pragma region Debug Log
+
+    m_DebugLog.Draw();
+
+#pragma endregion
+
 
     #pragma endregion
 }
@@ -175,6 +216,11 @@ void World::End()
 
 #pragma region Object Management
 
+void World::LogMessage(Debug::DebugMessage a_Message)
+{
+    GetWorld()->m_DebugLog.PrintMessage(a_Message);
+}
+
 bool World::AddObject(UBaseObject* a_Object)
 {
     if (a_Object)
@@ -182,7 +228,7 @@ bool World::AddObject(UBaseObject* a_Object)
         a_Object->SetWorld(this);
         a_Object->SetEnabled(true);
         m_Objects.push_back(a_Object);
-
+  
         return true;
     }
 

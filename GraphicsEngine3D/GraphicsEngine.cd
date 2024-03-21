@@ -1,2 +1,193 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram /> 
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ResourceManager" Collapsed="true">
+    <Position X="17.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAABAAAAAAAAAAAAAAAAEAAABAEAAgAAAAAgCAgIAAA=</HashCode>
+      <FileName>ResourceManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GraphicsEngine3DApp" Collapsed="true">
+    <Position X="17.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgEAAAAAAACAABAAIAAAAgBAAAAAAAAAAgAAAEAQA=</HashCode>
+      <FileName>GraphicsEngine3DApp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World" Collapsed="true">
+    <Position X="17.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAYAVSAAQBAABgABAIACAAAAJAACUAAgAIAhAAAAAgE=</HashCode>
+      <FileName>World.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UBaseObject" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAABAAAAAiAAAQAkAAAAAAAhBAAAABAABEAIAiIA=</HashCode>
+      <FileName>UBaseObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UBaseComponent" Collapsed="true">
+    <Position X="10.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAgIQAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAiAA=</HashCode>
+      <FileName>UBaseComponent.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UMeshRenderer" Collapsed="true">
+    <Position X="10.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAJEgAAAAAAAEAAAAAAAAAAAAAAAAQAAAA=</HashCode>
+      <FileName>UMeshRenderer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="URenderer" Collapsed="true">
+    <Position X="10.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAIABEgAAAAAAgAAAAAAAAIAAAAAQAAEAAAAAAAACAA=</HashCode>
+      <FileName>URenderer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AActor" Collapsed="true">
+    <Position X="4.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAYAAAkIACCIACAAAABEBEAAAAKEAggEIAAAQoEAjAA=</HashCode>
+      <FileName>AActor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ACamera" Collapsed="true">
+    <Position X="2.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACUCAAIggAAAAAGIAAQEoAAAFCAAAgiAEIABAAAAAAA=</HashCode>
+      <FileName>ACamera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AFlyCamera" Collapsed="true">
+    <Position X="1.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAIAAEAIAAAABEBAAEAAAAAQAAgAAAAABAgAA=</HashCode>
+      <FileName>AFlyCamera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AOrbitCamera" Collapsed="true">
+    <Position X="3.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAIAAAAAAAAAAAAAAAAAQAAAAAAAQAAAAAAAAI=</HashCode>
+      <FileName>AOrbitCamera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AStaticMesh" Collapsed="true">
+    <Position X="5.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAABAgAAAAAAAEAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>AStaticMesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ALight" Collapsed="true">
+    <Position X="8" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAIAAAAAAAAAAAEBAAAAQQAAEABAAAEAAAAgQA=</HashCode>
+      <FileName>ALight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FMath" Collapsed="true">
+    <Position X="15.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MathF.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RMaterial" Collapsed="true">
+    <Position X="5.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AMAEkAIAQIgQEAAAYgAAiAAACAAABAAAwCAAgERACAA=</HashCode>
+      <FileName>RMaterial.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RResource" Collapsed="true">
+    <Position X="3.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAABAAAAAAgAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>RResource.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RMesh" Collapsed="true">
+    <Position X="1.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAEgABAAAAAAwAAAAAAAAAAAAAAAAAEAAAAEAAAAAA=</HashCode>
+      <FileName>RMesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderingManager" Collapsed="true">
+    <Position X="19" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAgCBAAQQgAgQAAAQAEAAAgAgoEAAIAAAAgAAACAA=</HashCode>
+      <FileName>RenderingManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImGui_Window" Collapsed="true">
+    <Position X="9" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAACAAAAgAAAABBAAAIAAAAEAAAAAAEAAAAAAA=</HashCode>
+      <FileName>ImGui_Window.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aie::OBJMesh" Collapsed="true">
+    <Position X="3.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>YAAAAgBAAIAAAAAAAAIAAAAACEAIAAAAAABAIAAAAAA=</HashCode>
+      <FileName>OBJMesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aie::RenderTarget" Collapsed="true">
+    <Position X="15.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QgAAADAAAIAAAAABIAGAAAAAABAAQQCAACAAAAEABAA=</HashCode>
+      <FileName>RenderTarget.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aie::Shader" Collapsed="true">
+    <Position X="19" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAACAAAABAAAAAAAAAEAAAAAAAEAABAAAAAAAIYA=</HashCode>
+      <FileName>Shader.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aie::ShaderProgram" Collapsed="true">
+    <Position X="15.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAACAAIAAAAQAAAAAgABAAAAAAEAAAAABAABQAcA=</HashCode>
+      <FileName>Shader.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Debug::ImGui_DebugLog" Collapsed="true">
+    <Position X="9" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAIAAAAAAAAAAAAAABBAAAAAQAgQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImGui_DebugLog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Light" Collapsed="true">
+    <Position X="17.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAgAAAQYAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Light.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Debug::DebugMessage" Collapsed="true">
+    <Position X="15.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAABAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>ImGui_DebugLog.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="Debug::EMessageType_Debug" Collapsed="true">
+    <Position X="15.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAIBAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImGui_DebugLog.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

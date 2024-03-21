@@ -76,7 +76,7 @@
     <LibraryPath>$(SolutionDir)dependencies/glfw/lib-vc2015;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>$(SolutionDir)dependencies/glfw/lib-vc2015/x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
     <IncludePath>$(SolutionDir)dependencies/imgui;$(SolutionDir)dependencies/glfw/include;$(SolutionDir)dependencies/glm;$(SolutionDir)dependencies/stb;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <OutDir>$(SolutionDir)temp\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)temp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
@@ -122,9 +122,12 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glfw3.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/glfw/lib-vc2015/x64;</AdditionalLibraryDirectories>
     </Link>
     <Lib>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/glfw/lib-vc2015;</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -168,8 +171,11 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\dependencies\imgui\backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\dependencies\imgui\imgui.cpp" />
     <ClCompile Include="..\dependencies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\dependencies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Gizmos.cpp" />
@@ -177,6 +183,7 @@
     <ClCompile Include="imgui_glfw3.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Renderer2D.cpp" />
+    <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +197,7 @@
     <ClInclude Include="imgui_glfw3.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Renderer2D.h" />
+    <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

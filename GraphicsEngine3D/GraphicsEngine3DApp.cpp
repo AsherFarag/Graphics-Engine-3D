@@ -3,6 +3,7 @@
 // --- AIE ---
 #include "Gizmos.h"
 #include "Input.h"
+#include "gl_core_4_4.h"
 
 // --- GLM ---
 #include <glm/glm.hpp>
@@ -49,8 +50,13 @@ bool GraphicsEngine3DApp::startup()
 	Gizmos::create(10000, 10000, 10000, 10000);
 
 	m_World = new World();
+	if (m_World->Begin() == false)
+		return false;
+	m_World->m_MainCamera->SetRenderTarget(&m_RenderTarget);
+	if (m_RenderTarget.initialise(1, getWindowWidth(), getWindowHeight()) == false)
+		return false;
 
-	return m_World->Begin();
+	return true;
 }
 
 void GraphicsEngine3DApp::shutdown()
@@ -78,11 +84,19 @@ void GraphicsEngine3DApp::update(float deltaTime)
 
 void GraphicsEngine3DApp::draw()
 {
+	// Bind our Render
+	m_RenderTarget.bind();
+
 	// Wipe the screen to the background colour
 	clearScreen();
 
 	if (m_World)
 		m_World->Draw();
+
+	m_RenderTarget.unbind();
+
+	// Wipe the screen to the background colour
+	clearScreen();
 
 	#pragma region ImGui
 	
@@ -95,6 +109,34 @@ void GraphicsEngine3DApp::draw()
 	ImGui::End();
 
 	#pragma endregion
+
+	m_RenderTarget.getTarget(0).bind(0);
+	ImGui::Begin("Viewport");
+
+	// we access the ImGui window size
+	const float window_width = ImGui::GetContentRegionAvail().x;
+	const float window_height = ImGui::GetContentRegionAvail().y;
+
+	//m_RenderTarget.initialise(1, window_width, window_height);
+	m_RenderTarget.rescaleFrameBuffer(0, window_width, window_height);
+
+	// we rescale the framebuffer to the actual window size here and reset the glViewport 
+	//rescale_framebuffer(window_width, window_height);
+	glViewport(0, 0, window_width, window_height);
+
+	// we get the screen position of the window
+	ImVec2 pos = ImGui::GetCursorScreenPos();
+
+	// and here we can add our created texture as image to ImGui
+	// unfortunately we need to use the cast to void* or I didn't find another way tbh
+	ImGui::Image(
+		(ImTextureID)m_RenderTarget.getTarget(0).getHandle(),
+		ImGui::GetContentRegionAvail(),
+		ImVec2(0, 1),
+		ImVec2(1, 0)
+	);
+
+	ImGui::End();
 	
 	#pragma endregion
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "RResource.h"
 
 // --- STD ---
 #include <string>
@@ -21,6 +22,7 @@ namespace aie
 
 // a simple triangle mesh wrapper
 class OBJMesh
+	: public RResource
 {
 public:
 

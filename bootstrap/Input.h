@@ -195,6 +195,8 @@ protected:
 	// just giving the Application class access to the Input singleton
 	friend class Application;
 
+	friend class GraphicsEngine3DApp;
+
 	// singleton pointer
 	static Input* m_instance;
 
