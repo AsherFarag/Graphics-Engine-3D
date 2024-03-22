@@ -57,6 +57,8 @@ bool World::Begin()
         StaticMesh->SetPosition(vec3(((i % Rows) * 2.f - i * 2) * 0.1f, 0, (i % Cols) * 2.f));
     }
 
+    ResourceManager::LoadMesh("Primitives/Box.obj");
+
     #pragma region ImGui
 
     #pragma region Style
@@ -105,42 +107,49 @@ void World::Draw()
     ImGui::End();
     #pragma region ImGui
 
-#pragma region Scene Hierarchy
-    //ImGui::SetNextWindowPos(ImVec2(-1, 19));
+    #pragma region Scene Hierarchy
+
+    // Create Scene Hierarchy Window
     ImGui::Begin("Scene Hierarchy", nullptr);
+
+    // Print num of Actors
     ImGui::Text("Number of Actors: %i", m_Actors.size());
 
-    int i = 1;
+    int ActorCount = 1;
+    // Create a List of Actors
+    ImGui::BeginListBox("Actors", ImGui::GetContentRegionAvail());
     for (auto Actor : m_Actors)
     {
-        ImGui::Text("%i : ", i);
-        ImGui::SameLine();
-        ImGui::PushID(Actor->GetId());
-        if (ImGui::Button(Actor->GetName().c_str(), ImVec2(200, 15)))
+        bool IsSelected = (m_InspectedActor == nullptr ? false : Actor->GetId() == m_InspectedActor->GetId());
+        if (ImGui::Selectable((std::to_string(ActorCount) + ": " + Actor->GetName()).c_str(), IsSelected))
             m_InspectedActor = Actor;
-        ImGui::PopID();
 
-        i++;
+        ActorCount++;
     }
+    ImGui::EndListBox();
 
     ImGui::End();
 
-#pragma endregion
+    #pragma endregion
 
-#pragma region Inspector
+    #pragma region Inspector
+
     ImGui::Begin("Inspector");
     if (m_InspectedActor)
     {
         m_InspectedActor->Draw_ImGui();
+        ImVec4 OldColour = ImGui::GetStyle().Colors[ImGuiCol_Button];
+        ImGui::GetStyle().Colors[ImGuiCol_Button] = ImVec4(0.8f, 0.15f, 0.25f, 1);
         if (ImGui::Button("DESTROY"))
         {
             m_InspectedActor->Destroy();
             m_InspectedActor = nullptr;
         }
+        ImGui::GetStyle().Colors[ImGuiCol_Button] = OldColour;
     }
     ImGui::End();
 
-#pragma endregion
+    #pragma endregion
 
     if (ImGui::BeginMainMenuBar())
 
@@ -175,10 +184,7 @@ void World::Draw()
         ImGui::EndMainMenuBar();
     }
 
-
-
-
-#pragma region Shaders
+    #pragma region Shaders
 
     ImGui::Begin("Shader");
 
@@ -190,13 +196,13 @@ void World::Draw()
 
     ImGui::End();
 
-#pragma endregion
+    #pragma endregion
 
-#pragma region Debug Log
+    #pragma region Debug Log
 
     m_DebugLog.Draw();
 
-#pragma endregion
+    #pragma endregion
 
 
     #pragma endregion

@@ -172,6 +172,7 @@
     <ClCompile Include="AStaticMesh.cpp" />
     <ClCompile Include="GraphicsEngine3DApp.cpp" />
     <ClCompile Include="ImGui_DebugLog.cpp" />
+    <ClCompile Include="ImGui_Viewport.cpp" />
     <ClCompile Include="ImGui_Window.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OBJMesh.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="AStaticMesh.h" />
     <ClInclude Include="GraphicsEngine3DApp.h" />
     <ClInclude Include="ImGui_DebugLog.h" />
+    <ClInclude Include="ImGui_Viewport.h" />
     <ClInclude Include="ImGui_Window.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="MathF.h" />

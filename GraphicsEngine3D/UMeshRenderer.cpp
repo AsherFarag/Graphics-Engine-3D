@@ -37,7 +37,22 @@ void UMeshRenderer::Draw_ImGui()
 	{
 		if (m_Mesh)
 		{
-			ImGui::Text(m_Mesh->getFilename().c_str());
+			ImGui::Text("Mesh: [%s]", m_Mesh->GetResourceName().c_str() );
+
+			if (ImGui::BeginMenu("Set Mesh"))
+			{
+				auto LoadedMeshes = ResourceManager::GetLoadedMeshes();
+				for (auto i : LoadedMeshes)
+				{
+					// If Pressed, set the Mesh to this
+					if (ImGui::MenuItem(i.first.c_str()))
+						SetMesh(i.first.c_str());
+
+				}
+
+				ImGui::EndMenu();
+			}
+
 
 			//char ShaderBuffer[256] = "Phong";
 			//if (ImGui::Button("Reload Shader"))

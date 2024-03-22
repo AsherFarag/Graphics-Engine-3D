@@ -26,6 +26,7 @@ public:
 
 	static ResourceManager* GetInstance();
 
+	static map<string, OBJMesh*>& GetLoadedMeshes() { return GetInstance()->m_LoadedMeshes; }
 	static OBJMesh* LoadMesh(const string& a_MeshName, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
 	static OBJMesh* GetLoadedMesh(const string& a_MeshName, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
 

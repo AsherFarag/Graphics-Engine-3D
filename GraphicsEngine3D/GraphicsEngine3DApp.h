@@ -8,7 +8,8 @@
 #include "Shader.h"
 #include "RenderTarget.h"
 
-// --- ImGui --
+// --- ImGui ---
+#include "ImGui_Viewport.h"
 #include "imgui.h"
 
 // --- Engine ---
@@ -38,6 +39,8 @@ public:
 
 protected:
 	World* m_World;
+
+	ImGui_Viewport m_Viewport;
 
 public:
 

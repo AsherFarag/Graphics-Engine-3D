@@ -156,6 +156,9 @@
     <ClCompile Include="ImGui_Window.cpp">
       <Filter>Source Files\Engine\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="ImGui_Viewport.cpp">
+      <Filter>Source Files\Engine\ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsEngine3DApp.h">
@@ -228,6 +231,9 @@
       <Filter>Header Files\Engine\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="ImGui_Window.h">
+      <Filter>Header Files\Engine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui_Viewport.h">
       <Filter>Header Files\Engine\ImGui</Filter>
     </ClInclude>
   </ItemGroup>

@@ -20,8 +20,13 @@ OBJMesh::~OBJMesh() {
 
 bool OBJMesh::load(const char* filename, bool loadTextures /* = true */, bool flipTextureV /* = false */)
 {
-	std::string StringFilePath = std::string(RESOURCE_PATH) + MESH_FILE_PATH + filename;
+	// Set Resource Name
+	m_ResourceName = filename;
+
+	// Construct file path and assign it to filename
+	std::string StringFilePath = std::string(RESOURCE_PATH) + MESH_FILE_PATH + m_ResourceName;
 	filename = StringFilePath.c_str();
+
 	if (m_meshChunks.empty() == false) {
 		printf("Mesh already initialised, can't re-initialise!\n");
 		return false;
