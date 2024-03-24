@@ -21,7 +21,7 @@ ImGui_Viewport::~ImGui_Viewport()
 void ImGui_Viewport::BeginDraw()
 {
 	// Bind the Render Target Texture to a slot
-	m_RenderTarget->getTarget(0).bind(0);
+	//m_RenderTarget->getTarget(0).bind(0);
 
 	// Create a small border around the Image
 	ImGui::GetStyle().WindowPadding = ImVec2(3.f, 3.f);

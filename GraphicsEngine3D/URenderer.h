@@ -1,6 +1,8 @@
 #pragma once
 #include "UBaseComponent.h"
 
+#include "OBJMesh.h"
+
 // --- Engine ---
 #include "RMaterial.h"
 class RenderingManager;
@@ -15,6 +17,7 @@ public:
     virtual void Draw(mat4 a_ProjectionViewMatrix) = 0;
 
 protected:
+    aie::OBJMesh* m_Mesh;
     RMaterial* m_Material = nullptr;
 
     // Owning Rendering Manager
@@ -24,6 +27,9 @@ protected:
     virtual void OnDisabled();
 
 public:
+    aie::OBJMesh* GetMesh() { return m_Mesh; }
+    bool SetMesh(const char* a_MeshName, bool a_LoadTextures = true, bool a_FlipTextureV = false);
+
     void SetRenderingManager(RenderingManager* a_RenderingManager);
 
     RMaterial* GetMaterial() const { return m_Material; }

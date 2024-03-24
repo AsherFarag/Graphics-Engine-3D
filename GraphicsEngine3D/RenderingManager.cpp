@@ -26,6 +26,9 @@ void RenderingManager::Draw()
     if (m_RenderCamera == nullptr)
         return;
 
+    if (m_Renderers.size() == 0)
+        return;
+
     // Begin Render
     m_RenderCamera->BeginRender();
 
@@ -49,34 +52,64 @@ void RenderingManager::Draw()
     // 
     // ########################################################
 
-    for (auto Material : MaterialBuffer)
+    // TEMP
+    auto FirstMat = DrawOrderBuffer.front()->GetMaterial();
+    FirstMat->m_Shader->bind();
+    FirstMat->Bind();
+    FirstMat->m_Shader->bindUniform("CameraPosition", vec4(m_RenderCamera->GetPosition(), 1));
+
+    if (m_AmbientLight && m_AmbientLight->IsEnabled())
     {
-        Material->m_Shader.bind();
-        Material->m_Shader.bindUniform("CameraPosition", vec4(m_RenderCamera->GetPosition(), 1));
-
-        if (m_AmbientLight && m_AmbientLight->IsEnabled())
-        {
-            Material->m_Shader.bindUniform("AmbientLight", m_AmbientLight->GetColour());
-            //Material->m_Shader.bindUniform("AmbientLightDirection", normalize(m_AmbientLight->GetRotation()));
-        }
-        else
-        {
-            Material->m_Shader.bindUniform("AmbientLight", vec3());
-        }
-
-        Material->m_Shader.bindUniform("NumOfLights", ActiveNumOfLights);
-        if (ActiveNumOfLights > 0)
-        {
-            Material->m_Shader.bindUniform("PointLightColors", ActiveNumOfLights, &PointLightColours[0]);
-            Material->m_Shader.bindUniform("PointLightPositions", ActiveNumOfLights, &PointLightPositions[0]);
-            Material->m_Shader.bindUniform("PointLightFallOffs", ActiveNumOfLights, &PointLightFallOffs[0]);
-        }
+        FirstMat->m_Shader->bindUniform("AmbientLight", m_AmbientLight->GetColour());
+    }
+    else
+    {
+        FirstMat->m_Shader->bindUniform("AmbientLight", vec3());
     }
 
+    FirstMat->m_Shader->bindUniform("NumOfLights", ActiveNumOfLights);
+    if (ActiveNumOfLights > 0)
+    {
+        FirstMat->m_Shader->bindUniform("PointLightColors", ActiveNumOfLights, &PointLightColours[0]);
+        FirstMat->m_Shader->bindUniform("PointLightPositions", ActiveNumOfLights, &PointLightPositions[0]);
+        FirstMat->m_Shader->bindUniform("PointLightFallOffs", ActiveNumOfLights, &PointLightFallOffs[0]);
+    }
+
+    URenderer* PreviousRenderer = nullptr;
     for (auto Renderer : DrawOrderBuffer)
     {
+        if (PreviousRenderer && Renderer->GetMesh() != PreviousRenderer->GetMesh())
+        {
+            auto Material = Renderer->GetMaterial();
+            Material->m_Shader->bind();
+            Material->Bind();
+            Material->m_Shader->bindUniform("CameraPosition", vec4(m_RenderCamera->GetPosition(), 1));
+
+            if (m_AmbientLight && m_AmbientLight->IsEnabled())
+            {
+                Material->m_Shader->bindUniform("AmbientLight", m_AmbientLight->GetColour());
+                //Material->m_Shader.bindUniform("AmbientLightDirection", normalize(m_AmbientLight->GetRotation()));
+            }
+            else
+            {
+                Material->m_Shader->bindUniform("AmbientLight", vec3());
+            }
+
+            Material->m_Shader->bindUniform("NumOfLights", ActiveNumOfLights);
+            if (ActiveNumOfLights > 0)
+            {
+                Material->m_Shader->bindUniform("PointLightColors", ActiveNumOfLights, &PointLightColours[0]);
+                Material->m_Shader->bindUniform("PointLightPositions", ActiveNumOfLights, &PointLightPositions[0]);
+                Material->m_Shader->bindUniform("PointLightFallOffs", ActiveNumOfLights, &PointLightFallOffs[0]);
+            }
+        }
+
         Renderer->Draw(ProjectedView);
+
+        PreviousRenderer = Renderer;
     }
+
+#pragma region Gizmos
 
     if (m_AmbientLight && m_AmbientLight->IsEnabled())
         aie::Gizmos::addSphere(m_AmbientLight->GetPosition(), m_AmbientLight->GetScale().x * 0.5f, 7, 7, vec4(m_AmbientLight->m_Colour, 0.75f));
@@ -86,8 +119,6 @@ void RenderingManager::Draw()
         if (m_Lights[i]->IsEnabled())
             aie::Gizmos::addSphere(m_Lights[i]->GetPosition(), m_Lights[i]->GetScale().x * 0.5f, 7, 7, vec4(m_Lights[i]->m_Colour, 0.75f));
     }
-
-#pragma region Gizmos
 
     // draw a simple grid with gizmos
     vec4 white(1);
@@ -110,7 +141,7 @@ void RenderingManager::Draw()
 #pragma endregion
 
     // Finish Render
-    m_RenderCamera->EndRender();
+    m_RenderCamera->EndRender(); 
 }
 
 void RenderingManager::CalculateDrawOrder(std::list<URenderer*>& OutDrawBuffer, std::list<RMaterial*>& OutMaterialBuffer)
@@ -125,7 +156,7 @@ void RenderingManager::CalculateDrawOrder(std::list<URenderer*>& OutDrawBuffer, 
         }
     }
 
-    OutDrawBuffer.sort([&](URenderer* a, URenderer* b) -> bool { return a->GetMaterial() != b->GetMaterial(); });
+    //OutDrawBuffer.sort([&](URenderer* a, URenderer* b) -> bool { return a->GetMaterial() != b->GetMaterial(); });
 }
 
 int RenderingManager::GetActiveNumOfLights()

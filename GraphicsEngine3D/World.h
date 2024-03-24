@@ -22,6 +22,8 @@ class AStaticMesh;
 class RMaterial;
 class RenderingManager;
 
+#include "RMesh.h"
+
 
 // A World is a scene object that stores and handles all the objects inside of it.
 // It handles the destruction and creation of objects.
@@ -99,5 +101,8 @@ protected:
 	AFlyCamera* m_FlyCamera;
 
 	Debug::ImGui_DebugLog m_DebugLog;
+
+	RMesh m_FullScreenQuad;
+	aie::ShaderProgram m_PostProcess;
 };
 

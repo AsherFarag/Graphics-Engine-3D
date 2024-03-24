@@ -14,6 +14,7 @@
 #include "RResource.h"
 #include "AStaticMesh.h"
 #include "RenderingManager.h"
+#include "ResourceManager.h"
 #include "RMaterial.h"
 #include "World.h"
 
@@ -65,6 +66,8 @@ void GraphicsEngine3DApp::shutdown()
 {
 	if (m_World)
 		m_World->End();
+
+	delete ResourceManager::GetInstance();
 
 	Gizmos::destroy();
 }

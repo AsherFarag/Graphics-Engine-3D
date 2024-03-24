@@ -176,6 +176,41 @@ void RMesh::InitialiseQuad()
 	m_MeshChunk.m_TriCount = 2;
 }
 
+void RMesh::InitialiseFullScreenQuad()
+{
+	assert(m_MeshChunk.m_VAO == 0);
+	// generate buffers
+	glGenBuffers(1, &m_MeshChunk.m_VBO);
+	glGenVertexArrays(1, &m_MeshChunk.m_VAO);
+	// bind vertex array aka a mesh wrapper
+	glBindVertexArray(m_MeshChunk.m_VAO);
+	// bind vertex buffer
+	glBindBuffer(GL_ARRAY_BUFFER, m_MeshChunk.m_VBO);
+
+	// define vertices
+	float vertices[] =
+	{
+	-1,1, // left top
+	-1,-1, // left bottom
+	1,1, // right top
+	-1,-1, // left bottom
+	1,-1, // right bottom
+	1, 1 // right top
+	};
+
+	// fill vertex buffer
+	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), vertices,
+		GL_STATIC_DRAW);
+	// enable first element as position
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8, 0);
+	// unbind buffers
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	// quad has 2 triangles
+	m_MeshChunk.m_TriCount = 2;
+}
+
 bool RMesh::Load(const char* a_FileName, bool a_LoadTextures, bool a_FlipTextures)
 {
 	//std::string StringFilePath = std::string(RESOURCE_PATH) + MESH_FILE_PATH + a_FileName;
@@ -235,4 +270,8 @@ void RMesh::Draw()
 	{
 		glDrawArrays(GL_TRIANGLES, 0, 3 * m_MeshChunk.m_TriCount);
 	}
+}
+
+void RMesh::BatchDraw(std::vector<mat4> a_MeshTransforms)
+{
 }

@@ -27,6 +27,29 @@ World::~World()
 
 bool World::Begin()
 {
+#pragma region Default Material Set up
+
+    RMaterial* DefaultMaterial = ResourceManager::InstantiateMaterial("Default");
+    //DefaultMaterial->Ambient         = vec3(1);
+    //DefaultMaterial->Diffuse         = vec3(1);
+    //DefaultMaterial->Specular        = vec3(1);
+    //DefaultMaterial->Emissive        = vec3(0);
+    //DefaultMaterial->SpecularPower   = 1.f;
+    //DefaultMaterial->Opacity         = 1.f;
+
+    // textures
+    //DefaultMaterial->AlphaTexture.load("./bin/Resources/Mesh/Default.tga");
+    DefaultMaterial->DiffuseTexture.load("./bin/Resources/Mesh/Default.tga");
+    //DefaultMaterial->DiffuseTexture.load("./bin/Resources/Mesh/Default.tga");
+    //DefaultMaterial->SpecularTexture.load("./bin/Resources/Mesh/Default.tga");
+    //DefaultMaterial->SpecularHighlightTexture.load("./bin/Resources/Mesh/Default.tga");
+    DefaultMaterial->NormalTexture.load("./bin/Resources/Mesh/DefaultNormal.tga");
+    //DefaultMaterial->DisplacementTexture.load("./bin/Resources/Mesh/Default.tga");
+
+#pragma endregion
+
+
+    // Default Light Set up
     m_RenderingManager = new RenderingManager();
     ALight* AmbientLight = new ALight();
     AmbientLight->SetName("Ambient Light");
@@ -38,26 +61,38 @@ bool World::Begin()
     m_MainCamera = m_FlyCamera;
     m_MainCamera->SetAspectRatio(GraphicsEngine3DApp::GetInstance()->getWindowWidth(), GraphicsEngine3DApp::GetInstance()->getWindowWidth());
     m_MainCamera->SetPosition(vec3(-10, 1, 0));
-
     m_RenderingManager->SetRenderCamera(m_MainCamera);
 
-    // Material Set up
-    m_SoulspearMat = new RMaterial();
-    m_SoulspearMat->LoadShader("Phong");
-
+    // Create SoulSpear
     for (int i = 0; i < 1; i++)
     {
-        int Rows = 32;
-        int Cols = 32;
+        int Rows = 8;
+        int Cols = 8;
         AStaticMesh* StaticMesh;
         // Static Mesh Set Up
-        StaticMesh = new AStaticMesh("soulspear/soulspear.obj", true, true);
-        StaticMesh->GetMesh()->SetMaterial(m_SoulspearMat);
+        StaticMesh = new AStaticMesh("soulspear/soulspear", true, true);
+       // StaticMesh->GetMesh()->SetMaterial(m_SoulspearMat);
 
-        StaticMesh->SetPosition(vec3(((i % Rows) * 2.f - i * 2) * 0.1f, 0, (i % Cols) * 2.f));
+        StaticMesh->SetPosition(vec3(((i % Rows) * 2.f - i * 2) * 0.5f, 0, (i % Cols) * 2.f));
+    }
+    m_SoulspearMat = ResourceManager::GetMaterial("soulspear0");
+
+    ResourceManager::LoadMesh("Primitives/Box", DefaultMaterial);
+    ResourceManager::LoadMesh("Robot/Robot", nullptr, true, true);
+
+    // create a fullscreen quad
+    m_FullScreenQuad.InitialiseFullScreenQuad();
+
+    // load a post-processing shader
+    m_PostProcess.loadShader(aie::eShaderStage::VERTEX, "./bin/shaders/PostProcess.vert");
+    m_PostProcess.loadShader(aie::eShaderStage::FRAGMENT, "./bin/shaders/PostProcess.frag");
+    if (m_PostProcess.link() == false)
+    {
+        printf("Post Shader Error: %s\n", m_PostProcess.getLastError());
+        return false;
     }
 
-    ResourceManager::LoadMesh("Primitives/Box.obj");
+    m_PostProcess.bindUniform("PostProcess", 0);
 
     #pragma region ImGui
 
@@ -87,13 +122,24 @@ void World::Update()
 
 void World::Draw()
 {
+    auto EngineInstance = GraphicsEngine3DApp::GetInstance();
+
     // Wipe the gizmos clean for this frame
     Gizmos::clear();
 
     // Get the Rendering Manager to draw URenderers
     m_RenderingManager->Draw();
 
-    auto EngineInstance = GraphicsEngine3DApp::GetInstance();
+    m_PostProcess.bind();
+    m_PostProcess.bindUniform("colourTarget", 0);
+    m_MainCamera->GetRenderTarget()->bind();
+    m_MainCamera->GetRenderTarget()->getTarget(0).bind(0);
+
+    m_FullScreenQuad.Draw();
+
+    m_MainCamera->GetRenderTarget()->unbind();
+
+    #pragma region ImGui
 
     ImGuiWindowFlags Window_Flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus;
     ImGui::SetNextWindowPos(ImVec2(0, 20));
@@ -105,7 +151,6 @@ void World::Draw()
         ImGui::DockSpace(idWind, ImVec2(0, 0));
     }
     ImGui::End();
-    #pragma region ImGui
 
     #pragma region Scene Hierarchy
 
@@ -152,7 +197,6 @@ void World::Draw()
     #pragma endregion
 
     if (ImGui::BeginMainMenuBar())
-
     {
         if (ImGui::BeginMenu("Add Actor"))
         {
@@ -166,12 +210,12 @@ void World::Draw()
             if (ImGui::MenuItem("Light"))
                 NewActor = new ALight();
 
-            if (ImGui::MenuItem("SoulSpear"))
+            if (ImGui::MenuItem("Static Mesh"))
             {
                 AStaticMesh* StaticMesh;
                 // Static Mesh Set Up
-                StaticMesh = new AStaticMesh("soulspear/soulspear.obj", true, true);
-                StaticMesh->GetMesh()->SetMaterial(m_SoulspearMat);
+                StaticMesh = new AStaticMesh();
+                //StaticMesh->GetMesh()->SetMaterial(m_SoulspearMat);
 
                 NewActor = StaticMesh;
             }
@@ -194,7 +238,15 @@ void World::Draw()
         LogMessage(Debug::DebugMessage(true, " ---- Reloaded Shaders ---"));
     }
 
+    static int PostProcessIndex = 0;
+    if (ImGui::SliderInt("Post Process", &PostProcessIndex, 0, 3))
+    {
+        m_PostProcess.bindUniform("PostProcess", PostProcessIndex);
+    }
+
     ImGui::End();
+
+
 
     #pragma endregion
 

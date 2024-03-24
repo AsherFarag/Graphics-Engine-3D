@@ -3,6 +3,7 @@
 
 // --- STD ---
 #include <string>
+using std::string;
 #include <vector>
 #include <map>
 
@@ -41,17 +42,17 @@ public:
 	~OBJMesh();
 
 	// will fail if a mesh has already been loaded in to this instance
-	bool load(const char* filename, bool loadTextures = true, bool flipTextureV = false);
+	bool load(const char* filename, bool loadTextures = true, bool flipTextureV = false, RMaterial* a_Material = nullptr);
 
 	// allow option to draw as patches for tessellation
 	void draw(bool usePatches = false);
 
 	// access to the filename that was loaded
-	const std::string& getFilename() const { return m_filename; }
+	const string& getFilename() const { return m_filename; }
 
 	// material access
 	size_t getMaterialCount() const { return m_materials.size();  }
-	RMaterial& getMaterial(size_t index) { return m_materials[index];  }
+	RMaterial* getMaterial(size_t index) { return m_materials[index];  }
 
 private:
 
@@ -64,9 +65,9 @@ private:
 		int				materialID;
 	};
 
-	std::string				m_filename;
+	string m_filename;
 	std::vector<MeshChunk>	m_meshChunks;
-	std::vector<RMaterial>	m_materials;
+	std::vector<RMaterial*>	m_materials;
 };
 
 } // namespace aie

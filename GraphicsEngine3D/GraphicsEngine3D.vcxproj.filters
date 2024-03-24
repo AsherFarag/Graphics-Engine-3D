@@ -135,9 +135,6 @@
     <ClCompile Include="World.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="UMeshRenderer.cpp">
       <Filter>Source Files\Engine\Objects\Components</Filter>
     </ClCompile>
@@ -158,6 +155,9 @@
     </ClCompile>
     <ClCompile Include="ImGui_Viewport.cpp">
       <Filter>Source Files\Engine\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -215,9 +215,6 @@
     <ClInclude Include="URenderer.h">
       <Filter>Header Files\Engine\Objects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AStaticMesh.h">
       <Filter>Header Files\Engine\Objects\Actors\Common</Filter>
     </ClInclude>
@@ -235,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="ImGui_Viewport.h">
       <Filter>Header Files\Engine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Header Files\Engine\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

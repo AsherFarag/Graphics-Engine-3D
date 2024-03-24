@@ -1,16 +1,27 @@
 #include "OBJMesh.h"
+
+// --- STD ---
+#include <iostream>
+
+// --- OpenGL ---
 #include "gl_core_4_4.h"
+
+// --- GLM ---
 #include <glm/geometric.hpp>
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
+
+// --- Engine ---
 #include "RMesh.h"
+#include "ResourceManager.h"
 
 
 namespace aie
 {
 
-OBJMesh::~OBJMesh() {
+OBJMesh::~OBJMesh()
+{
 	for (auto& c : m_meshChunks) {
 		glDeleteVertexArrays(1, &c.vao);
 		glDeleteBuffers(1, &c.vbo);
@@ -18,29 +29,38 @@ OBJMesh::~OBJMesh() {
 	}
 }
 
-bool OBJMesh::load(const char* filename, bool loadTextures /* = true */, bool flipTextureV /* = false */)
+bool OBJMesh::load(const char* filename, bool loadTextures /* = true */, bool flipTextureV /* = false */, RMaterial* a_Material)
 {
-	// Set Resource Name
-	m_ResourceName = filename;
+	// === Step 1 ===
+	// Construct the full file path with file name
 
-	// Construct file path and assign it to filename
-	std::string StringFilePath = std::string(RESOURCE_PATH) + MESH_FILE_PATH + m_ResourceName;
-	filename = StringFilePath.c_str();
+	// Set File type extension
+	m_FileType = ".obj";
+	
+	// Construct the file path
+	m_FilePath = string(RESOURCE_PATH) + MESH_FILE_PATH + filename;
+
+	// Get the name of the File
+	m_ResourceName = m_FilePath.substr(m_FilePath.find_last_of('/') + 1);
+
+	// Attach file extension
+	m_FilePath.append(m_FileType);
 
 	if (m_meshChunks.empty() == false) {
 		printf("Mesh already initialised, can't re-initialise!\n");
+
 		return false;
 	}
 
 	std::vector<tinyobj::shape_t> shapes;
 	std::vector<tinyobj::material_t> materials;
-	std::string error = "";
+	string error = "";
 
-	std::string file = filename;
-	std::string folder = file.substr(0, file.find_last_of('/') + 1);
+	string file = m_FilePath;
+	string folder = file.substr(0, file.find_last_of('/') + 1);
 
 	bool success = tinyobj::LoadObj(shapes, materials, error,
-									filename, folder.c_str());
+		file.c_str(), folder.c_str());
 
 	if (success == false) {
 		printf("%s\n", error.c_str());
@@ -49,29 +69,40 @@ bool OBJMesh::load(const char* filename, bool loadTextures /* = true */, bool fl
 
 	m_filename = filename;
 
-	// copy materials
-	m_materials.resize(materials.size());
-	int index = 0;
-	for (auto& m : materials)
+	if (a_Material)
 	{
+		m_materials.resize(1);
+		m_materials[0] = a_Material;
+	}
 
-		m_materials[index].Ambient = glm::vec3(m.ambient[0], m.ambient[1], m.ambient[2]);
-		m_materials[index].Diffuse = glm::vec3(m.diffuse[0], m.diffuse[1], m.diffuse[2]);
-		m_materials[index].Specular = glm::vec3(m.specular[0], m.specular[1], m.specular[2]);
-		m_materials[index].Emissive = glm::vec3(m.emission[0], m.emission[1], m.emission[2]);
-		m_materials[index].SpecularPower = m.shininess;
-		m_materials[index].Opacity = m.dissolve;
+	else
+	{
+		// copy materials
+		m_materials.resize(materials.size());
+		int index = 0;
+		for (auto& m : materials)
+		{
+			std::string MaterialName = m_ResourceName.append(std::to_string(index));
+			m_materials[index] = ResourceManager::InstantiateMaterial(MaterialName.c_str());
 
-		// textures
-		m_materials[index].AlphaTexture.load((folder + m.alpha_texname).c_str());
-		m_materials[index].AmbientTexture.load((folder + m.ambient_texname).c_str());
-		m_materials[index].DiffuseTexture.load((folder + m.diffuse_texname).c_str());
-		m_materials[index].SpecularTexture.load((folder + m.specular_texname).c_str());
-		m_materials[index].SpecularHighlightTexture.load((folder + m.specular_highlight_texname).c_str());
-		m_materials[index].NormalTexture.load((folder + m.bump_texname).c_str());
-		m_materials[index].DisplacementTexture.load((folder + m.displacement_texname).c_str());
+			m_materials[index]->Ambient = glm::vec3(m.ambient[0], m.ambient[1], m.ambient[2]);
+			m_materials[index]->Diffuse = glm::vec3(m.diffuse[0], m.diffuse[1], m.diffuse[2]);
+			m_materials[index]->Specular = glm::vec3(m.specular[0], m.specular[1], m.specular[2]);
+			m_materials[index]->Emissive = glm::vec3(m.emission[0], m.emission[1], m.emission[2]);
+			m_materials[index]->SpecularPower = m.shininess;
+			m_materials[index]->Opacity = m.dissolve;
 
-		++index;
+			// textures
+			m_materials[index]->AlphaTexture.load((folder + m.alpha_texname).c_str());
+			m_materials[index]->AmbientTexture.load((folder + m.ambient_texname).c_str());
+			m_materials[index]->DiffuseTexture.load((folder + m.diffuse_texname).c_str());
+			m_materials[index]->SpecularTexture.load((folder + m.specular_texname).c_str());
+			m_materials[index]->SpecularHighlightTexture.load((folder + m.specular_highlight_texname).c_str());
+			m_materials[index]->NormalTexture.load((folder + m.bump_texname).c_str());
+			m_materials[index]->DisplacementTexture.load((folder + m.displacement_texname).c_str());
+
+			++index;
+		}
 	}
 
 	// copy shapes
@@ -168,21 +199,22 @@ void OBJMesh::draw(bool usePatches /* = false */) {
 		return;
 	}
 
-	// pull uniforms from the shader
-	int kaUniform = glGetUniformLocation(program, "Ka");
-	int kdUniform = glGetUniformLocation(program, "Kd");
-	int ksUniform = glGetUniformLocation(program, "Ks");
-	int keUniform = glGetUniformLocation(program, "Ke");
-	int opacityUniform = glGetUniformLocation(program, "Opacity");
-	int specPowUniform = glGetUniformLocation(program, "SpecularPower");
+	// Pull Uniforms from the shader
+	int kaUniform					= glGetUniformLocation(program, "Ka");
+	int kdUniform					= glGetUniformLocation(program, "Kd");
+	int ksUniform					= glGetUniformLocation(program, "Ks");
+	int keUniform					= glGetUniformLocation(program, "Ke");
+	int opacityUniform				= glGetUniformLocation(program, "Opacity");
+	int specPowUniform				= glGetUniformLocation(program, "SpecularPower");
 
-	int alphaTexUniform = glGetUniformLocation(program, "AlphaTexture");
-	int ambientTexUniform = glGetUniformLocation(program, "AmbientTexture");
-	int diffuseTexUniform = glGetUniformLocation(program, "DiffuseTexture");
-	int specTexUniform = glGetUniformLocation(program, "SpecularTexture");
-	int specHighlightTexUniform = glGetUniformLocation(program, "SpecularHighlightTexture");
-	int normalTexUniform = glGetUniformLocation(program, "NormalTexture");
-	int dispTexUniform = glGetUniformLocation(program, "DisplacementTexture");
+	// Pull Texture Uniforms from the shader
+	int alphaTexUniform				= glGetUniformLocation(program, "AlphaTexture");
+	int ambientTexUniform			= glGetUniformLocation(program, "AmbientTexture");
+	int diffuseTexUniform			= glGetUniformLocation(program, "DiffuseTexture");
+	int specTexUniform				= glGetUniformLocation(program, "SpecularTexture");
+	int specHighlightTexUniform		= glGetUniformLocation(program, "SpecularHighlightTexture");
+	int normalTexUniform			= glGetUniformLocation(program, "NormalTexture");
+	int dispTexUniform				= glGetUniformLocation(program, "DisplacementTexture");
 
 	// set texture slots (these don't change per material)
 	if (diffuseTexUniform >= 0)
@@ -209,57 +241,57 @@ void OBJMesh::draw(bool usePatches /* = false */) {
 		if (currentMaterial != c.materialID) {
 			currentMaterial = c.materialID;
 			if (kaUniform >= 0)
-				glUniform3fv(kaUniform, 1, &m_materials[currentMaterial].Ambient[0]);
-			if (kdUniform >= 0)
-				glUniform3fv(kdUniform, 1, &m_materials[currentMaterial].Diffuse[0]);
-			if (ksUniform >= 0)
-				glUniform3fv(ksUniform, 1, &m_materials[currentMaterial].Specular[0]);
-			if (keUniform >= 0)
-				glUniform3fv(keUniform, 1, &m_materials[currentMaterial].Emissive[0]);
-			if (opacityUniform >= 0)
-				glUniform1f(opacityUniform, m_materials[currentMaterial].Opacity);
-			if (specPowUniform >= 0)
-				glUniform1f(specPowUniform, m_materials[currentMaterial].SpecularPower);
+				glUniform3fv(kaUniform, 1, &m_materials[currentMaterial]->Ambient[0]);
+			if (kdUniform >= 0)											
+				glUniform3fv(kdUniform, 1, &m_materials[currentMaterial]->Diffuse[0]);
+			if (ksUniform >= 0)											
+				glUniform3fv(ksUniform, 1, &m_materials[currentMaterial]->Specular[0]);
+			if (keUniform >= 0)											
+				glUniform3fv(keUniform, 1, &m_materials[currentMaterial]->Emissive[0]);
+			if (opacityUniform >= 0)									
+				glUniform1f(opacityUniform, m_materials[currentMaterial]->Opacity);
+			if (specPowUniform >= 0)									
+				glUniform1f(specPowUniform, m_materials[currentMaterial]->SpecularPower);
 
 			glActiveTexture(GL_TEXTURE0);
-			if (m_materials[currentMaterial].DiffuseTexture.getHandle() > 0)
-				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial].DiffuseTexture.getHandle());
+			if (m_materials[currentMaterial]->DiffuseTexture.getHandle() > 0)
+				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial]->DiffuseTexture.getHandle());
 			else if (diffuseTexUniform >= 0)
 				glBindTexture(GL_TEXTURE_2D, 0);
 
 			glActiveTexture(GL_TEXTURE1);
-			if (m_materials[currentMaterial].AlphaTexture.getHandle() > 0)
-				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial].AlphaTexture.getHandle());
+			if (m_materials[currentMaterial]->AlphaTexture.getHandle() > 0)
+				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial]->AlphaTexture.getHandle());
 			else if (alphaTexUniform >= 0)
 				glBindTexture(GL_TEXTURE_2D, 0);
 
 			glActiveTexture(GL_TEXTURE2);
-			if (m_materials[currentMaterial].AmbientTexture.getHandle() > 0)
-				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial].AmbientTexture.getHandle());
+			if (m_materials[currentMaterial]->AmbientTexture.getHandle() > 0)
+				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial]->AmbientTexture.getHandle());
 			else if (ambientTexUniform >= 0)
 				glBindTexture(GL_TEXTURE_2D, 0);
 
 			glActiveTexture(GL_TEXTURE3);
-			if (m_materials[currentMaterial].SpecularTexture.getHandle() > 0)
-				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial].SpecularTexture.getHandle());
+			if (m_materials[currentMaterial]->SpecularTexture.getHandle() > 0)
+				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial]->SpecularTexture.getHandle());
 			else if (specTexUniform >= 0)
 				glBindTexture(GL_TEXTURE_2D, 0);
 
 			glActiveTexture(GL_TEXTURE4);
-			if (m_materials[currentMaterial].SpecularHighlightTexture.getHandle() > 0)
-				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial].SpecularHighlightTexture.getHandle());
+			if (m_materials[currentMaterial]->SpecularHighlightTexture.getHandle() > 0)
+				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial]->SpecularHighlightTexture.getHandle());
 			else if (specHighlightTexUniform >= 0)
 				glBindTexture(GL_TEXTURE_2D, 0);
 
 			glActiveTexture(GL_TEXTURE5);
-			if (m_materials[currentMaterial].NormalTexture.getHandle() > 0)
-				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial].NormalTexture.getHandle());
+			if (m_materials[currentMaterial]->NormalTexture.getHandle() > 0)
+				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial]->NormalTexture.getHandle());
 			else if (normalTexUniform >= 0)
 				glBindTexture(GL_TEXTURE_2D, 0);
 
 			glActiveTexture(GL_TEXTURE6);
-			if (m_materials[currentMaterial].DisplacementTexture.getHandle() > 0)
-				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial].DisplacementTexture.getHandle());
+			if (m_materials[currentMaterial]->DisplacementTexture.getHandle() > 0)
+				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial]->DisplacementTexture.getHandle());
 			else if (dispTexUniform >= 0)
 				glBindTexture(GL_TEXTURE_2D, 0);
 		}

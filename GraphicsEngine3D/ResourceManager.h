@@ -8,6 +8,9 @@ using std::map;
 
 // --- Engine ---
 #include "OBJMesh.h"
+#include "RMaterial.h"
+
+#include "Shader.h"
 
 class ResourceManager
 {
@@ -15,10 +18,13 @@ protected:
 	ResourceManager();
 	~ResourceManager();
 
+	// Allow access to destructor
+	friend class GraphicsEngine3DApp;
+
 	//  Type  , Map< Name,	Resource >
 	map<size_t, map<size_t, RResource*>> m_LoadedResources;
 
-	map<string, OBJMesh*> m_LoadedMeshes;
+	aie::ShaderProgram m_PhongShader;
 
 public:
 	ResourceManager(ResourceManager& Other) = delete;
@@ -26,10 +32,32 @@ public:
 
 	static ResourceManager* GetInstance();
 
-	static map<string, OBJMesh*>& GetLoadedMeshes() { return GetInstance()->m_LoadedMeshes; }
-	static OBJMesh* LoadMesh(const string& a_MeshName, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
-	static OBJMesh* GetLoadedMesh(const string& a_MeshName, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
+#pragma region Mesh Resources
 
+private:
+	map<string, OBJMesh*> m_LoadedMeshes;
+
+public:
+	static auto& GetLoadedMeshes() { return GetInstance()->m_LoadedMeshes; }
+	static OBJMesh* LoadMesh(const string& a_MeshName, RMaterial* a_Material = nullptr, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
+	static OBJMesh* GetLoadedMesh(const string& a_MeshName);
+
+#pragma endregion
+
+#pragma region Material Resources
+
+	map<string, RMaterial*> m_LoadedMaterials;
+
+public:
+	static auto& GetLoadedMaterials() { return GetInstance()->m_LoadedMaterials; }
+	//static RMaterial* LoadMaterial(const string& a_MaterialName, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
+	static RMaterial* InstantiateMaterial(const string& a_MaterialName);
+	static RMaterial* GetMaterial(const string& a_MaterialName);
+
+#pragma endregion
+
+
+#pragma region Unimplemented
 	template < typename T >
 	static T* GetResource(const string& a_ResourceName)
 	{
@@ -62,6 +90,8 @@ public:
 
 
 	}
+#pragma endregion
+
 };
 
 static ResourceManager* s_ResourceInstance;

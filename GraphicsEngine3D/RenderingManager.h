@@ -11,6 +11,7 @@ using std::vector;
 class ALight;
 class ACamera;
 class URenderer;
+class UMeshRenderer;
 class RMaterial;
 
 const int MAX_LIGHTS = 4;

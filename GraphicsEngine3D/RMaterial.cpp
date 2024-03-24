@@ -15,27 +15,27 @@ void RMaterial::Bind()
     BindSpecular();
     BindSpecularPower();
 
-    //DiffuseTexture.bind(0);
-    //m_Shader.bindUniform("DiffuseTex", 0);
-    //SpecularTexture.bind(3);
-    //m_Shader.bindUniform("SpecularTex", 3);
-    //NormalTexture.bind(5);
-    //m_Shader.bindUniform("NormalTex", 5);
+    DiffuseTexture.bind(0);
+    m_Shader->bindUniform("DiffuseTex", 0);
+    SpecularTexture.bind(3);
+    m_Shader->bindUniform("SpecularTexture", 3);
+    NormalTexture.bind(5);
+    m_Shader->bindUniform("NormalTexture", 5);
 }
 
 void RMaterial::BindAmbient()
 {
-    m_Shader.bindUniform("Ka", Ambient);
+    m_Shader->bindUniform("Ka", Ambient);
 }
 
 void RMaterial::BindDiffuse()
 {
-    m_Shader.bindUniform("Kd", Diffuse);
+    m_Shader->bindUniform("Kd", Diffuse);
 }
 
 void RMaterial::BindSpecular()
 {
-    m_Shader.bindUniform("Ks", Specular);
+    m_Shader->bindUniform("Ks", Specular);
 }
 
 void RMaterial::BindEmissive()
@@ -45,7 +45,7 @@ void RMaterial::BindEmissive()
 
 void RMaterial::BindSpecularPower()
 {
-    m_Shader.bindUniform("SpecularPower", SpecularPower);
+    m_Shader->bindUniform("SpecularPower", SpecularPower);
 }
 
 void RMaterial::BindOpacity()
@@ -108,13 +108,13 @@ bool RMaterial::LoadShader(const char* a_FileName)
     std::string Vert = FileName.c_str();
     std::string Frag = FileName.c_str();
 
-    m_Shader.loadShader(aie::eShaderStage::VERTEX,
+    m_Shader->loadShader(aie::eShaderStage::VERTEX,
         Vert.append(".vert").c_str());
-    m_Shader.loadShader(aie::eShaderStage::FRAGMENT,
+    m_Shader->loadShader(aie::eShaderStage::FRAGMENT,
         Frag.append(".frag").c_str());
-    if (m_Shader.link() == false)
+    if (m_Shader->link() == false)
     {
-        printf(std::string(a_FileName).append(" Shader Error: %s\n").c_str(), m_Shader.getLastError());
+        printf(std::string(a_FileName).append(" Shader Error: %s\n").c_str(), m_Shader->getLastError());
         return false;
     }
 

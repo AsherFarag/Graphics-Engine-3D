@@ -32,8 +32,7 @@ AStaticMesh::AStaticMesh(EPrimitiveMesh a_Primitive)
 		break;
 	}
 
-	PrimitiveFileName.append(".obj");
-
+	m_Name = "Static Mesh";
 	m_Mesh = AddComponent<UMeshRenderer>(this);
 	m_Mesh->SetMesh(PrimitiveFileName.c_str(), false);
 }

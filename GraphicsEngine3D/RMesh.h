@@ -1,6 +1,9 @@
 #pragma once
 #include "RResource.h"
 
+// --- STD ---
+#include <vector>
+
 // --- Engine ---
 #include "RMaterial.h"
 
@@ -58,10 +61,13 @@ public:
 
 	void InitialiseQuad();
 
+	void InitialiseFullScreenQuad();
+
 	// Will fail if it cannot find the file OR a mesh has already been loaded in this instance
 	bool Load(const char* a_FileName, bool a_LoadTextures = true, bool a_FlipTextures = false);
 
 	void Draw();
+	void BatchDraw(std::vector<mat4> a_MeshTransforms);
 
 	// Material access
 	//size_t GetMaterialCount() const { return m_Materials.size(); }

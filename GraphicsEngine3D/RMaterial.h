@@ -26,7 +26,7 @@ public:
 	bool LoadShader(const char* a_FileName);
 	bool LoadTexture(const char* a_FileName);
 
-	ShaderProgram m_Shader;
+	ShaderProgram* m_Shader;
 
 	vec3 Ambient;
 	vec3 Diffuse;

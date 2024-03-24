@@ -20,6 +20,7 @@ public:
     // Unbinds m_RenderTarget
     void EndRender();
 
+    aie::RenderTarget* GetRenderTarget() { return m_RenderTarget; }
     void SetRenderTarget(aie::RenderTarget* a_RenderTarget) { m_RenderTarget = a_RenderTarget; }
 
 protected:
