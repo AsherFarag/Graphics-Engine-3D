@@ -40,30 +40,15 @@ void UMeshRenderer::Draw_ImGui()
 				auto& LoadedMeshes = ResourceManager::GetLoadedMeshes();
 				for (auto i : LoadedMeshes)
 				{
+					if (i.second == GetMesh())
+						continue;
+
 					// If Pressed, set the Mesh to this
 					if (ImGui::MenuItem(i.second->GetResourceName().c_str()))
 						SetMesh(i.first.c_str());
 				}
 
 				ImGui::EndMenu();
-			}
-
-			if (ImGui::TreeNode("Materials"))
-			{
-				auto& LoadedMaterials = ResourceManager::GetLoadedMaterials();
-				for (auto i : LoadedMaterials)
-				{
-					if (ImGui::TreeNode(i.first.c_str()))
-					{
-						ImGui::Text("Diffuse: [%s]", i.second->DiffuseTexture.getFilename().c_str());
-						ImGui::Text("Normal: [%s]", i.second->NormalTexture.getFilename().c_str());
-						ImGui::Text("Specular: [%s]", i.second->SpecularTexture.getFilename().c_str());
-
-						ImGui::TreePop();
-					}
-				}
-
-				ImGui::TreePop();
 			}
 		}
 

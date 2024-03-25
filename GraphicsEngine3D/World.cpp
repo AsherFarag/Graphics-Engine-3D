@@ -27,27 +27,29 @@ World::~World()
 
 bool World::Begin()
 {
-#pragma region Default Material Set up
+    ResourceManager::SetMainShader( ResourceManager::LoadShader("Phong") );
+
+    m_PostProcess = ResourceManager::LoadShader("PostProcess");
+    m_PostProcess->bindUniform("PostProcess", 0);
+    m_PostProcess->bindUniform("colourTarget", 0);
+
+    // create a fullscreen quad
+    m_FullScreenQuad.InitialiseFullScreenQuad();
+
+    #pragma region Default Material Set up
 
     RMaterial* DefaultMaterial = ResourceManager::InstantiateMaterial("Default");
-    //DefaultMaterial->Ambient         = vec3(1);
-    //DefaultMaterial->Diffuse         = vec3(1);
-    //DefaultMaterial->Specular        = vec3(1);
-    //DefaultMaterial->Emissive        = vec3(0);
-    //DefaultMaterial->SpecularPower   = 1.f;
-    //DefaultMaterial->Opacity         = 1.f;
+    DefaultMaterial->Ambient = vec3(1.f);
+    DefaultMaterial->SpecularPower = 20.f;
 
     // textures
-    //DefaultMaterial->AlphaTexture.load("./bin/Resources/Mesh/Default.tga");
     DefaultMaterial->DiffuseTexture.load("./bin/Resources/Mesh/Default.tga");
-    //DefaultMaterial->DiffuseTexture.load("./bin/Resources/Mesh/Default.tga");
-    //DefaultMaterial->SpecularTexture.load("./bin/Resources/Mesh/Default.tga");
-    //DefaultMaterial->SpecularHighlightTexture.load("./bin/Resources/Mesh/Default.tga");
     DefaultMaterial->NormalTexture.load("./bin/Resources/Mesh/DefaultNormal.tga");
-    //DefaultMaterial->DisplacementTexture.load("./bin/Resources/Mesh/Default.tga");
 
-#pragma endregion
+    #pragma endregion
 
+    ResourceManager::LoadMesh("Primitives/Box", DefaultMaterial);
+    ResourceManager::LoadMesh("Robot/Robot", nullptr, true, true);
 
     // Default Light Set up
     m_RenderingManager = new RenderingManager();
@@ -71,28 +73,12 @@ bool World::Begin()
         AStaticMesh* StaticMesh;
         // Static Mesh Set Up
         StaticMesh = new AStaticMesh("soulspear/soulspear", true, true);
-       // StaticMesh->GetMesh()->SetMaterial(m_SoulspearMat);
 
         StaticMesh->SetPosition(vec3(((i % Rows) * 2.f - i * 2) * 0.5f, 0, (i % Cols) * 2.f));
     }
-    m_SoulspearMat = ResourceManager::GetMaterial("soulspear0");
 
-    ResourceManager::LoadMesh("Primitives/Box", DefaultMaterial);
-    ResourceManager::LoadMesh("Robot/Robot", nullptr, true, true);
-
-    // create a fullscreen quad
-    m_FullScreenQuad.InitialiseFullScreenQuad();
-
-    // load a post-processing shader
-    m_PostProcess.loadShader(aie::eShaderStage::VERTEX, "./bin/shaders/PostProcess.vert");
-    m_PostProcess.loadShader(aie::eShaderStage::FRAGMENT, "./bin/shaders/PostProcess.frag");
-    if (m_PostProcess.link() == false)
-    {
-        printf("Post Shader Error: %s\n", m_PostProcess.getLastError());
-        return false;
-    }
-
-    m_PostProcess.bindUniform("PostProcess", 0);
+    AStaticMesh* Plane = new AStaticMesh("Primitives/Box");
+    Plane->SetScale({ 20.f, 0.1f, 20.f });
 
     #pragma region ImGui
 
@@ -130,14 +116,22 @@ void World::Draw()
     // Get the Rendering Manager to draw URenderers
     m_RenderingManager->Draw();
 
-    m_PostProcess.bind();
-    m_PostProcess.bindUniform("colourTarget", 0);
-    m_MainCamera->GetRenderTarget()->bind();
-    m_MainCamera->GetRenderTarget()->getTarget(0).bind(0);
+    if (m_UsePostProcess)
+    {
+        m_PostProcess->bind();
 
-    m_FullScreenQuad.Draw();
+        m_PostProcessPercent += 10.f * DeltaTime();
 
-    m_MainCamera->GetRenderTarget()->unbind();
+        m_PostProcess->bindUniform("ProgressPercent", m_PostProcessPercent);
+
+
+        m_MainCamera->GetRenderTarget()->bind();
+        m_MainCamera->GetRenderTarget()->getTarget(0).bind(0);
+
+        m_FullScreenQuad.Draw();
+
+        m_MainCamera->GetRenderTarget()->unbind();
+    }
 
     #pragma region ImGui
 
@@ -221,7 +215,10 @@ void World::Draw()
             }
 
             if (NewActor)
+            {
                 NewActor->SetPosition(SpawnPos);
+                m_InspectedActor = NewActor;
+            }
 
             ImGui::EndMenu();
         }
@@ -234,15 +231,30 @@ void World::Draw()
 
     if (ImGui::Button("Reload Shaders"))
     {
-        m_SoulspearMat->LoadShader("Phong");
-        LogMessage(Debug::DebugMessage(true, " ---- Reloaded Shaders ---"));
+        ResourceManager::ReloadShaders();
+
+        m_PostProcess->loadShader(aie::eShaderStage::VERTEX, "./bin/shaders/PostProcess.vert");
+        m_PostProcess->loadShader(aie::eShaderStage::FRAGMENT, "./bin/shaders/PostProcess.frag");
+
+        LogMessage(Debug::DebugMessage(true, " --- Reloaded Shaders ---"));
     }
 
     static int PostProcessIndex = 0;
-    if (ImGui::SliderInt("Post Process", &PostProcessIndex, 0, 3))
+    if (ImGui::SliderInt("Post Process", &PostProcessIndex, 0, 7))
     {
-        m_PostProcess.bindUniform("PostProcess", PostProcessIndex);
+        m_PostProcess->bindUniform("PostProcess", PostProcessIndex);
     }
+
+    // Toon
+    if (PostProcessIndex == 4)
+    {
+        static int ToonScale = 1;
+        if (ImGui::SliderInt("ToonScale", &ToonScale, 0, 10))
+            m_PostProcess->bindUniform("ToonScale", ToonScale);
+    }
+
+    ImGui::Checkbox("Use Post-Process", &m_UsePostProcess);
+
 
     ImGui::End();
 
@@ -255,6 +267,8 @@ void World::Draw()
     m_DebugLog.Draw();
 
     #pragma endregion
+
+    m_ResourceManagerView.Draw();
 
 
     #pragma endregion

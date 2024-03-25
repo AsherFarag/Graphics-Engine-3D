@@ -52,7 +52,7 @@ public:
 
 	// material access
 	size_t getMaterialCount() const { return m_materials.size();  }
-	RMaterial* getMaterial(size_t index) { return m_materials[index];  }
+	RMaterial* getMaterial(size_t index) { if (index < m_materials.size()) { return m_materials[index]; } return nullptr; }
 
 private:
 

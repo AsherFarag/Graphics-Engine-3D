@@ -159,6 +159,9 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files\Engine\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="ImGui_ResourceManager.cpp">
+      <Filter>Source Files\Engine\ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsEngine3DApp.h">
@@ -235,6 +238,9 @@
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>Header Files\Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui_ResourceManager.h">
+      <Filter>Header Files\Engine\ImGui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -13,6 +13,7 @@ using std::weak_ptr;
 // --- Engine ---
 #include "GraphicsEngine3DApp.h"
 #include "ImGui_DebugLog.h"
+#include "ImGui_ResourceManager.h"
 class ALight;
 class UBaseObject;
 class AActor;
@@ -96,13 +97,15 @@ protected:
 protected:
 	ALight* m_AmbientLight;
 
-	RMaterial* m_SoulspearMat;
-
 	AFlyCamera* m_FlyCamera;
 
 	Debug::ImGui_DebugLog m_DebugLog;
+	ImGui_ResourceManager m_ResourceManagerView;
 
 	RMesh m_FullScreenQuad;
-	aie::ShaderProgram m_PostProcess;
+	aie::ShaderProgram* m_PostProcess;
+
+	bool m_UsePostProcess = false;
+	float m_PostProcessPercent = 0.f;
 };
 

@@ -27,7 +27,7 @@ public:
 
 	void rescaleFrameBuffer(unsigned int target, float width, float height);
 
-protected:
+public:
 
 	unsigned int	m_width;
 	unsigned int	m_height;
@@ -37,7 +37,7 @@ protected:
 
 	unsigned int	m_targetCount;
 	Texture*		m_targets;
-    unsigned int    m_depthTarget;
+    unsigned int    m_depthTarget = 0;
 };
 
 } // namespace aie

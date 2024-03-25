@@ -5,6 +5,8 @@ in vec2 vTexCoord;
 
 uniform sampler2D colourTarget;
 uniform int PostProcess;
+uniform float ProgressPercent;
+uniform int ToonScale;
 
 out vec4 FragColour;
 
@@ -42,9 +44,40 @@ vec4 Distort(vec2 texCoord)
     return texture(colourTarget, newCoord);
 }
 
+vec4 ScanLine(vec2 texCoord)
+{
+    vec4 colour = texture(colourTarget, texCoord);
+
+    // Num of ScanLines
+    float Density = 10;
+    float Count = textureSize(colourTarget, 0).y * Density;
+ 
+    //float ScanLineMultiplier = sin(int(texCoord.y) % Count);
+
+
+    //colour *= sin(texCoord.y * ProgressPercent);
+    //colour *= ProgressPercen
+    //colour *= ScanLineMultiplier;
+    return colour + colour * vec4(sin(texCoord.y * Count - ProgressPercent + 1),sin(texCoord.y * Count - ProgressPercent),sin(texCoord.y * Count - ProgressPercent - 1),1);
+}
+
 vec4 DistanceFog(vec2 texCoord)
 {
-    return vec4(texCoord, 0, 0);
+    vec4 colour = texture(colourTarget, texCoord);
+    return vec4(vec3(gl_FragCoord.z), 1);
+}
+
+vec4 Toon(vec2 texCoord)
+{
+    vec4 colour = texture(colourTarget, texCoord);
+    return round(colour * float(ToonScale)) / ToonScale;
+}
+
+vec4 Gray(vec2 texCoord)
+{
+    vec4 colour = texture(colourTarget, texCoord);
+    float Average = (colour.x + colour.y + colour.z) / 3.0f;
+    return vec4(Average,Average,Average,1);
 }
 
 vec4 ColorCheck(vec2 texCoord)
@@ -77,6 +110,18 @@ void main()
             FragColour = Distort(texCoord);
             break;
         case 3:
+            FragColour = ScanLine(texCoord);
+            break;
+        case 4:
+            FragColour = Toon(texCoord);
+            break;
+        case 5:
+            FragColour = Gray(texCoord);
+            break;
+        case 6:
+            FragColour = DistanceFog(texCoord);
+            break;
+        case 7:
             FragColour = ColorCheck(texCoord);
             break;
     }

@@ -4,20 +4,6 @@
 
 ResourceManager::ResourceManager()
 {
-	// TEMP
-	// Load Phong Shader
-	std::string FileName = std::string("./bin/shaders/Phong");
-	std::string Vert = FileName.c_str();
-	std::string Frag = FileName.c_str();
-
-	m_PhongShader.loadShader(aie::eShaderStage::VERTEX,
-		Vert.append(".vert").c_str());
-	m_PhongShader.loadShader(aie::eShaderStage::FRAGMENT,
-		Frag.append(".frag").c_str());
-	if (m_PhongShader.link() == false)
-	{
-		printf(std::string("Phong").append(" Shader Error: %s\n").c_str(), m_PhongShader.getLastError());
-	}
 }
 
 ResourceManager::~ResourceManager()
@@ -32,6 +18,12 @@ ResourceManager::~ResourceManager()
 	{
 		delete m_LoadedMaterials.begin()->second;
 		m_LoadedMaterials.erase(m_LoadedMaterials.begin());
+	}
+
+	while (m_LoadedShaders.begin() != m_LoadedShaders.end())
+	{
+		delete m_LoadedShaders.begin()->second;
+		m_LoadedShaders.erase(m_LoadedShaders.begin());
 	}
 }
 
@@ -79,15 +71,17 @@ OBJMesh* ResourceManager::GetLoadedMesh(const std::string& a_MeshName)
 	return nullptr;
 }
 
-RMaterial* ResourceManager::InstantiateMaterial(const string& a_MaterialName)
+RMaterial* ResourceManager::InstantiateMaterial(const string& a_MaterialName, aie::ShaderProgram* a_ShaderProgram)
 {
 	auto* Material = GetMaterial(a_MaterialName);
 	if (Material == nullptr)
 	{
 		Material = new RMaterial();
-		Material->m_Shader = &GetInstance()->m_PhongShader;
+
 		GetInstance()->m_LoadedMaterials.insert({ a_MaterialName , Material });
 	}
+
+	a_ShaderProgram == nullptr ? Material->m_Shader = GetInstance()->m_MainShader : a_ShaderProgram;
 
 	return Material;
 }
@@ -96,6 +90,46 @@ RMaterial* ResourceManager::GetMaterial(const string& a_MaterialName)
 {
 	auto Material = GetInstance()->m_LoadedMaterials.find(a_MaterialName);
 	return Material != GetInstance()->m_LoadedMaterials.end() ? Material->second : nullptr;
+}
+
+void ResourceManager::ReloadShaders()
+{
+	string FilePath = "./bin/shaders/";
+
+	auto& LoadedShaders = GetInstance()->m_LoadedShaders;
+	for (auto i = LoadedShaders.begin(); i != LoadedShaders.end(); i++)
+	{
+		i->second->loadShader(aie::eShaderStage::VERTEX, (FilePath + i->first + ".vert").c_str());
+		i->second->loadShader(aie::eShaderStage::FRAGMENT, (FilePath + i->first + ".frag").c_str());
+	}
+}
+
+ShaderProgram* ResourceManager::LoadShader(const string& a_FileName)
+{
+	string FilePath = "./bin/shaders/";
+
+	auto* Shader = GetShader(a_FileName);
+	if (Shader == nullptr)
+	{
+		Shader = new aie::ShaderProgram();
+		Shader->loadShader(aie::eShaderStage::VERTEX, (FilePath + a_FileName + ".vert").c_str());
+		Shader->loadShader(aie::eShaderStage::FRAGMENT, (FilePath + a_FileName + ".frag").c_str());
+		GetInstance()->m_LoadedShaders.insert({ a_FileName , Shader });
+	}
+
+	if (Shader->link() == false)
+	{
+		printf((a_FileName + " Shader Error: %s\n").c_str(), Shader->getLastError());
+		return Shader;
+	}
+
+	return Shader;
+}
+
+ShaderProgram* ResourceManager::GetShader(const string& a_ShaderName)
+{
+	auto Shader = GetInstance()->m_LoadedShaders.find(a_ShaderName);
+	return Shader != GetInstance()->m_LoadedShaders.end() ? Shader->second : nullptr;
 }
 
 #pragma endregion

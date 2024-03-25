@@ -19,6 +19,8 @@ class World;
 
 #define IS_DEBUG true
 
+#define AIE "./bin/"
+
 #pragma endregion
 
 class GraphicsEngine3DApp

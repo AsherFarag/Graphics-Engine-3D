@@ -24,8 +24,6 @@ protected:
 	//  Type  , Map< Name,	Resource >
 	map<size_t, map<size_t, RResource*>> m_LoadedResources;
 
-	aie::ShaderProgram m_PhongShader;
-
 public:
 	ResourceManager(ResourceManager& Other) = delete;
 	void operator=(const ResourceManager&) = delete;
@@ -51,8 +49,24 @@ public:
 public:
 	static auto& GetLoadedMaterials() { return GetInstance()->m_LoadedMaterials; }
 	//static RMaterial* LoadMaterial(const string& a_MaterialName, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
-	static RMaterial* InstantiateMaterial(const string& a_MaterialName);
+	static RMaterial* InstantiateMaterial(const string& a_MaterialName, aie::ShaderProgram* a_ShaderProgram = nullptr);
 	static RMaterial* GetMaterial(const string& a_MaterialName);
+
+#pragma endregion
+
+#pragma region Shaders
+
+protected:
+	aie::ShaderProgram* m_MainShader;
+
+	map<string, ShaderProgram*> m_LoadedShaders;
+
+public:
+	static void ReloadShaders();
+	static ShaderProgram* LoadShader(const string& a_FileName);
+	static ShaderProgram* GetShader(const string& a_ShaderName);
+
+	static void SetMainShader(ShaderProgram* a_Shader) { GetInstance()->m_MainShader = a_Shader; }
 
 #pragma endregion
 

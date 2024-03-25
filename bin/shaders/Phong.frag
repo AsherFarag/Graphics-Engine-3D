@@ -77,7 +77,7 @@ void main()
 
             // Attenuate Light Intensity using the Inverse Square Law
             Distance = Distance * PointLightFallOffs[i];
-            vec3 Colour = PointLightColors[i] / (Distance * Distance);
+            vec3 Colour = PointLightColors[i] / (Distance);
 
             DiffuseTotal += Diffuse(Colour, N, Direction);
             SpecularTotal += Specular(Colour, N, Direction, V);

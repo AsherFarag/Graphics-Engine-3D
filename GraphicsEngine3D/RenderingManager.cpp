@@ -26,87 +26,90 @@ void RenderingManager::Draw()
     if (m_RenderCamera == nullptr)
         return;
 
-    if (m_Renderers.size() == 0)
-        return;
-
     // Begin Render
     m_RenderCamera->BeginRender();
 
     // Calculate the Projected View Matrix of the Render Camera
     mat4 ProjectedView = m_RenderCamera->GetProjectionMatrix() * m_RenderCamera->GetViewMatrix();
 
-    // Get Draw Order and Material buffers for batch rendering
-    std::list<URenderer*> DrawOrderBuffer;
-    std::list<RMaterial*> MaterialBuffer;
-    CalculateDrawOrder(DrawOrderBuffer, MaterialBuffer);
-
-    // Get arrays of the lights values
-    int ActiveNumOfLights             = GetActiveNumOfLights();
-    vector<vec3> PointLightColours    = GetPointLightColours();
-    vector<vec3> PointLightPositions  = GetPointLightPositions();
-    vector<float> PointLightFallOffs  = GetPointLightFallOffs();
-
-    // ########################################################
-    //
-    // TODO: Fix up the batching because this doesnt even work
-    // 
-    // ########################################################
-
-    // TEMP
-    auto FirstMat = DrawOrderBuffer.front()->GetMaterial();
-    FirstMat->m_Shader->bind();
-    FirstMat->Bind();
-    FirstMat->m_Shader->bindUniform("CameraPosition", vec4(m_RenderCamera->GetPosition(), 1));
-
-    if (m_AmbientLight && m_AmbientLight->IsEnabled())
+    // Draw Renderers
+    if (m_Renderers.size() > 0)
     {
-        FirstMat->m_Shader->bindUniform("AmbientLight", m_AmbientLight->GetColour());
-    }
-    else
-    {
-        FirstMat->m_Shader->bindUniform("AmbientLight", vec3());
-    }
+        // Get Draw Order and Material buffers for batch rendering
+        std::list<URenderer*> DrawOrderBuffer;
+        std::list<RMaterial*> MaterialBuffer;
+        CalculateDrawOrder(DrawOrderBuffer, MaterialBuffer);
 
-    FirstMat->m_Shader->bindUniform("NumOfLights", ActiveNumOfLights);
-    if (ActiveNumOfLights > 0)
-    {
-        FirstMat->m_Shader->bindUniform("PointLightColors", ActiveNumOfLights, &PointLightColours[0]);
-        FirstMat->m_Shader->bindUniform("PointLightPositions", ActiveNumOfLights, &PointLightPositions[0]);
-        FirstMat->m_Shader->bindUniform("PointLightFallOffs", ActiveNumOfLights, &PointLightFallOffs[0]);
-    }
+        // Get arrays of the lights values
+        int ActiveNumOfLights = GetActiveNumOfLights();
+        vector<vec3> PointLightColours = GetPointLightColours();
+        vector<vec3> PointLightPositions = GetPointLightPositions();
+        vector<float> PointLightFallOffs = GetPointLightFallOffs();
 
-    URenderer* PreviousRenderer = nullptr;
-    for (auto Renderer : DrawOrderBuffer)
-    {
-        if (PreviousRenderer && Renderer->GetMesh() != PreviousRenderer->GetMesh())
+        // ########################################################
+        //
+        // TODO: Fix up the batching because this doesnt even work
+        // 
+        // ########################################################
+
+        // TEMP
+        auto FirstMat = DrawOrderBuffer.front()->GetMaterial();
+        FirstMat->m_Shader->bind();
+        FirstMat->Bind();
+        FirstMat->m_Shader->bindUniform("CameraPosition", vec4(m_RenderCamera->GetPosition(), 1));
+
+        if (m_AmbientLight && m_AmbientLight->IsEnabled())
         {
-            auto Material = Renderer->GetMaterial();
-            Material->m_Shader->bind();
-            Material->Bind();
-            Material->m_Shader->bindUniform("CameraPosition", vec4(m_RenderCamera->GetPosition(), 1));
-
-            if (m_AmbientLight && m_AmbientLight->IsEnabled())
-            {
-                Material->m_Shader->bindUniform("AmbientLight", m_AmbientLight->GetColour());
-                //Material->m_Shader.bindUniform("AmbientLightDirection", normalize(m_AmbientLight->GetRotation()));
-            }
-            else
-            {
-                Material->m_Shader->bindUniform("AmbientLight", vec3());
-            }
-
-            Material->m_Shader->bindUniform("NumOfLights", ActiveNumOfLights);
-            if (ActiveNumOfLights > 0)
-            {
-                Material->m_Shader->bindUniform("PointLightColors", ActiveNumOfLights, &PointLightColours[0]);
-                Material->m_Shader->bindUniform("PointLightPositions", ActiveNumOfLights, &PointLightPositions[0]);
-                Material->m_Shader->bindUniform("PointLightFallOffs", ActiveNumOfLights, &PointLightFallOffs[0]);
-            }
+            FirstMat->m_Shader->bindUniform("AmbientLight", m_AmbientLight->GetColour());
+        }
+        else
+        {
+            FirstMat->m_Shader->bindUniform("AmbientLight", vec3());
         }
 
-        Renderer->Draw(ProjectedView);
+        FirstMat->m_Shader->bindUniform("NumOfLights", ActiveNumOfLights);
+        if (ActiveNumOfLights > 0)
+        {
+            FirstMat->m_Shader->bindUniform("PointLightColors", ActiveNumOfLights, &PointLightColours[0]);
+            FirstMat->m_Shader->bindUniform("PointLightPositions", ActiveNumOfLights, &PointLightPositions[0]);
+            FirstMat->m_Shader->bindUniform("PointLightFallOffs", ActiveNumOfLights, &PointLightFallOffs[0]);
+        }
 
-        PreviousRenderer = Renderer;
+
+
+        URenderer* PreviousRenderer = nullptr;
+        for (auto Renderer : DrawOrderBuffer)
+        {
+            if (PreviousRenderer && Renderer->GetMesh() != PreviousRenderer->GetMesh())
+            {
+                auto Material = Renderer->GetMaterial();
+                Material->m_Shader->bind();
+                Material->Bind();
+                Material->m_Shader->bindUniform("CameraPosition", vec4(m_RenderCamera->GetPosition(), 1));
+
+                if (m_AmbientLight && m_AmbientLight->IsEnabled())
+                {
+                    Material->m_Shader->bindUniform("AmbientLight", m_AmbientLight->GetColour());
+                    //Material->m_Shader.bindUniform("AmbientLightDirection", normalize(m_AmbientLight->GetRotation()));
+                }
+                else
+                {
+                    Material->m_Shader->bindUniform("AmbientLight", vec3());
+                }
+
+                Material->m_Shader->bindUniform("NumOfLights", ActiveNumOfLights);
+                if (ActiveNumOfLights > 0)
+                {
+                    Material->m_Shader->bindUniform("PointLightColors", ActiveNumOfLights, &PointLightColours[0]);
+                    Material->m_Shader->bindUniform("PointLightPositions", ActiveNumOfLights, &PointLightPositions[0]);
+                    Material->m_Shader->bindUniform("PointLightFallOffs", ActiveNumOfLights, &PointLightFallOffs[0]);
+                }
+            }
+
+            Renderer->Draw(ProjectedView);
+
+            PreviousRenderer = Renderer;
+        }
     }
 
 #pragma region Gizmos

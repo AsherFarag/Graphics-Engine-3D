@@ -105,6 +105,7 @@ bool RMaterial::LoadMaterial(const char* a_FileName)
 bool RMaterial::LoadShader(const char* a_FileName)
 {
     std::string FileName = std::string("./bin/shaders/").append(a_FileName);
+    //std::string FileName = std::string("shaders/").append(a_FileName);
     std::string Vert = FileName.c_str();
     std::string Frag = FileName.c_str();
 

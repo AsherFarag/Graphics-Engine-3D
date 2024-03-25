@@ -22,7 +22,7 @@ public:
 		vec4 m_Normal;		// Added to attribute location 1
 		vec2 m_TexCoord;	// Added to attribute location 2
 
-							// Normal-Mapping Data
+		// Normal-Mapping Data
 		vec4 m_Tangent;		// Added to attribute location 3
 	};
 
@@ -50,7 +50,7 @@ private:
 	};
 
 	MeshChunk m_MeshChunk;
-	RMaterial m_Materials;
+	RMaterial* m_Materials;
 
 public:
 	void Initialise(unsigned int a_VertexCount, const Vertex* a_Vertices, unsigned int a_IndexCount = 0, unsigned int* a_Indices = nullptr);
@@ -68,6 +68,9 @@ public:
 
 	void Draw();
 	void BatchDraw(std::vector<mat4> a_MeshTransforms);
+
+	RMaterial* GetMaterial() { return m_Materials; }
+	void SetMaterial(RMaterial* a_Material) { m_Materials = a_Material; }
 
 	// Material access
 	//size_t GetMaterialCount() const { return m_Materials.size(); }

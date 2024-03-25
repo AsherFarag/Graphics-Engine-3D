@@ -45,7 +45,7 @@ void ALight::OnDraw_ImGui()
 	ImGui::DragFloat("Intensity", &m_Intensity, 0.01f);
 	m_Intensity = max(0.f, m_Intensity);
 
-	ImGui::SliderFloat("Fall Off", &m_FallOff, 0.001f, 1.f);
+	ImGui::SliderFloat("Fall Off", &m_FallOff, 1.f, 5.f);
 
 	bool NewAmbient = m_IsAmbient;
 	if (ImGui::Checkbox("Is Ambient", &NewAmbient))

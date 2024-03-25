@@ -27,7 +27,8 @@ bool RenderTarget::initialise(unsigned int targetCount, unsigned int width, unsi
 	glGenFramebuffers(1, &m_fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-    if (use_depth_texture) {
+    if (use_depth_texture)
+	{
         glGenTextures(1, &m_depthTarget);
         glBindTexture(GL_TEXTURE_2D, m_depthTarget);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
@@ -39,7 +40,8 @@ bool RenderTarget::initialise(unsigned int targetCount, unsigned int width, unsi
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
-    else { // setup and bind a 24bit depth buffer as a render buffer
+    else
+	{ // setup and bind a 24bit depth buffer as a render buffer
         glGenRenderbuffers(1, &m_rbo);
         glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,

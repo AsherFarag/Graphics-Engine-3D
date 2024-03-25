@@ -44,7 +44,6 @@ GraphicsEngine3DApp* GraphicsEngine3DApp::GetInstance()
 
 bool GraphicsEngine3DApp::startup()
 {
-	
 	setBackgroundColour(0.25f, 0.25f, 0.25f);
 
 	// initialise gizmo primitive counts
@@ -54,7 +53,7 @@ bool GraphicsEngine3DApp::startup()
 	if (m_World->Begin() == false)
 		return false;
 	m_World->m_MainCamera->SetRenderTarget(&m_RenderTarget);
-	if (m_RenderTarget.initialise(1, getWindowWidth(), getWindowHeight()) == false)
+	if (m_RenderTarget.initialise(1, getWindowWidth(), getWindowHeight(), false) == false)
 		return false;
 
 	m_Viewport = ImGui_Viewport(&m_RenderTarget);
@@ -74,17 +73,17 @@ void GraphicsEngine3DApp::shutdown()
 
 void GraphicsEngine3DApp::update(float deltaTime)
 {
-	if (m_World)
-	{
-		m_World->m_DeltaTime = deltaTime;
-		m_World->Update();
-	}
-
 	// quit if we press escape
 	aie::Input* input = aie::Input::getInstance();
 
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
+
+	if (m_World)
+	{
+		m_World->m_DeltaTime = deltaTime;
+		m_World->Update();
+	}
 }
 
 void GraphicsEngine3DApp::draw()
@@ -97,6 +96,8 @@ void GraphicsEngine3DApp::draw()
 
 	if (m_World)
 		m_World->Draw();
+
+
 
 	// Unbind our Render
 	m_RenderTarget.unbind();
