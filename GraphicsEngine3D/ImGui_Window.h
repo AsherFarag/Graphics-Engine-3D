@@ -14,6 +14,8 @@ public:
 
 	void Draw();
 
+	void SetName(const char* a_WindowName) { m_WindowName = a_WindowName; }
+
 protected:
 	size_t m_ID;
 

@@ -14,6 +14,7 @@ using std::weak_ptr;
 #include "GraphicsEngine3DApp.h"
 #include "ImGui_DebugLog.h"
 #include "ImGui_ResourceManager.h"
+#include "ImGui_Viewport.h"
 class ALight;
 class UBaseObject;
 class AActor;
@@ -101,5 +102,10 @@ protected:
 
 	Debug::ImGui_DebugLog m_DebugLog;
 	ImGui_ResourceManager m_ResourceManagerView;
+
+	ImGui_Viewport m_SecondViewPort;
+	RenderTarget m_RenderTarget;
+
+	ACamera* m_SecondCamera;
 };
 

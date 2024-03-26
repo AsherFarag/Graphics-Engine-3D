@@ -28,16 +28,17 @@ void AFlyCamera::Update()
 		m_MoveSpeedMultiplier -= ((m_LastMouseScroll - Input->getMouseScroll()) * m_MouseScrollSensitivity) * 25.f;
 	else
 		m_MoveSpeedMultiplier -= (m_LastMouseScroll - Input->getMouseScroll()) * m_MouseScrollSensitivity;
+
 	m_MoveSpeedMultiplier = clamp(m_MoveSpeedMultiplier, 0.f, m_MaxMoveSpeedMultiplier);
 	m_LastMouseScroll = Input->getMouseScroll();
 
-	float ThetaR = radians(m_Theta);
-	float PhiR = radians(m_Phi);
+	float ThetaR = radians(m_Rotation.y);
+	float PhiR = radians(m_Rotation.z);
 
 	//vec3 Forward(cos(YawR) * cos(PitchR), sin(YawR), cos(YawR) * sin(PitchR));
 	//vec3 Right(-sin(PitchR), 0, cos(PitchR));
-	vec3 Forward(cos(PhiR) * cos(ThetaR), sin(PhiR), cos(PhiR) * sin(ThetaR));
-	vec3 Right(-sin(ThetaR), 0, cos(ThetaR));
+	vec3 Forward = GetForward();
+	vec3 Right(sin(ThetaR), 0, cos(ThetaR));
 	vec3 Up(0, 1, 0);
 
 	if (Input->isKeyDown(aie::INPUT_KEY_W))
@@ -66,11 +67,11 @@ void AFlyCamera::Update()
 	}
 	if (Input->isKeyDown(aie::INPUT_KEY_RIGHT))
 	{
-		m_Theta += m_LookSensitivity * DeltaTime;
+		m_Rotation.y += m_LookSensitivity * DeltaTime;
 	}
 	if (Input->isKeyDown(aie::INPUT_KEY_LEFT))
 	{
-		m_Theta -= m_LookSensitivity * DeltaTime;
+		m_Rotation.y -= m_LookSensitivity * DeltaTime;
 	}
 
 	float MouseX = Input->getMouseX();
@@ -81,9 +82,9 @@ void AFlyCamera::Update()
 		/*m_Rotation.y -= m_LookSensitivity * (MouseX - m_LastMousePosition.x) * DeltaTime;
 		m_Rotation.x -= m_LookSensitivity * (MouseY - m_LastMousePosition.y) * DeltaTime;*/
 
-		m_Theta += m_LookSensitivity * (MouseX - m_LastMousePosition.x) * DeltaTime;
-		m_Phi += m_LookSensitivity * (MouseY - m_LastMousePosition.y) * DeltaTime;
-		m_Phi = clamp(m_Phi, -87.5f, 87.5f);
+		m_Rotation.y -= m_LookSensitivity * (MouseX - m_LastMousePosition.x) * DeltaTime;
+		m_Rotation.z += m_LookSensitivity * (MouseY - m_LastMousePosition.y) * DeltaTime;
+		//m_Rotation.z = clamp(m_Phi, -87.5f, 87.5f);
 	}
 
 	m_LastMousePosition = vec2(MouseX, MouseY);

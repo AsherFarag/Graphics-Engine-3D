@@ -1,5 +1,8 @@
 #include "World.h"
 
+// --- AIE ---
+#include "Input.h"
+
 // --- OpenGL ---
 #include "gl_core_4_4.h"
 
@@ -48,6 +51,12 @@ bool World::Begin()
     // textures
     SkyMaterial->DiffuseTexture.load("./bin/Resources/Mesh/Sky.jpeg");
 
+    RMaterial* CameraMaterial = ResourceManager::InstantiateMaterial("Camera");
+    CameraMaterial->Ambient = vec3(0.1f, 0.3f, 1.f);
+
+    // textures
+    CameraMaterial->DiffuseTexture.load("./bin/Resources/Mesh/Default.tga");
+
 
     #pragma endregion
 
@@ -70,9 +79,15 @@ bool World::Begin()
     // Camera Set Up
     m_FlyCamera = new AFlyCamera();
     m_MainCamera = m_FlyCamera;
-    m_MainCamera->SetAspectRatio(GraphicsEngine3DApp::GetInstance()->getWindowWidth(), GraphicsEngine3DApp::GetInstance()->getWindowWidth());
-    m_MainCamera->SetPosition(vec3(-10, 1, 0));
-    m_RenderingManager->AddRenderCamera(m_MainCamera);
+    m_FlyCamera->SetPosition(vec3(-10, 1, 0));
+
+    m_SecondCamera = new ACamera();
+    m_SecondCamera->SetRenderTarget(&m_RenderTarget);
+
+    m_RenderTarget.initialise(1, 1280, 720);
+
+    m_SecondViewPort = ImGui_Viewport(&m_RenderTarget);
+    m_SecondViewPort.SetName("viewport2");
 
     // Create SoulSpear
     for (int i = 0; i < 1; i++)
@@ -116,9 +131,25 @@ void World::Update()
 {
     DestroyPendingObjects();
 
+    m_SecondCamera->m_Phi += 5 * DeltaTime();
+
     for (auto Actor : m_Actors)
     {
         Actor->Update();
+    }
+
+    auto* Input = aie::Input::getInstance();
+    if (Input->isKeyDown(aie::INPUT_KEY_V))
+    {
+        vec3 SpawnPos = vec3();
+        if (m_MainCamera)
+        {
+            SpawnPos = m_MainCamera->GetPosition() + m_MainCamera->GetForward() * 10.f;
+        }
+        AStaticMesh* StaticMesh;
+        // Static Mesh Set Up
+        StaticMesh = new AStaticMesh();
+        StaticMesh->SetPosition(SpawnPos);
     }
 }
 
@@ -153,6 +184,17 @@ void World::Draw()
     int ActorCount = 1;
     // Create a List of Actors
     ImGui::BeginListBox("Actors", ImGui::GetContentRegionAvail());
+    if (ImGui::Button("Destroy All Actors"))
+    {
+        for (auto Actor : m_Actors)
+        {
+            if (Actor == m_MainCamera)
+                continue;
+
+            Actor->Destroy();
+        }
+    }
+
     for (auto Actor : m_Actors)
     {
         bool IsSelected = (m_InspectedActor == nullptr ? false : Actor->GetId() == m_InspectedActor->GetId());
@@ -247,6 +289,8 @@ void World::Draw()
 
 
     #pragma endregion
+
+    m_SecondViewPort.Draw();
 }
 
 void World::End()
@@ -270,7 +314,7 @@ void World::LogMessage(Debug::DebugMessage a_Message)
 
 bool World::AddObject(UBaseObject* a_Object)
 {
-    if (a_Object)
+    if (std::find(m_Objects.begin(), m_Objects.end(), a_Object) == m_Objects.end())
     {
         a_Object->SetWorld(this);
         a_Object->SetEnabled(true);

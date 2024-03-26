@@ -65,9 +65,11 @@ vec4 DistanceFog(vec2 texCoord)
 {
     float zNear = 0.001;    // TODO: Replace by the zNear of your perspective projection
     float zFar  = 1000.0; // TODO: Replace by the zFar  of your perspective projection
-    float depth = texture2D(depthTarget, texCoord).z;
+    float depth = gl_FragCoord.z; //texture2D(depthTarget, texCoord).z;
     depth = (2.0 * zNear) / (zFar + zNear - depth * (zFar - zNear)); // Linearize Depth
-    return vec4(vec3(depth), 1);
+    depth =  depth / zFar; // divide by far for demonstration
+    //return vec4(vec3(depth), 1.0);
+    return vec4(vec3(gl_FragCoord.z), 1.0);
 }
 
 vec4 Toon(vec2 texCoord)

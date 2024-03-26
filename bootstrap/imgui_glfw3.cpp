@@ -113,10 +113,10 @@ void ImGui_RenderDrawLists(ImDrawData* draw_data) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, last_element_array_buffer);
     glBlendEquationSeparate(last_blend_equation_rgb, last_blend_equation_alpha);
     glBlendFunc(last_blend_src, last_blend_dst);
-    if (last_enable_blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
-    if (last_enable_cull_face) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
-    if (last_enable_depth_test) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
-    if (last_enable_scissor_test) glEnable(GL_SCISSOR_TEST); else glDisable(GL_SCISSOR_TEST);
+    if (last_enable_blend)          glEnable(GL_BLEND);         else glDisable(GL_BLEND);
+    if (last_enable_cull_face)      glEnable(GL_CULL_FACE);     else glDisable(GL_CULL_FACE);
+    if (last_enable_depth_test)     glEnable(GL_DEPTH_TEST);    else glDisable(GL_DEPTH_TEST);
+    if (last_enable_scissor_test)   glEnable(GL_SCISSOR_TEST);  else glDisable(GL_SCISSOR_TEST);
     glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
 }
 

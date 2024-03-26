@@ -26,11 +26,14 @@ public:
 
     virtual void Update() override;
 
+    int m_Target = 0;
+    float m_Theta = 0.f; // Left & Right
+    float m_Phi = 0.f; // Up & Down
+
 protected:
     vec2 m_LastMousePosition;
 
-    float m_Theta = 0.f; // Left & Right
-    float m_Phi = 0.f; // Up & Down
+
 
     float m_AspectRatio = 16 / 9;
     float m_FOVDegrees = 90.f;
@@ -43,6 +46,8 @@ protected:
     aie::RenderTarget* m_RenderTarget = nullptr;
 
     bool m_UsePostProcessing = false;
+
+    UMeshRenderer* m_MeshRenderer;
 
 protected:
     void BeginRender();

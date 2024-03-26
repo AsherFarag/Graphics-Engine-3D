@@ -14,6 +14,8 @@ public:
 
 	void SetRenderTarget(aie::RenderTarget* a_NewRenderTarget) { m_RenderTarget = a_NewRenderTarget; }
 
+	int m_Target = 0;
+
 protected:
 	aie::RenderTarget* m_RenderTarget;
 

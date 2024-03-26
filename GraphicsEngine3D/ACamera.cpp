@@ -13,6 +13,7 @@
 #include "GraphicsEngine3DApp.h"
 #include "ALight.h"
 #include "RenderingManager.h"
+#include "UMeshRenderer.h"
 
 ACamera::ACamera()
 	: AActor()
@@ -26,6 +27,12 @@ ACamera::ACamera()
     m_PostProcessShader->bindUniform("depthTarget", 1);
 
     World::GetRenderingManager()->AddRenderCamera(this);
+
+    m_MeshRenderer = AddComponent<UMeshRenderer>(this);
+    m_MeshRenderer->SetMesh("FilmCamera");
+    m_MeshRenderer->SetMaterial(ResourceManager::GetMaterial("Camera"));
+
+    SetScale(vec3(0.1f));
 }
 
 ACamera::~ACamera()
@@ -34,6 +41,8 @@ ACamera::~ACamera()
 
 void ACamera::Update()
 {
+    m_Rotation.z = clamp(m_Rotation.z, -87.5f, 87.5f);
+
 	if (m_RenderTarget)
 		SetAspectRatio(m_RenderTarget->getWidth(), m_RenderTarget->getHeight());
 	else
@@ -77,6 +86,9 @@ void ACamera::Render(ALight* a_AmbientLight, vector<ALight*>* a_Lights, list< UM
     // Draw Renderers
     for (auto MeshRenderer = a_Meshes->begin(); MeshRenderer != a_Meshes->end(); ++MeshRenderer)
     {
+        if (*MeshRenderer == m_MeshRenderer)
+            continue;
+
         #pragma message("TODO: Currently each draw call rebinds the material. Set-Up Batch Rendering")
 
         #pragma region Bind Material
@@ -283,9 +295,9 @@ void ACamera::SetAspectRatio(float a_Width, float a_Height)
 
 vec3 ACamera::GetForward()
 {
-	float ThetaR = radians(m_Theta);
-	float PhiR = radians(m_Phi);
-	return vec3(cos(PhiR) * cos(ThetaR), sin(PhiR), cos(PhiR) * sin(ThetaR));
+	float ThetaR = radians(m_Rotation.y);
+	float PhiR = radians(m_Rotation.z);
+	return vec3(cos(PhiR) * cos(-ThetaR), sin(PhiR), cos(PhiR) * sin(-ThetaR));
 }
 
 void ACamera::OnDraw_ImGui()
