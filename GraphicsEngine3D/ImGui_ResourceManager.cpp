@@ -39,8 +39,8 @@ void ImGui_ResourceManager::OnDraw()
 		{
 			if (ImGui::TreeNode(i.first.c_str()))
 			{
-				ImGui::Text("Diffuse: [%s]", i.second->DiffuseTexture.getFilename().c_str());
-				ImGui::Text("Normal: [%s]", i.second->NormalTexture.getFilename().c_str());
+				ImGui::Text("Diffuse:  [%s]", i.second->DiffuseTexture.getFilename().c_str());
+				ImGui::Text("Normal:   [%s]", i.second->NormalTexture.getFilename().c_str());
 				ImGui::Text("Specular: [%s]", i.second->SpecularTexture.getFilename().c_str());
 
 				ImGui::TreePop();

@@ -1,6 +1,7 @@
 #include "World.h"
 
-
+// --- OpenGL ---
+#include "gl_core_4_4.h"
 
 // --- Engine ---
 #include "UBaseObject.h"
@@ -29,26 +30,34 @@ bool World::Begin()
 {
     ResourceManager::SetMainShader( ResourceManager::LoadShader("Phong") );
 
-    m_PostProcess = ResourceManager::LoadShader("PostProcess");
-    m_PostProcess->bindUniform("PostProcess", 0);
-    m_PostProcess->bindUniform("colourTarget", 0);
-
-    // create a fullscreen quad
-    m_FullScreenQuad.InitialiseFullScreenQuad();
+    ResourceManager::LoadShader("PostProcess");
 
     #pragma region Default Material Set up
 
     RMaterial* DefaultMaterial = ResourceManager::InstantiateMaterial("Default");
-    DefaultMaterial->Ambient = vec3(1.f);
-    DefaultMaterial->SpecularPower = 20.f;
+    DefaultMaterial->Ambient = vec3(0.5f);
+    DefaultMaterial->SpecularPower = 1.f;
 
     // textures
     DefaultMaterial->DiffuseTexture.load("./bin/Resources/Mesh/Default.tga");
     DefaultMaterial->NormalTexture.load("./bin/Resources/Mesh/DefaultNormal.tga");
 
+    RMaterial* SkyMaterial = ResourceManager::InstantiateMaterial("Sky");
+    SkyMaterial->Ambient = vec3(1.f);
+
+    // textures
+    SkyMaterial->DiffuseTexture.load("./bin/Resources/Mesh/Sky.jpeg");
+
+
     #pragma endregion
 
+    // Load Primitive Meshes
     ResourceManager::LoadMesh("Primitives/Box", DefaultMaterial);
+    ResourceManager::LoadMesh("Primitives/Cone", DefaultMaterial);
+    ResourceManager::LoadMesh("Primitives/Cylinder", DefaultMaterial);
+    ResourceManager::LoadMesh("Primitives/Pyramid", DefaultMaterial);
+    ResourceManager::LoadMesh("Primitives/Sphere", DefaultMaterial);
+
     ResourceManager::LoadMesh("Robot/Robot", nullptr, true, true);
 
     // Default Light Set up
@@ -63,7 +72,7 @@ bool World::Begin()
     m_MainCamera = m_FlyCamera;
     m_MainCamera->SetAspectRatio(GraphicsEngine3DApp::GetInstance()->getWindowWidth(), GraphicsEngine3DApp::GetInstance()->getWindowWidth());
     m_MainCamera->SetPosition(vec3(-10, 1, 0));
-    m_RenderingManager->SetRenderCamera(m_MainCamera);
+    m_RenderingManager->AddRenderCamera(m_MainCamera);
 
     // Create SoulSpear
     for (int i = 0; i < 1; i++)
@@ -78,7 +87,14 @@ bool World::Begin()
     }
 
     AStaticMesh* Plane = new AStaticMesh("Primitives/Box");
+    Plane->SetName("Plane");
     Plane->SetScale({ 20.f, 0.1f, 20.f });
+    Plane->SetPosition({ 0.f, -0.051f, 0.f });
+
+    AStaticMesh* Sky = new AStaticMesh("Primitives/Sphere");
+    Sky->GetMesh()->SetMaterial(SkyMaterial);
+    Sky->SetName("Sky");
+    Sky->SetScale({ 100.f, 100.f, -100.f });
 
     #pragma region ImGui
 
@@ -110,28 +126,8 @@ void World::Draw()
 {
     auto EngineInstance = GraphicsEngine3DApp::GetInstance();
 
-    // Wipe the gizmos clean for this frame
-    Gizmos::clear();
-
     // Get the Rendering Manager to draw URenderers
     m_RenderingManager->Draw();
-
-    if (m_UsePostProcess)
-    {
-        m_PostProcess->bind();
-
-        m_PostProcessPercent += 10.f * DeltaTime();
-
-        m_PostProcess->bindUniform("ProgressPercent", m_PostProcessPercent);
-
-
-        m_MainCamera->GetRenderTarget()->bind();
-        m_MainCamera->GetRenderTarget()->getTarget(0).bind(0);
-
-        m_FullScreenQuad.Draw();
-
-        m_MainCamera->GetRenderTarget()->unbind();
-    }
 
     #pragma region ImGui
 
@@ -232,29 +228,8 @@ void World::Draw()
     if (ImGui::Button("Reload Shaders"))
     {
         ResourceManager::ReloadShaders();
-
-        m_PostProcess->loadShader(aie::eShaderStage::VERTEX, "./bin/shaders/PostProcess.vert");
-        m_PostProcess->loadShader(aie::eShaderStage::FRAGMENT, "./bin/shaders/PostProcess.frag");
-
         LogMessage(Debug::DebugMessage(true, " --- Reloaded Shaders ---"));
     }
-
-    static int PostProcessIndex = 0;
-    if (ImGui::SliderInt("Post Process", &PostProcessIndex, 0, 7))
-    {
-        m_PostProcess->bindUniform("PostProcess", PostProcessIndex);
-    }
-
-    // Toon
-    if (PostProcessIndex == 4)
-    {
-        static int ToonScale = 1;
-        if (ImGui::SliderInt("ToonScale", &ToonScale, 0, 10))
-            m_PostProcess->bindUniform("ToonScale", ToonScale);
-    }
-
-    ImGui::Checkbox("Use Post-Process", &m_UsePostProcess);
-
 
     ImGui::End();
 
@@ -286,12 +261,12 @@ void World::End()
     delete m_RenderingManager;
 }
 
-#pragma region Object Management
-
 void World::LogMessage(Debug::DebugMessage a_Message)
 {
     GetWorld()->m_DebugLog.PrintMessage(a_Message);
 }
+
+#pragma region Object Management
 
 bool World::AddObject(UBaseObject* a_Object)
 {

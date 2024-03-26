@@ -53,7 +53,8 @@ bool GraphicsEngine3DApp::startup()
 	if (m_World->Begin() == false)
 		return false;
 	m_World->m_MainCamera->SetRenderTarget(&m_RenderTarget);
-	if (m_RenderTarget.initialise(1, getWindowWidth(), getWindowHeight(), false) == false)
+
+	if (m_RenderTarget.initialise(1, getWindowWidth(), getWindowHeight()) == false)
 		return false;
 
 	m_Viewport = ImGui_Viewport(&m_RenderTarget);
@@ -88,22 +89,8 @@ void GraphicsEngine3DApp::update(float deltaTime)
 
 void GraphicsEngine3DApp::draw()
 {
-	// Bind our Render
-	m_RenderTarget.bind();
-
-	// Wipe the screen to the background colour
-	clearScreen();
-
 	if (m_World)
 		m_World->Draw();
-
-
-
-	// Unbind our Render
-	m_RenderTarget.unbind();
-
-	// Wipe the screen to the background colour
-	clearScreen();
 
 	#pragma region ImGui
 	

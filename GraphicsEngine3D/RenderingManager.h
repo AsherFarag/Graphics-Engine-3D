@@ -16,6 +16,17 @@ class RMaterial;
 
 const int MAX_LIGHTS = 4;
 
+// === Rendering Manager ===
+//
+// Only one Rendering Manager exists per world.
+// It handles and stores references to all Renderers, Lights and Cameras.
+//  
+// TODO:
+// --- Batch Rendering ---
+// It converts all render data into batches for the camera.
+// Such as, getting all mesh renderers using the same mesh and passing only the mesh and the renderer transforms, as an array, to the camera.
+//
+
 class RenderingManager
 {
 public:
@@ -28,10 +39,11 @@ public:
 
 protected:
     list<URenderer*> m_Renderers;
+    list<UMeshRenderer*> m_MeshRenderers;
 
     void CalculateDrawOrder(list<URenderer*>& OutDrawBuffer, std::list<RMaterial*>& OutMaterialBuffer);
 
-    ACamera* m_RenderCamera;
+    vector<ACamera*> m_RenderCameras;
 
     #pragma region  --- Lights --- 
 
@@ -45,6 +57,9 @@ protected:
     vector<vec3> GetPointLightColours();
     vector<float> GetPointLightFallOffs();
 
+    bool AddRenderer(URenderer* a_Renderer);
+    bool RemoveRenderer(URenderer* a_Renderer);
+
 public:
     bool AddLight(ALight* a_Light);
     bool RemoveLight(ALight* a_Light);
@@ -54,15 +69,10 @@ public:
     #pragma endregion
 
 public:
-    bool AddRenderer(URenderer* a_Renderer);
-    bool RemoveRenderer(URenderer* a_Renderer);
+    bool AddMeshRenderer(UMeshRenderer* a_Renderer);
+    bool RemoveMeshRenderer(UMeshRenderer* a_Renderer);
 
-    void SetRenderCamera(ACamera* a_NewRenderCamera);
-
-
-    // TEMP
-public:
-
-
+    bool AddRenderCamera(ACamera* a_NewRenderCamera);
+    bool RemoveRenderCamera(ACamera* a_NewRenderCamera);
 };
 

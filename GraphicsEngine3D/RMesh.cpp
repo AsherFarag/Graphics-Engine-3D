@@ -179,9 +179,11 @@ void RMesh::InitialiseQuad()
 void RMesh::InitialiseFullScreenQuad()
 {
 	assert(m_MeshChunk.m_VAO == 0);
+
 	// generate buffers
 	glGenBuffers(1, &m_MeshChunk.m_VBO);
 	glGenVertexArrays(1, &m_MeshChunk.m_VAO);
+
 	// bind vertex array aka a mesh wrapper
 	glBindVertexArray(m_MeshChunk.m_VAO);
 	// bind vertex buffer

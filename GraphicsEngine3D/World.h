@@ -101,11 +101,5 @@ protected:
 
 	Debug::ImGui_DebugLog m_DebugLog;
 	ImGui_ResourceManager m_ResourceManagerView;
-
-	RMesh m_FullScreenQuad;
-	aie::ShaderProgram* m_PostProcess;
-
-	bool m_UsePostProcess = false;
-	float m_PostProcessPercent = 0.f;
 };
 

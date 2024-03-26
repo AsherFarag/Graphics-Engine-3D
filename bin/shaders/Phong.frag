@@ -90,6 +90,7 @@ void main()
 
       // Output Colour
       FragColour = vec4( Ambient + Diffuse + Specular, 1 );
+      //FragColour = vec4(vec3(gl_FragCoord.z), 1.0);
 
       // Test Outputs
       //FragColour = vec4(N, 1 );

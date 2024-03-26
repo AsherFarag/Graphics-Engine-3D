@@ -23,128 +23,35 @@ bool RenderingManager::StartUp()
 
 void RenderingManager::Draw()
 {
-    if (m_RenderCamera == nullptr)
-        return;
-
-    // Begin Render
-    m_RenderCamera->BeginRender();
-
-    // Calculate the Projected View Matrix of the Render Camera
-    mat4 ProjectedView = m_RenderCamera->GetProjectionMatrix() * m_RenderCamera->GetViewMatrix();
-
-    // Draw Renderers
-    if (m_Renderers.size() > 0)
+    for (auto Camera : m_RenderCameras)
     {
-        // Get Draw Order and Material buffers for batch rendering
-        std::list<URenderer*> DrawOrderBuffer;
-        std::list<RMaterial*> MaterialBuffer;
-        CalculateDrawOrder(DrawOrderBuffer, MaterialBuffer);
+        if (Camera->IsEnabled() == false)
+            continue;
 
-        // Get arrays of the lights values
-        int ActiveNumOfLights = GetActiveNumOfLights();
-        vector<vec3> PointLightColours = GetPointLightColours();
-        vector<vec3> PointLightPositions = GetPointLightPositions();
-        vector<float> PointLightFallOffs = GetPointLightFallOffs();
+        // Begin Render
+        Camera->BeginRender();
 
-        // ########################################################
-        //
-        // TODO: Fix up the batching because this doesnt even work
-        // 
-        // ########################################################
-
-        // TEMP
-        auto FirstMat = DrawOrderBuffer.front()->GetMaterial();
-        FirstMat->m_Shader->bind();
-        FirstMat->Bind();
-        FirstMat->m_Shader->bindUniform("CameraPosition", vec4(m_RenderCamera->GetPosition(), 1));
-
-        if (m_AmbientLight && m_AmbientLight->IsEnabled())
+        // Get a vector of the active lights
+        vector<ALight*> ActiveLights;
+        for (auto Light : m_Lights)
         {
-            FirstMat->m_Shader->bindUniform("AmbientLight", m_AmbientLight->GetColour());
-        }
-        else
-        {
-            FirstMat->m_Shader->bindUniform("AmbientLight", vec3());
+            if (Light->IsEnabled())
+                ActiveLights.push_back(Light);
         }
 
-        FirstMat->m_Shader->bindUniform("NumOfLights", ActiveNumOfLights);
-        if (ActiveNumOfLights > 0)
-        {
-            FirstMat->m_Shader->bindUniform("PointLightColors", ActiveNumOfLights, &PointLightColours[0]);
-            FirstMat->m_Shader->bindUniform("PointLightPositions", ActiveNumOfLights, &PointLightPositions[0]);
-            FirstMat->m_Shader->bindUniform("PointLightFallOffs", ActiveNumOfLights, &PointLightFallOffs[0]);
-        }
+        Camera->Render(m_AmbientLight, &ActiveLights, &m_MeshRenderers);
 
+        // Finish Render
+        Camera->EndRender();
 
-
-        URenderer* PreviousRenderer = nullptr;
-        for (auto Renderer : DrawOrderBuffer)
-        {
-            if (PreviousRenderer && Renderer->GetMesh() != PreviousRenderer->GetMesh())
-            {
-                auto Material = Renderer->GetMaterial();
-                Material->m_Shader->bind();
-                Material->Bind();
-                Material->m_Shader->bindUniform("CameraPosition", vec4(m_RenderCamera->GetPosition(), 1));
-
-                if (m_AmbientLight && m_AmbientLight->IsEnabled())
-                {
-                    Material->m_Shader->bindUniform("AmbientLight", m_AmbientLight->GetColour());
-                    //Material->m_Shader.bindUniform("AmbientLightDirection", normalize(m_AmbientLight->GetRotation()));
-                }
-                else
-                {
-                    Material->m_Shader->bindUniform("AmbientLight", vec3());
-                }
-
-                Material->m_Shader->bindUniform("NumOfLights", ActiveNumOfLights);
-                if (ActiveNumOfLights > 0)
-                {
-                    Material->m_Shader->bindUniform("PointLightColors", ActiveNumOfLights, &PointLightColours[0]);
-                    Material->m_Shader->bindUniform("PointLightPositions", ActiveNumOfLights, &PointLightPositions[0]);
-                    Material->m_Shader->bindUniform("PointLightFallOffs", ActiveNumOfLights, &PointLightFallOffs[0]);
-                }
-            }
-
-            Renderer->Draw(ProjectedView);
-
-            PreviousRenderer = Renderer;
-        }
+        if (Camera->IsUsingPostProcessing())
+            Camera->ApplyPostProcessing();
     }
+}
 
-#pragma region Gizmos
-
-    if (m_AmbientLight && m_AmbientLight->IsEnabled())
-        aie::Gizmos::addSphere(m_AmbientLight->GetPosition(), m_AmbientLight->GetScale().x * 0.5f, 7, 7, vec4(m_AmbientLight->m_Colour, 0.75f));
-
-    for (int i = 0; i < m_NumOfLights; i++)
-    {
-        if (m_Lights[i]->IsEnabled())
-            aie::Gizmos::addSphere(m_Lights[i]->GetPosition(), m_Lights[i]->GetScale().x * 0.5f, 7, 7, vec4(m_Lights[i]->m_Colour, 0.75f));
-    }
-
-    // draw a simple grid with gizmos
-    vec4 white(1);
-    vec4 black(0, 0, 0, 1);
-    for (int i = 0; i < 21; ++i)
-    {
-        Gizmos::addLine(vec3(-10 + i, 0, 10),
-            vec3(-10 + i, 0, -10),
-            i == 10 ? white : black);
-        Gizmos::addLine(vec3(10, 0, -10 + i),
-            vec3(-10, 0, -10 + i),
-            i == 10 ? white : black);
-    }
-
-    // Draw Directional Light
-    //Gizmos::addSphere(m_DirectionalLight.m_Direction * 100.f, 10.f, 10, 10, vec4((m_DirectionalLight.m_Colour * 0.5f) * m_DirectionalLight.m_Intensity, 1));
-
-    Gizmos::draw(ProjectedView);
-
-#pragma endregion
-
-    // Finish Render
-    m_RenderCamera->EndRender(); 
+bool RenderingManager::End()
+{
+    return true;
 }
 
 void RenderingManager::CalculateDrawOrder(std::list<URenderer*>& OutDrawBuffer, std::list<RMaterial*>& OutMaterialBuffer)
@@ -224,12 +131,47 @@ bool RenderingManager::RemoveRenderer(URenderer* a_Renderer)
     return false;
 }
 
-void RenderingManager::SetRenderCamera(ACamera* a_NewRenderCamera)
+bool RenderingManager::AddMeshRenderer(UMeshRenderer* a_Renderer)
 {
-    if (a_NewRenderCamera == nullptr)
-        return;
+    if (AddRenderer(a_Renderer))
+    {
+        m_MeshRenderers.push_back(a_Renderer);
+        return true;
+    }
 
-    m_RenderCamera = a_NewRenderCamera;
+    return false;
+}
+
+bool RenderingManager::RemoveMeshRenderer(UMeshRenderer* a_Renderer)
+{
+    if (RemoveRenderer(a_Renderer))
+    {
+        m_MeshRenderers.erase(std::find(m_MeshRenderers.begin(), m_MeshRenderers.end(), a_Renderer));
+        return true;
+    }
+
+    return false;
+}
+
+bool RenderingManager::AddRenderCamera(ACamera* a_NewRenderCamera)
+{
+    if (std::find(m_RenderCameras.begin(), m_RenderCameras.end(), a_NewRenderCamera) != m_RenderCameras.end())
+        return false;
+
+    m_RenderCameras.push_back(a_NewRenderCamera);
+    return true;
+}
+
+bool RenderingManager::RemoveRenderCamera(ACamera* a_NewRenderCamera)
+{
+    auto i = std::find(m_RenderCameras.begin(), m_RenderCameras.end(), a_NewRenderCamera);
+    if (i != m_RenderCameras.end())
+    {
+        m_RenderCameras.erase(i);
+        return true;
+    }
+
+    return false;
 }
 
 bool RenderingManager::AddLight(ALight* a_Light)

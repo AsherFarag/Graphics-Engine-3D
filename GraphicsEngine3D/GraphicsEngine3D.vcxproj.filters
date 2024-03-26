@@ -61,9 +61,6 @@
     <Filter Include="Header Files\Engine\Objects\Actors\Common">
       <UniqueIdentifier>{29a066af-d769-453a-b1ac-189898d51c6a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Objects\Components\Lights">
-      <UniqueIdentifier>{f542eae4-4350-47c6-8544-86d041f178f0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Engine\Objects\Actors\Lights">
       <UniqueIdentifier>{d36bb72e-aac5-48db-8512-a7a64b4d3c63}</UniqueIdentifier>
     </Filter>
@@ -138,9 +135,6 @@
     <ClCompile Include="UMeshRenderer.cpp">
       <Filter>Source Files\Engine\Objects\Components</Filter>
     </ClCompile>
-    <ClCompile Include="URenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ALight.cpp">
       <Filter>Source Files\Engine\Objects\Actors\Lights</Filter>
     </ClCompile>
@@ -161,6 +155,9 @@
     </ClCompile>
     <ClCompile Include="ImGui_ResourceManager.cpp">
       <Filter>Source Files\Engine\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="URenderer.cpp">
+      <Filter>Source Files\Engine\Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

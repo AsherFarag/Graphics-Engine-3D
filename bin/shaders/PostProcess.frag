@@ -4,6 +4,7 @@
 in vec2 vTexCoord;
 
 uniform sampler2D colourTarget;
+uniform sampler2D depthTarget;
 uniform int PostProcess;
 uniform float ProgressPercent;
 uniform int ToonScale;
@@ -38,8 +39,7 @@ vec4 Distort(vec2 texCoord)
     vec2 mid = vec2(0.5f);
     float distanceFromCentre = distance(texCoord, mid);
     vec2 normalizedCoord = normalize(texCoord - mid);
-    float bias = distanceFromCentre +
-    sin(distanceFromCentre * 15) * 0.05f;
+    float bias = distanceFromCentre + sin(distanceFromCentre * 15) * 0.05f;
     vec2 newCoord = mid + bias * normalizedCoord;
     return texture(colourTarget, newCoord);
 }
@@ -63,8 +63,11 @@ vec4 ScanLine(vec2 texCoord)
 
 vec4 DistanceFog(vec2 texCoord)
 {
-    vec4 colour = texture(colourTarget, texCoord);
-    return vec4(vec3(gl_FragCoord.z), 1);
+    float zNear = 0.001;    // TODO: Replace by the zNear of your perspective projection
+    float zFar  = 1000.0; // TODO: Replace by the zFar  of your perspective projection
+    float depth = texture2D(depthTarget, texCoord).z;
+    depth = (2.0 * zNear) / (zFar + zNear - depth * (zFar - zNear)); // Linearize Depth
+    return vec4(vec3(depth), 1);
 }
 
 vec4 Toon(vec2 texCoord)
@@ -122,7 +125,7 @@ void main()
             FragColour = DistanceFog(texCoord);
             break;
         case 7:
-            FragColour = ColorCheck(texCoord);
+            FragColour = vec4(vec3(gl_FragCoord.z), 1.0);
             break;
     }
 

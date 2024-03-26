@@ -20,9 +20,6 @@ ImGui_Viewport::~ImGui_Viewport()
 
 void ImGui_Viewport::BeginDraw()
 {
-	// Bind the Render Target Texture to a slot
-	//m_RenderTarget->getTarget(0).bind(0);
-
 	// Create a small border around the Image
 	ImGui::GetStyle().WindowPadding = ImVec2(3.f, 3.f);
 
@@ -37,6 +34,8 @@ void ImGui_Viewport::OnDraw()
 
 	// Rescale the framebuffer to the actual window size and reset the glViewport 
 	m_RenderTarget->rescaleFrameBuffer(0, window_width, window_height);
+	//m_RenderTarget->rescaleFrameBuffer(1, window_width, window_height);
+
 	glViewport(0, 0, window_width, window_height);
 
 	ImGui::Image(
