@@ -1,15 +1,16 @@
 #pragma once
 #include "Application.h"
 
+// --- STD ---
+#include <string>
+
 // --- GLM ---
 #include <glm/mat4x4.hpp>
 
 // --- AIE ---
 #include "Shader.h"
-#include "RenderTarget.h"
 
 // --- ImGui ---
-#include "ImGui_Viewport.h"
 #include "imgui.h"
 
 // --- Engine ---
@@ -41,8 +42,6 @@ public:
 
 protected:
 	World* m_World;
-
-	ImGui_Viewport m_Viewport;
 
 public:
 

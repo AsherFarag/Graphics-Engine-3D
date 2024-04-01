@@ -13,7 +13,7 @@ void ImGui_ResourceManager::BeginDraw()
 {
 	m_ResourceManager = ResourceManager::GetInstance();
 
-	ImGui::Begin(m_WindowName);
+	ImGui::Begin(m_WindowName.c_str());
 }
 
 void ImGui_ResourceManager::OnDraw()

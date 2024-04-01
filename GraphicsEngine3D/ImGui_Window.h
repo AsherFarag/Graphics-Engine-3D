@@ -2,6 +2,7 @@
 
 // --- STD ---
 #include <string>
+using std::string;
 
 // --- ImGui ---
 #include "imgui.h"
@@ -14,12 +15,12 @@ public:
 
 	void Draw();
 
-	void SetName(const char* a_WindowName) { m_WindowName = a_WindowName; }
+	void SetName(const string& a_WindowName) { m_WindowName = a_WindowName; }
 
 protected:
 	size_t m_ID;
 
-	const char* m_WindowName = "New Window";
+	string m_WindowName = "New Window";
 
 protected:
 	virtual void BeginDraw();

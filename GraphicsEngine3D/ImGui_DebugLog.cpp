@@ -1,5 +1,6 @@
 #include "ImGui_DebugLog.h"
 
+
 Debug::ImGui_DebugLog::ImGui_DebugLog()
 {
 	m_WindowName = "Debug Log";
@@ -16,7 +17,7 @@ void Debug::ImGui_DebugLog::PrintMessage(DebugMessage a_DebugMessage)
 
 void Debug::ImGui_DebugLog::BeginDraw()
 {
-	ImGui::Begin(m_WindowName);
+	ImGui::Begin(m_WindowName.c_str());
 }
 
 void Debug::ImGui_DebugLog::OnDraw()

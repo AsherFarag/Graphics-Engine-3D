@@ -4,7 +4,7 @@ class AFlyCamera :
     public ACamera
 {
 public:
-    AFlyCamera();
+    AFlyCamera(aie::RenderTarget* a_RenderTarget = nullptr);
     virtual ~AFlyCamera();
 
     virtual void Update() override;
@@ -19,7 +19,7 @@ public:
     float m_MoveSpeedMultiplier = 1.f;
     float m_MaxMoveSpeedMultiplier = 100.f;
 
-    float m_LookSensitivity = 100.f;
+    float m_LookSensitivity = 1.f;
     float m_MouseScrollSensitivity = 0.15f;
     float m_LastMouseScroll = 0.f;
 

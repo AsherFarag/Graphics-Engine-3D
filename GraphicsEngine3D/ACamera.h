@@ -10,8 +10,13 @@ using std::list;
 
 // --- GLM ---
 #include "glm/trigonometric.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 // --- Engine ---
+#include "ImGui_Viewport.h"
 #include "URenderer.h"
 #include "UMeshRenderer.h"
 
@@ -19,11 +24,12 @@ class ACamera :
     public AActor
 {
 public:
-    ACamera();
+    ACamera(aie::RenderTarget* a_RenderTarget = nullptr);
     virtual ~ACamera();
 
     friend class RenderingManager;
 
+    virtual void Begin() override;
     virtual void Update() override;
 
     int m_Target = 0;
@@ -33,21 +39,24 @@ public:
 protected:
     vec2 m_LastMousePosition;
 
-
+    vec3 m_Forward = vec3();
 
     float m_AspectRatio = 16 / 9;
     float m_FOVDegrees = 90.f;
-    float m_Near = 0.001f;
+    float m_Near = 0.1f;
     float m_Far = 1000.f;
 
     mat4 m_ViewTransform;
     mat4 m_ProjectionViewTransform;
-
+    
+    // Owner
     aie::RenderTarget* m_RenderTarget = nullptr;
 
     bool m_UsePostProcessing = false;
 
     UMeshRenderer* m_MeshRenderer;
+
+    ImGui_Viewport m_Viewport;
 
 protected:
     void BeginRender();
@@ -80,10 +89,10 @@ public:
     void SetAspectRatio(float a_AspectRatio);
     void SetAspectRatio(float a_Width, float a_Height);
 
-    vec3 GetForward();
+    vec3 GetForward() { return m_Forward; }
 
     aie::RenderTarget* GetRenderTarget() { return m_RenderTarget; }
-    void SetRenderTarget(aie::RenderTarget* a_RenderTarget) { m_RenderTarget = a_RenderTarget; }
+    void SetRenderTarget(aie::RenderTarget* a_RenderTarget) { m_RenderTarget = a_RenderTarget; m_Viewport.SetRenderTarget(m_RenderTarget); }
 
     bool IsUsingPostProcessing() const { return m_UsePostProcessing; }
     void UsePostProcessing(bool Use) { m_UsePostProcessing = Use; }

@@ -17,7 +17,7 @@ void ImGui_Window::Draw()
 
 void ImGui_Window::BeginDraw()
 {
-	ImGui::Begin(m_WindowName);
+	ImGui::Begin(m_WindowName.c_str());
 }
 
 void ImGui_Window::OnDraw()

@@ -85,6 +85,21 @@
     <Filter Include="Source Files\Engine\ImGui">
       <UniqueIdentifier>{be0c940c-b9dd-4dd9-a4e6-8e3be496166b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Editor">
+      <UniqueIdentifier>{69c8c7f2-2780-4e67-bafc-6ad2078b46a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor\ImGui Windows">
+      <UniqueIdentifier>{0c0173b3-1437-451b-ab10-8f20622c3149}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor">
+      <UniqueIdentifier>{25e25ce6-291b-449d-abde-2735142431a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor\ImGui Windows">
+      <UniqueIdentifier>{a739a1f3-0f01-4afd-88d8-ce06f19d20a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Resources\Material">
+      <UniqueIdentifier>{f39313ea-1400-44d5-843a-b8054c4599bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -141,23 +156,29 @@
     <ClCompile Include="AStaticMesh.cpp">
       <Filter>Source Files\Engine\Objects\Actors\Common</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui_DebugLog.cpp">
-      <Filter>Source Files\Engine\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui_Window.cpp">
-      <Filter>Source Files\Engine\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGui_Viewport.cpp">
-      <Filter>Source Files\Engine\ImGui</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files\Engine\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui_ResourceManager.cpp">
-      <Filter>Source Files\Engine\ImGui</Filter>
-    </ClCompile>
     <ClCompile Include="URenderer.cpp">
       <Filter>Source Files\Engine\Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui_DebugLog.cpp">
+      <Filter>Source Files\Editor\ImGui Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui_ResourceManager.cpp">
+      <Filter>Source Files\Editor\ImGui Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui_Viewport.cpp">
+      <Filter>Source Files\Editor\ImGui Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui_Window.cpp">
+      <Filter>Source Files\Editor\ImGui Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui_Inspector.cpp">
+      <Filter>Source Files\Editor\ImGui Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor.cpp">
+      <Filter>Source Files\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -209,9 +230,6 @@
     <ClInclude Include="UMeshRenderer.h">
       <Filter>Header Files\Engine\Objects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="RMaterial.h">
-      <Filter>Header Files\Engine\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="URenderer.h">
       <Filter>Header Files\Engine\Objects\Components</Filter>
     </ClInclude>
@@ -224,20 +242,38 @@
     <ClInclude Include="ALight.h">
       <Filter>Header Files\Engine\Objects\Actors\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui_DebugLog.h">
-      <Filter>Header Files\Engine\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui_Window.h">
-      <Filter>Header Files\Engine\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui_Viewport.h">
-      <Filter>Header Files\Engine\ImGui</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>Header Files\Engine\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Inspector.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui_DebugLog.h">
+      <Filter>Header Files\Editor\ImGui Windows</Filter>
+    </ClInclude>
     <ClInclude Include="ImGui_ResourceManager.h">
-      <Filter>Header Files\Engine\ImGui</Filter>
+      <Filter>Header Files\Editor\ImGui Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui_Viewport.h">
+      <Filter>Header Files\Editor\ImGui Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui_Window.h">
+      <Filter>Header Files\Editor\ImGui Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui_Inspector.h">
+      <Filter>Header Files\Editor\ImGui Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor.h">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="RMaterial.h">
+      <Filter>Header Files\Engine\Resources\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Property.h">
+      <Filter>Header Files\Engine\Resources\Material</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

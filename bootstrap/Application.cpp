@@ -87,6 +87,7 @@ void Application::run(const char* title, int width, int height, bool fullscreen)
 			// update delta time
 			currTime = glfwGetTime();
 			deltaTime = currTime - prevTime;
+			m_frameTime = deltaTime;
 			if (deltaTime > 0.1f)
 				deltaTime = 0.1f;
 
@@ -117,34 +118,6 @@ void Application::run(const char* title, int width, int height, bool fullscreen)
 			update(float(deltaTime));
 
 			draw();
-
-			//m_RenderTarget.getTarget(0).bind(0);
-			//ImGui::Begin("Viewport");
-
-			//// we access the ImGui window size
-			//const float window_width = ImGui::GetContentRegionAvail().x;
-			//const float window_height = ImGui::GetContentRegionAvail().y;
-
-			////m_RenderTarget.initialise(1, window_width, window_height);
-			//m_RenderTarget.rescaleFrameBuffer(0, window_width, window_height);
-
-			//// we rescale the framebuffer to the actual window size here and reset the glViewport 
-			////rescale_framebuffer(window_width, window_height);
-			//glViewport(0, 0, window_width, window_height);
-
-			//// we get the screen position of the window
-			//ImVec2 pos = ImGui::GetCursorScreenPos();
-
-			//// and here we can add our created texture as image to ImGui
-			//// unfortunately we need to use the cast to void* or I didn't find another way tbh
-			//ImGui::Image(
-			//	(ImTextureID)m_RenderTarget.getTarget(0).getHandle(),
-			//	ImGui::GetContentRegionAvail(),
-			//	ImVec2(0, 1),
-			//	ImVec2(1, 0)
-			//);
-
-			//ImGui::End();
 			
 			// draw IMGUI last
 			ImGui::Render();

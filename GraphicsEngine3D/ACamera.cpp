@@ -5,6 +5,8 @@
 
 // --- GLM ---
 #include "glm/common.hpp"
+#include "glm/ext.hpp"
+
 
 // --- AIE ---
 #include "Shader.h"
@@ -15,7 +17,7 @@
 #include "RenderingManager.h"
 #include "UMeshRenderer.h"
 
-ACamera::ACamera()
+ACamera::ACamera(aie::RenderTarget* a_RenderTarget)
 	: AActor()
 {
 	m_Name = "Camera";
@@ -24,7 +26,6 @@ ACamera::ACamera()
     m_PostProcessShader = ResourceManager::LoadShader("PostProcess");
     m_PostProcessShader->bindUniform("PostProcess", 0);
     m_PostProcessShader->bindUniform("colourTarget", 0);
-    m_PostProcessShader->bindUniform("depthTarget", 1);
 
     World::GetRenderingManager()->AddRenderCamera(this);
 
@@ -32,11 +33,34 @@ ACamera::ACamera()
     m_MeshRenderer->SetMesh("FilmCamera");
     m_MeshRenderer->SetMaterial(ResourceManager::GetMaterial("Camera"));
 
-    SetScale(vec3(0.1f));
+    SetScale(vec3(0.005f));
+
+    m_Viewport.SetName((string("Viewport##") + std::to_string(ID)).c_str());
+
+    m_RenderTarget = a_RenderTarget;
+    if (m_RenderTarget == nullptr)
+        m_RenderTarget = new aie::RenderTarget();
+
+    m_Viewport.SetRenderTarget(m_RenderTarget);
+
+    m_Forward = vec3(1, 0, 0);
 }
 
 ACamera::~ACamera()
 {
+    delete m_RenderTarget;
+}
+
+void ACamera::Begin()
+{
+#pragma message(" - Fix up rescaling frame buffer in ACamera - ")
+    if (!m_RenderTarget->initialise(1, 640, 480, true))
+    {
+        LOG(Error, true, "Could not initialise camera render target");
+
+        return;
+    }
+    m_Viewport.SetRenderTarget(m_RenderTarget);
 }
 
 void ACamera::Update()
@@ -94,21 +118,24 @@ void ACamera::Render(ALight* a_AmbientLight, vector<ALight*>* a_Lights, list< UM
         #pragma region Bind Material
 
         auto Material = (*MeshRenderer)->GetMaterial();
-        Material->m_Shader->bind();
-        Material->Bind();
-        Material->m_Shader->bindUniform("CameraPosition", vec4(GetPosition(), 1));
-
-        if (a_AmbientLight && a_AmbientLight->IsEnabled())
-            Material->m_Shader->bindUniform("AmbientLight", a_AmbientLight->GetColour());
-        else
-            Material->m_Shader->bindUniform("AmbientLight", vec3());
-
-        Material->m_Shader->bindUniform("NumOfLights", NumOfLights);
-        if (NumOfLights > 0)
+        if (Material != nullptr)
         {
-            Material->m_Shader->bindUniform("PointLightColors", NumOfLights, &LightColours[0]);
-            Material->m_Shader->bindUniform("PointLightPositions", NumOfLights, &LightPositions[0]);
-            Material->m_Shader->bindUniform("PointLightFallOffs", NumOfLights, &LightFallOffs[0]);
+            Material->m_Shader->bind();
+            Material->Bind();
+            Material->m_Shader->bindUniform("CameraPosition", vec4(GetPosition(), 1));
+
+            if (a_AmbientLight && a_AmbientLight->IsEnabled())
+                Material->m_Shader->bindUniform("AmbientLight", a_AmbientLight->GetColour());
+            else
+                Material->m_Shader->bindUniform("AmbientLight", vec3());
+
+            Material->m_Shader->bindUniform("NumOfLights", NumOfLights);
+            if (NumOfLights > 0)
+            {
+                Material->m_Shader->bindUniform("PointLightColors", NumOfLights, &LightColours[0]);
+                Material->m_Shader->bindUniform("PointLightPositions", NumOfLights, &LightPositions[0]);
+                Material->m_Shader->bindUniform("PointLightFallOffs", NumOfLights, &LightFallOffs[0]);
+            }
         }
 
         #pragma endregion 
@@ -205,18 +232,18 @@ void ACamera::Render(ALight* a_AmbientLight, vector<ALight*>* a_Lights, list< UM
         aie::Gizmos::addSphere((*a_Lights)[i]->GetPosition(), (*a_Lights)[i]->GetScale().x * 0.5f, 7, 7, vec4((*a_Lights)[i]->m_Colour, 0.75f));
     }
 
-    // draw a simple grid with gizmos
-    vec4 white(1);
-    vec4 black(0, 0, 0, 1);
-    for (int i = 0; i < 21; ++i)
-    {
-        Gizmos::addLine(vec3(-10 + i, 0, 10),
-            vec3(-10 + i, 0, -10),
-            i == 10 ? white : black);
-        Gizmos::addLine(vec3(10, 0, -10 + i),
-            vec3(-10, 0, -10 + i),
-            i == 10 ? white : black);
-    }
+    //// draw a simple grid with gizmos
+    //vec4 white(1);
+    //vec4 black(0, 0, 0, 1);
+    //for (int i = 0; i < 21; ++i)
+    //{
+    //    Gizmos::addLine(vec3(-10 + i, 0, 10),
+    //        vec3(-10 + i, 0, -10),
+    //        i == 10 ? white : black);
+    //    Gizmos::addLine(vec3(10, 0, -10 + i),
+    //        vec3(-10, 0, -10 + i),
+    //        i == 10 ? white : black);
+    //}
 
     // Draw Directional Light
     //Gizmos::addSphere(m_DirectionalLight.m_Direction * 100.f, 10.f, 10, 10, vec4((m_DirectionalLight.m_Colour * 0.5f) * m_DirectionalLight.m_Intensity, 1));
@@ -232,8 +259,6 @@ void ACamera::EndRender()
 	{
 		m_RenderTarget->unbind();
 	}
-
-    ClearScreen();
 }
 
 void ACamera::ClearScreen()
@@ -249,10 +274,24 @@ void ACamera::ApplyPostProcessing()
     m_PostProcessShader->bind();
     m_PostProcessShader->bindUniform("ProgressPercent", m_PostProcessPercent);
 
+
     GetRenderTarget()->bind();
-    GetRenderTarget()->getTarget(0).bind(0);
+    GetRenderTarget()->bindRead();
+
+    // 
+
+    GLboolean depthMask = GL_TRUE;
+    glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
+
+    glDepthMask(GL_FALSE);
+
+    glDisable(GL_DEPTH_TEST);
 
     m_PostProcessQuad.Draw();
+
+    glEnable(GL_DEPTH_TEST);
+
+    glDepthMask(depthMask);
 
     GetRenderTarget()->unbind();
 }
@@ -293,12 +332,12 @@ void ACamera::SetAspectRatio(float a_Width, float a_Height)
 	SetAspectRatio(a_Width / a_Height);
 }
 
-vec3 ACamera::GetForward()
-{
-	float ThetaR = radians(m_Rotation.y);
-	float PhiR = radians(m_Rotation.z);
-	return vec3(cos(PhiR) * cos(-ThetaR), sin(PhiR), cos(PhiR) * sin(-ThetaR));
-}
+//vec3 ACamera::GetForward()
+//{
+//	float ThetaR = radians(m_Rotation.y);
+//	float PhiR = radians(m_Rotation.z);
+//	return vec3(cos(PhiR) * cos(-ThetaR), sin(PhiR), cos(PhiR) * sin(-ThetaR));
+//}
 
 void ACamera::OnDraw_ImGui()
 {
@@ -321,6 +360,14 @@ void ACamera::OnDraw_ImGui()
             static int ToonScale = 1;
             ImGui::SliderInt("ToonScale", &ToonScale, 0, 10);
             m_PostProcessShader->bindUniform("ToonScale", ToonScale);
+        }
+
+        // Fog
+        if (PostProcessIndex == 6)
+        {
+            static vec4 FogColour = vec4(1);
+            ImGui::ColorEdit4("Fog Colour", &FogColour[0]);
+            m_PostProcessShader->bindUniform("FogColour", FogColour);
         }
 
         ImGui::Checkbox("Use Post-Process", &m_UsePostProcessing);

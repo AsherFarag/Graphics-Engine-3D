@@ -52,12 +52,6 @@ bool GraphicsEngine3DApp::startup()
 	m_World = new World();
 	if (m_World->Begin() == false)
 		return false;
-	m_World->m_MainCamera->SetRenderTarget(&m_RenderTarget);
-
-	if (m_RenderTarget.initialise(1, getWindowWidth(), getWindowHeight()) == false)
-		return false;
-
-	m_Viewport = ImGui_Viewport(&m_RenderTarget);
 
 	return true;
 }
@@ -92,6 +86,8 @@ void GraphicsEngine3DApp::draw()
 	if (m_World)
 		m_World->Draw();
 
+#if IS_EDITOR
+
 	#pragma region ImGui
 	
 	#pragma region Stats
@@ -99,18 +95,15 @@ void GraphicsEngine3DApp::draw()
 	ImGui::Begin("Stats");
 
 	ImGui::Text("FPS: %i", m_fps);
+	ImGui::Text("Last Render: %.4fms", m_frameTime * 1000.f);
 
 	ImGui::End();
 
 	#pragma endregion
-
-	#pragma region Viewport
-
-	m_Viewport.Draw();
-
-	#pragma endregion
 	
 	#pragma endregion
+
+#endif // IS_EDITOR
 }
 
 bool GraphicsEngine3DApp::LaunchShaders()

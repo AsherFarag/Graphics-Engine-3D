@@ -15,6 +15,13 @@
 #include "RenderingManager.h"
 #include "ResourceManager.h"
 
+#if IS_EDITOR
+
+#include "Editor.h"
+#include "ImGui_DebugLog.h"
+
+#endif
+
 World::World()
 {
     // - Set Up Managers -
@@ -22,11 +29,11 @@ World::World()
 
     m_Objects = std::list<UBaseObject*>();
     m_Actors = std::list<AActor*>();
+
 }
 
 World::~World()
 {
-
 }
 
 bool World::Begin()
@@ -38,24 +45,24 @@ bool World::Begin()
     #pragma region Default Material Set up
 
     RMaterial* DefaultMaterial = ResourceManager::InstantiateMaterial("Default");
-    DefaultMaterial->Ambient = vec3(0.5f);
+    DefaultMaterial->Ambient = vec3(0.8f);
     DefaultMaterial->SpecularPower = 1.f;
 
     // textures
-    DefaultMaterial->DiffuseTexture.load("./bin/Resources/Mesh/Default.tga");
-    DefaultMaterial->NormalTexture.load("./bin/Resources/Mesh/DefaultNormal.tga");
+    DefaultMaterial->DiffuseTexture.load("Resources/Mesh/Default.tga");
+    DefaultMaterial->NormalTexture.load("Resources/Mesh/DefaultNormal.tga");
 
     RMaterial* SkyMaterial = ResourceManager::InstantiateMaterial("Sky");
     SkyMaterial->Ambient = vec3(1.f);
 
     // textures
-    SkyMaterial->DiffuseTexture.load("./bin/Resources/Mesh/Sky.jpeg");
+    SkyMaterial->DiffuseTexture.load("Resources/Mesh/Sky.jpeg");
 
     RMaterial* CameraMaterial = ResourceManager::InstantiateMaterial("Camera");
     CameraMaterial->Ambient = vec3(0.1f, 0.3f, 1.f);
 
     // textures
-    CameraMaterial->DiffuseTexture.load("./bin/Resources/Mesh/Default.tga");
+    CameraMaterial->DiffuseTexture.load("Resources/Mesh/Default.tga");
 
 
     #pragma endregion
@@ -77,20 +84,11 @@ bool World::Begin()
     m_RenderingManager->SetAmbientLight(AmbientLight);
 
     // Camera Set Up
-    m_FlyCamera = new AFlyCamera();
-    m_MainCamera = m_FlyCamera;
-    m_FlyCamera->SetPosition(vec3(-10, 1, 0));
-
-    m_SecondCamera = new ACamera();
-    m_SecondCamera->SetRenderTarget(&m_RenderTarget);
-
-    m_RenderTarget.initialise(1, 1280, 720);
-
-    m_SecondViewPort = ImGui_Viewport(&m_RenderTarget);
-    m_SecondViewPort.SetName("viewport2");
+    m_MainCamera = new AFlyCamera();
+    m_MainCamera->SetPosition(vec3(-10, 1, 0));
 
     // Create SoulSpear
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 64; i++)
     {
         int Rows = 8;
         int Cols = 8;
@@ -109,20 +107,26 @@ bool World::Begin()
     AStaticMesh* Sky = new AStaticMesh("Primitives/Sphere");
     Sky->GetMesh()->SetMaterial(SkyMaterial);
     Sky->SetName("Sky");
-    Sky->SetScale({ 100.f, 100.f, -100.f });
+    Sky->SetScale({ 1000.f, 1000.f, -1000.f });
+    
+#if IS_EDITOR
 
-    #pragma region ImGui
-
-    #pragma region Style
-
-    ImGui::GetStyle().WindowRounding = 0;
-
-    #pragma endregion
+    Editor::SetEditorStyle(Editor::ES_MIDNIGHT);
 
     m_DebugLog = Debug::ImGui_DebugLog();
-    m_DebugLog.PrintMessage(Debug::DebugMessage(false, "===== Begin World =====", Debug::Default, ImVec4(0,1,0,1)));
+    m_DebugLog.PrintMessage(Debug::DebugMessage(false, "===== Begin World =====", Debug::Default, ImVec4(0, 1, 0, 1)));
+
+#endif // IS_EDITOR
+
+
+
 
     #pragma endregion
+
+    for (auto Actor : m_Actors)
+    {
+        Actor->Begin();
+    }
 
     return true;
 }
@@ -131,25 +135,9 @@ void World::Update()
 {
     DestroyPendingObjects();
 
-    m_SecondCamera->m_Phi += 5 * DeltaTime();
-
     for (auto Actor : m_Actors)
     {
         Actor->Update();
-    }
-
-    auto* Input = aie::Input::getInstance();
-    if (Input->isKeyDown(aie::INPUT_KEY_V))
-    {
-        vec3 SpawnPos = vec3();
-        if (m_MainCamera)
-        {
-            SpawnPos = m_MainCamera->GetPosition() + m_MainCamera->GetForward() * 10.f;
-        }
-        AStaticMesh* StaticMesh;
-        // Static Mesh Set Up
-        StaticMesh = new AStaticMesh();
-        StaticMesh->SetPosition(SpawnPos);
     }
 }
 
@@ -159,8 +147,8 @@ void World::Draw()
 
     // Get the Rendering Manager to draw URenderers
     m_RenderingManager->Draw();
-
-    #pragma region ImGui
+#if IS_EDITOR
+#pragma region ImGui
 
     ImGuiWindowFlags Window_Flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus;
     ImGui::SetNextWindowPos(ImVec2(0, 20));
@@ -173,7 +161,7 @@ void World::Draw()
     }
     ImGui::End();
 
-    #pragma region Scene Hierarchy
+#pragma region Scene Hierarchy
 
     // Create Scene Hierarchy Window
     ImGui::Begin("Scene Hierarchy", nullptr);
@@ -183,33 +171,35 @@ void World::Draw()
 
     int ActorCount = 1;
     // Create a List of Actors
-    ImGui::BeginListBox("Actors", ImGui::GetContentRegionAvail());
-    if (ImGui::Button("Destroy All Actors"))
+    if (ImGui::BeginListBox("Actors", ImGui::GetContentRegionAvail()))
     {
+        if (ImGui::Button("Destroy All Actors"))
+        {
+            for (auto Actor : m_Actors)
+            {
+                if (Actor == m_MainCamera)
+                    continue;
+
+                Actor->Destroy();
+            }
+        }
+
         for (auto Actor : m_Actors)
         {
-            if (Actor == m_MainCamera)
-                continue;
+            bool IsSelected = (m_InspectedActor == nullptr ? false : Actor->GetId() == m_InspectedActor->GetId());
+            if (ImGui::Selectable((std::to_string(ActorCount) + ": " + Actor->GetName()).c_str(), IsSelected))
+                m_InspectedActor = Actor;
 
-            Actor->Destroy();
+            ActorCount++;
         }
+        ImGui::EndListBox();
     }
-
-    for (auto Actor : m_Actors)
-    {
-        bool IsSelected = (m_InspectedActor == nullptr ? false : Actor->GetId() == m_InspectedActor->GetId());
-        if (ImGui::Selectable((std::to_string(ActorCount) + ": " + Actor->GetName()).c_str(), IsSelected))
-            m_InspectedActor = Actor;
-
-        ActorCount++;
-    }
-    ImGui::EndListBox();
 
     ImGui::End();
 
-    #pragma endregion
+#pragma endregion
 
-    #pragma region Inspector
+#pragma region Inspector
 
     ImGui::Begin("Inspector");
     if (m_InspectedActor)
@@ -226,7 +216,7 @@ void World::Draw()
     }
     ImGui::End();
 
-    #pragma endregion
+#pragma endregion
 
     if (ImGui::BeginMainMenuBar())
     {
@@ -236,7 +226,7 @@ void World::Draw()
             vec3 SpawnPos = vec3(0);
             if (m_MainCamera)
             {
-                SpawnPos = m_MainCamera->GetPosition() + m_MainCamera->GetForward() * 10.f;
+                SpawnPos = m_MainCamera->GetPosition() + m_MainCamera->GetForward() * 5.f;
             }
 
             if (ImGui::MenuItem("Light"))
@@ -252,6 +242,12 @@ void World::Draw()
                 NewActor = StaticMesh;
             }
 
+            if (ImGui::MenuItem("Camera"))
+            {
+                auto C = new ACamera();
+                C->Begin();
+            }
+
             if (NewActor)
             {
                 NewActor->SetPosition(SpawnPos);
@@ -263,34 +259,35 @@ void World::Draw()
         ImGui::EndMainMenuBar();
     }
 
-    #pragma region Shaders
+#pragma region Shaders
 
     ImGui::Begin("Shader");
 
     if (ImGui::Button("Reload Shaders"))
     {
         ResourceManager::ReloadShaders();
-        LogMessage(Debug::DebugMessage(true, " --- Reloaded Shaders ---"));
+        World::DebugLog(Debug::DebugMessage(true, " --- Reloaded Shaders ---"));
     }
 
     ImGui::End();
 
 
 
-    #pragma endregion
+#pragma endregion
 
-    #pragma region Debug Log
+#pragma region Debug Log
 
     m_DebugLog.Draw();
 
-    #pragma endregion
+#pragma endregion
 
     m_ResourceManagerView.Draw();
 
+    m_RenderingManager->DrawViewports();
 
-    #pragma endregion
 
-    m_SecondViewPort.Draw();
+#pragma endregion
+#endif // IS_EDITOR
 }
 
 void World::End()
@@ -305,9 +302,10 @@ void World::End()
     delete m_RenderingManager;
 }
 
-void World::LogMessage(Debug::DebugMessage a_Message)
+
+void World::DebugLog(Debug::DebugMessage a_Log)
 {
-    GetWorld()->m_DebugLog.PrintMessage(a_Message);
+    GetWorld()->m_DebugLog.PrintMessage(a_Log);
 }
 
 #pragma region Object Management

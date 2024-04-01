@@ -49,6 +49,12 @@ void RenderingManager::Draw()
     }
 }
 
+void RenderingManager::DrawViewports()
+{
+    for (auto Camera : m_RenderCameras)
+        Camera->m_Viewport.Draw();
+}
+
 bool RenderingManager::End()
 {
     return true;
@@ -185,7 +191,7 @@ bool RenderingManager::AddLight(ALight* a_Light)
 
     a_Light->SetActive(false);
 
-    World::LogMessage(Debug::DebugMessage(true, "Light Limit Reached. Can not instantiate new light", Debug::Error));
+    LOG( Error, true, "Light Limit Reached. Can not instantiate new light" );
     
     return false;
 }

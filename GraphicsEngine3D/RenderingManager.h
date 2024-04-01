@@ -35,6 +35,7 @@ public:
 
     bool StartUp();
     void Draw();
+    void DrawViewports();
     bool End();
 
 protected:

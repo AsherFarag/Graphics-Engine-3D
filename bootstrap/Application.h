@@ -1,7 +1,5 @@
 #pragma once
 
-#include "RenderTarget.h"
-
 // forward declared structure for access to GLFW window
 struct GLFWwindow;
 
@@ -70,7 +68,7 @@ protected:
 	
 	unsigned int	m_fps;
 
-	RenderTarget m_RenderTarget;
+	double m_frameTime;
 };
 
 } // namespace aie

@@ -23,7 +23,7 @@ void ImGui_Viewport::BeginDraw()
 	// Create a small border around the Image
 	ImGui::GetStyle().WindowPadding = ImVec2(3.f, 3.f);
 
-	ImGui::Begin(m_WindowName, nullptr, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoScrollbar);
+	ImGui::Begin(m_WindowName.c_str(), nullptr, ImGuiWindowFlags_AlwaysUseWindowPadding | ImGuiWindowFlags_NoScrollbar);
 }
 
 void ImGui_Viewport::OnDraw()
@@ -33,13 +33,13 @@ void ImGui_Viewport::OnDraw()
 	const float window_height = ImGui::GetContentRegionAvail().y;
 
 	// Rescale the framebuffer to the actual window size and reset the glViewport 
-	m_RenderTarget->rescaleFrameBuffer(m_Target, window_width, window_height);
+	m_RenderTarget->rescaleFrameBuffer(window_width, window_height);
 	//m_RenderTarget->rescaleFrameBuffer(1, window_width, window_height);
 
 	glViewport(0, 0, window_width, window_height);
 
 	ImGui::Image(
-		(ImTextureID)m_RenderTarget->getTarget(m_Target).getHandle(),
+		(ImTextureID)m_RenderTarget->getTarget(0).getHandle(),
 		ImGui::GetContentRegionAvail(),
 		ImVec2(0, 1),
 		ImVec2(1, 0)

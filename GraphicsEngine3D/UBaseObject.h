@@ -16,6 +16,14 @@ public:
 	size_t GetId() const { return ID; }
 	bool Destroy(float a_LifeTime = -1.f);
 
+#if IS_EDITOR
+
+	// Allow the Inspector to access properties
+public:
+	friend class Inspector;
+
+#endif
+
 protected:
 	// A Reference to the engine instance
 	GraphicsEngine3DApp* Engine = nullptr;

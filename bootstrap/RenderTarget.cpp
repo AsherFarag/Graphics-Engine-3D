@@ -23,6 +23,8 @@ RenderTarget::RenderTarget(unsigned int targetCount, unsigned int width, unsigne
 
 bool RenderTarget::initialise(unsigned int targetCount, unsigned int width, unsigned int height,bool use_depth_texture) {
 
+	//use_depth_texture = false;
+
 	// setup and bind a framebuffer object
 	glGenFramebuffers(1, &m_fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -38,6 +40,8 @@ bool RenderTarget::initialise(unsigned int targetCount, unsigned int width, unsi
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
     else
@@ -113,22 +117,55 @@ void RenderTarget::unbind() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void RenderTarget::bindDepthTarget(unsigned int index) const {
-    glActiveTexture(GL_TEXTURE0 + index);
-    glBindTexture(GL_TEXTURE_2D, m_depthTarget);
+void RenderTarget::bindRead() const
+{
+	for (int i = 0; i < m_targetCount; i++) 
+	{
+		m_targets[i].bind(i);
+	}
+
+	// Bind Depth Target
+	glActiveTexture(GL_TEXTURE0 + m_targetCount);
+	glBindTexture(GL_TEXTURE_2D, m_depthTarget);
 }
 
-void RenderTarget::rescaleFrameBuffer(unsigned int target, float width, float height)
+void RenderTarget::rescaleFrameBuffer(float width, float height)
 {
-	glBindTexture(GL_TEXTURE_2D, m_targets[target].getHandle());
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_targets[target].getHandle(), 0);
+	// Rescale Depth
+	if (m_rbo)
+	{
+		glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
+	}
+	else
+	{
+		glBindTexture(GL_TEXTURE_2D, m_depthTarget);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthTarget, 0);
+	}
 
-	glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
+	for (int i = 0; i < m_targetCount; i++)
+	{
+		glBindTexture(GL_TEXTURE_2D, m_targets[i].getHandle());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_targets[i].getHandle(), 0);
+	}
+
+	if (width > 0)
+		m_width = width;
+	if (height > 0)
+		m_height = height;
+
+	glViewport(0, 0, m_width, m_height);
 }
 
 } // namespace aie

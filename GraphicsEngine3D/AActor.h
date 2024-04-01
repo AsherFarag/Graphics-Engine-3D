@@ -20,6 +20,7 @@ public:
     AActor();
     virtual ~AActor();
 
+	virtual void Begin() {}
 	virtual void Update();
 
 protected:
@@ -129,6 +130,12 @@ protected:
 
 #pragma endregion
 
+#if IS_EDITOR
 
+	// Allow the Inspector to access properties
+public:
+	friend class Inspector;
+
+#endif
 };
 

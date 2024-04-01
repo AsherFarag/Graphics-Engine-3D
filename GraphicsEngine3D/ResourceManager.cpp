@@ -94,7 +94,7 @@ RMaterial* ResourceManager::GetMaterial(const string& a_MaterialName)
 
 void ResourceManager::ReloadShaders()
 {
-	string FilePath = "./bin/shaders/";
+	string FilePath = "Resources/Shaders/";
 
 	auto& LoadedShaders = GetInstance()->m_LoadedShaders;
 	for (auto i = LoadedShaders.begin(); i != LoadedShaders.end(); i++)
@@ -106,7 +106,7 @@ void ResourceManager::ReloadShaders()
 
 ShaderProgram* ResourceManager::LoadShader(const string& a_FileName)
 {
-	string FilePath = "./bin/shaders/";
+	string FilePath = "Resources/Shaders/";
 
 	auto* Shader = GetShader(a_FileName);
 	if (Shader == nullptr)

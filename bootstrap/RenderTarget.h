@@ -23,20 +23,20 @@ public:
 
 	unsigned int	getTargetCount() const { return m_targetCount; }
 	const Texture&	getTarget(unsigned int target) const { return m_targets[target]; }
-    void            bindDepthTarget(unsigned int index) const;
+    void            bindRead() const;
 
-	void rescaleFrameBuffer(unsigned int target, float width, float height);
+	void rescaleFrameBuffer(float width, float height);
 
 public:
 
-	unsigned int	m_width;
-	unsigned int	m_height;
+	unsigned int	m_width = 0;
+	unsigned int	m_height = 0;
 
-	unsigned int	m_fbo;
-	unsigned int	m_rbo;
+	unsigned int	m_fbo = 0;
+	unsigned int	m_rbo = 0;
 
-	unsigned int	m_targetCount;
-	Texture*		m_targets;
+	unsigned int	m_targetCount = 0;
+	Texture*		m_targets = nullptr;
     unsigned int    m_depthTarget = 0;
 };
 

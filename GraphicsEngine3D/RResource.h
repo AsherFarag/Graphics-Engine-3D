@@ -8,7 +8,7 @@
 #include "glm/glm.hpp"
 using namespace glm;
 
-#define RESOURCE_PATH "./bin/Resources/"
+#define RESOURCE_PATH "Resources/"
 
 class RResource
 {

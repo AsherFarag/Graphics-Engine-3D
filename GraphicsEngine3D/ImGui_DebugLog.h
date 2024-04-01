@@ -86,6 +86,5 @@ namespace Debug
 		virtual void OnDraw();
 		virtual void EndDraw();
 	};
-
 }
 

@@ -12,9 +12,7 @@ using std::weak_ptr;
 
 // --- Engine ---
 #include "GraphicsEngine3DApp.h"
-#include "ImGui_DebugLog.h"
-#include "ImGui_ResourceManager.h"
-#include "ImGui_Viewport.h"
+#include "RMesh.h"
 class ALight;
 class UBaseObject;
 class AActor;
@@ -24,7 +22,14 @@ class AStaticMesh;
 class RMaterial;
 class RenderingManager;
 
-#include "RMesh.h"
+#if IS_EDITOR
+
+#include "ImGui_DebugLog.h"
+#include "ImGui_ResourceManager.h"
+#include "ImGui_Viewport.h"
+
+#endif // IS_EDITOR
+
 
 
 // A World is a scene object that stores and handles all the objects inside of it.
@@ -60,7 +65,6 @@ protected:
 public:
 
 	static float const DeltaTime() { return GetWorld()->m_DeltaTime; }
-	static void LogMessage(Debug::DebugMessage a_Message);
 
 	static World* GetWorld() { return GraphicsEngine3DApp::GetInstance()->m_World; }
 	static RenderingManager* GetRenderingManager() { return GraphicsEngine3DApp::GetInstance()->m_World->m_RenderingManager; }
@@ -98,14 +102,16 @@ protected:
 protected:
 	ALight* m_AmbientLight;
 
-	AFlyCamera* m_FlyCamera;
+#if IS_EDITOR
 
+protected:
 	Debug::ImGui_DebugLog m_DebugLog;
 	ImGui_ResourceManager m_ResourceManagerView;
 
-	ImGui_Viewport m_SecondViewPort;
-	RenderTarget m_RenderTarget;
+public:
+	static void DebugLog(Debug::DebugMessage a_Log);
 
-	ACamera* m_SecondCamera;
+#endif // IS_EDITOR
+
 };
 
