@@ -32,11 +32,11 @@ void ImGui_Viewport::OnDraw()
 	const float window_width = ImGui::GetContentRegionAvail().x;
 	const float window_height = ImGui::GetContentRegionAvail().y;
 
+	
+
 	// Rescale the framebuffer to the actual window size and reset the glViewport 
 	m_RenderTarget->rescaleFrameBuffer(window_width, window_height);
 	//m_RenderTarget->rescaleFrameBuffer(1, window_width, window_height);
-
-	glViewport(0, 0, window_width, window_height);
 
 	ImGui::Image(
 		(ImTextureID)m_RenderTarget->getTarget(0).getHandle(),

@@ -35,7 +35,7 @@ ACamera::ACamera(aie::RenderTarget* a_RenderTarget)
     m_MeshRenderer->SetMaterial(ResourceManager::GetMaterial("Camera"));
 
     // Set Mesh Size as Camera Model is Huge
-    SetScale(vec3(0.005f));
+    SetScale(vec3(0.1f));
 
 #if IS_EDITOR
     m_RenderTarget = a_RenderTarget;
@@ -97,6 +97,9 @@ void ACamera::BeginRender()
 	{
 		// Bind our Render
 		m_RenderTarget->bind();
+
+        glViewport(0, 0, m_RenderTarget->getWidth(), m_RenderTarget->getHeight());
+
 
         #if !IS_EDITOR
         m_RenderTarget->rescaleFrameBuffer(Engine->getWindowWidth(), Engine->getWindowHeight());

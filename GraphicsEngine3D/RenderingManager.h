@@ -37,7 +37,8 @@ public:
     void Draw();
     bool End();
 
-    void Render(ACamera* Camera);
+    void Render(ACamera* Camera, mat4 ProjectedView);
+    void DrawShadows(ACamera* Camera);
 
 
 #if IS_EDITOR

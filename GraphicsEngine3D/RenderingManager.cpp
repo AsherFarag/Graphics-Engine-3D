@@ -34,7 +34,9 @@ void RenderingManager::Draw()
         // Begin Render
         Camera->BeginRender();
         
-        Render(Camera);
+        // Calculate the Projected View Matrix
+        mat4 ProjectedView = Camera->GetProjectionMatrix() * Camera->GetViewMatrix();
+        Render(Camera, ProjectedView);
 
         // Finish Render
         Camera->EndRender();
@@ -59,7 +61,7 @@ bool RenderingManager::End()
     return true;
 }
 
-void RenderingManager::Render(ACamera* Camera)
+void RenderingManager::Render(mat4 ProjectedView)
 {
     // Calculate the Projected View Matrix
     mat4 ProjectedView = Camera->GetProjectionMatrix() * Camera->GetViewMatrix();
@@ -144,6 +146,35 @@ void RenderingManager::Render(ACamera* Camera)
     Gizmos::draw(ProjectedView);
 
 #pragma endregion
+}
+
+void RenderingManager::DrawShadows(ACamera* Camera)
+{
+    unsigned int DepthMapFBO;
+    glGenFramebuffers(1, &DepthMapFBO);
+
+    unsigned int DepthMap;
+    glGenTextures(1, &DepthMap);
+    glBindTexture(GL_TEXTURE_2D, DepthMap);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+        m_AmbientLight->m_ShadowResolution.x, m_AmbientLight->m_ShadowResolution.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, DepthMapFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthMap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glViewport(0, 0, m_AmbientLight->m_ShadowResolution.x, m_AmbientLight->m_ShadowResolution.y);
+    glBindFramebuffer(GL_FRAMEBUFFER, DepthMapFBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    //ConfigureShaderAndMatrices();
+    Render(Camera);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void RenderingManager::CalculateDrawOrder(std::list<URenderer*>& OutDrawBuffer, std::list<RMaterial*>& OutMaterialBuffer)
