@@ -23,7 +23,7 @@ void ImGui_ResourceManager::OnDraw()
 
 	if (ImGui::TreeNode("Meshes"))
 	{
-		auto& LoadedMeshes = ResourceManager::GetLoadedMeshes();
+		auto& LoadedMeshes = ResourceManager::GetLoadedOBJMeshes();
 		for (auto i : LoadedMeshes)
 		{
 			ImGui::Text(i.second->GetResourceName().c_str());

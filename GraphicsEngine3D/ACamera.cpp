@@ -16,6 +16,7 @@
 #include "ALight.h"
 #include "RenderingManager.h"
 #include "UMeshRenderer.h"
+#include "ResourceManager.h"
 
 ACamera::ACamera(aie::RenderTarget* a_RenderTarget)
 	: AActor()
@@ -33,15 +34,18 @@ ACamera::ACamera(aie::RenderTarget* a_RenderTarget)
     m_MeshRenderer->SetMesh("FilmCamera");
     m_MeshRenderer->SetMaterial(ResourceManager::GetMaterial("Camera"));
 
+    // Set Mesh Size as Camera Model is Huge
     SetScale(vec3(0.005f));
 
-    m_Viewport.SetName((string("Viewport##") + std::to_string(ID)).c_str());
-
+#if IS_EDITOR
     m_RenderTarget = a_RenderTarget;
     if (m_RenderTarget == nullptr)
         m_RenderTarget = new aie::RenderTarget();
 
+    m_Viewport.SetName((string("Viewport##") + std::to_string(ID)).c_str());
     m_Viewport.SetRenderTarget(m_RenderTarget);
+
+#endif // IS_EDITOR
 
     m_Forward = vec3(1, 0, 0);
 }
@@ -54,13 +58,17 @@ ACamera::~ACamera()
 void ACamera::Begin()
 {
 #pragma message(" - Fix up rescaling frame buffer in ACamera - ")
-    if (!m_RenderTarget->initialise(1, 640, 480, true))
+    if (m_RenderTarget && !m_RenderTarget->initialise(1, 640, 480, true))
     {
         LOG(Error, true, "Could not initialise camera render target");
 
         return;
     }
+#if IS_EDITOR
+
     m_Viewport.SetRenderTarget(m_RenderTarget);
+
+#endif // IS_EDITOR
 }
 
 void ACamera::Update()
@@ -68,9 +76,17 @@ void ACamera::Update()
     m_Rotation.z = clamp(m_Rotation.z, -87.5f, 87.5f);
 
 	if (m_RenderTarget)
-		SetAspectRatio(m_RenderTarget->getWidth(), m_RenderTarget->getHeight());
-	else
-		SetAspectRatio(Engine->getWindowWidth(), Engine->getWindowHeight());
+    {
+        #if IS_EDITOR
+
+        SetAspectRatio(m_RenderTarget->getWidth(), m_RenderTarget->getHeight());
+
+        #else
+
+        SetAspectRatio(Engine->getWindowWidth(), Engine->getWindowHeight());
+
+        #endif // IS_EDITOR
+    }
 
 	SetViewMatrix();
 }
@@ -81,6 +97,10 @@ void ACamera::BeginRender()
 	{
 		// Bind our Render
 		m_RenderTarget->bind();
+
+        #if !IS_EDITOR
+        m_RenderTarget->rescaleFrameBuffer(Engine->getWindowWidth(), Engine->getWindowHeight());
+        #endif // !IS_EDITOR
 	}
 
     // Wipe the gizmos clean for this frame
@@ -89,169 +109,6 @@ void ACamera::BeginRender()
     ClearScreen();
 }
 
-void ACamera::Render(ALight* a_AmbientLight, vector<ALight*>* a_Lights, list< UMeshRenderer* >* a_Meshes)
-{
-	// Calculate the Projected View Matrix
-	mat4 ProjectedView = GetProjectionMatrix() * GetViewMatrix();
-
-    const int NumOfLights = a_Lights->size();
-    vector<vec3>  LightPositions;
-    vector<vec3>  LightColours;
-    vector<float> LightFallOffs;
-
-    for (auto Light : *a_Lights)
-    {
-        LightPositions.push_back(Light->GetPosition());
-        LightColours.push_back(Light->GetColour());
-        LightFallOffs.push_back(Light->m_FallOff);
-    }
-    
-
-    // Draw Renderers
-    for (auto MeshRenderer = a_Meshes->begin(); MeshRenderer != a_Meshes->end(); ++MeshRenderer)
-    {
-        if (*MeshRenderer == m_MeshRenderer)
-            continue;
-
-        #pragma message("TODO: Currently each draw call rebinds the material. Set-Up Batch Rendering")
-
-        #pragma region Bind Material
-
-        auto Material = (*MeshRenderer)->GetMaterial();
-        if (Material != nullptr)
-        {
-            Material->m_Shader->bind();
-            Material->Bind();
-            Material->m_Shader->bindUniform("CameraPosition", vec4(GetPosition(), 1));
-
-            if (a_AmbientLight && a_AmbientLight->IsEnabled())
-                Material->m_Shader->bindUniform("AmbientLight", a_AmbientLight->GetColour());
-            else
-                Material->m_Shader->bindUniform("AmbientLight", vec3());
-
-            Material->m_Shader->bindUniform("NumOfLights", NumOfLights);
-            if (NumOfLights > 0)
-            {
-                Material->m_Shader->bindUniform("PointLightColors", NumOfLights, &LightColours[0]);
-                Material->m_Shader->bindUniform("PointLightPositions", NumOfLights, &LightPositions[0]);
-                Material->m_Shader->bindUniform("PointLightFallOffs", NumOfLights, &LightFallOffs[0]);
-            }
-        }
-
-        #pragma endregion 
-
-        (*MeshRenderer)->Draw(ProjectedView);
-    }
-
-    #pragma region Legacy
-
-
-
-    //if (a_Meshes->size() > 0)
-    //{
-    //    // Get Draw Order and Material buffers for batch rendering
-    //    list<URenderer*> DrawOrderBuffer;
-    //    list<RMaterial*> MaterialBuffer;
-    //    CalculateDrawOrder(DrawOrderBuffer, MaterialBuffer);
-
-    //    // ########################################################
-    //    //
-    //    // TODO: Fix up the batching because this doesnt even work
-    //    // 
-    //    // ########################################################
-
-    //    // TEMP
-    //    auto FirstMat = DrawOrderBuffer.front()->GetMaterial();
-    //    FirstMat->m_Shader->bind();
-    //    FirstMat->Bind();
-    //    FirstMat->m_Shader->bindUniform("CameraPosition", vec4(m_RenderCamera->GetPosition(), 1));
-
-    //    if (m_AmbientLight && m_AmbientLight->IsEnabled())
-    //    {
-    //        FirstMat->m_Shader->bindUniform("AmbientLight", m_AmbientLight->GetColour());
-    //    }
-    //    else
-    //    {
-    //        FirstMat->m_Shader->bindUniform("AmbientLight", vec3());
-    //    }
-
-    //    FirstMat->m_Shader->bindUniform("NumOfLights", ActiveNumOfLights);
-    //    if (ActiveNumOfLights > 0)
-    //    {
-    //        FirstMat->m_Shader->bindUniform("PointLightColors", ActiveNumOfLights, &PointLightColours[0]);
-    //        FirstMat->m_Shader->bindUniform("PointLightPositions", ActiveNumOfLights, &PointLightPositions[0]);
-    //        FirstMat->m_Shader->bindUniform("PointLightFallOffs", ActiveNumOfLights, &PointLightFallOffs[0]);
-    //    }
-
-
-
-    //    URenderer* PreviousRenderer = nullptr;
-    //    for (auto Renderer : DrawOrderBuffer)
-    //    {
-    //        if (PreviousRenderer && Renderer->GetMesh() != PreviousRenderer->GetMesh())
-    //        {
-    //            auto Material = Renderer->GetMaterial();
-    //            Material->m_Shader->bind();
-    //            Material->Bind();
-    //            Material->m_Shader->bindUniform("CameraPosition", vec4(m_RenderCamera->GetPosition(), 1));
-
-    //            if (m_AmbientLight && m_AmbientLight->IsEnabled())
-    //            {
-    //                Material->m_Shader->bindUniform("AmbientLight", m_AmbientLight->GetColour());
-    //                //Material->m_Shader.bindUniform("AmbientLightDirection", normalize(m_AmbientLight->GetRotation()));
-    //            }
-    //            else
-    //            {
-    //                Material->m_Shader->bindUniform("AmbientLight", vec3());
-    //            }
-
-    //            Material->m_Shader->bindUniform("NumOfLights", ActiveNumOfLights);
-    //            if (ActiveNumOfLights > 0)
-    //            {
-    //                Material->m_Shader->bindUniform("PointLightColors", ActiveNumOfLights, &PointLightColours[0]);
-    //                Material->m_Shader->bindUniform("PointLightPositions", ActiveNumOfLights, &PointLightPositions[0]);
-    //                Material->m_Shader->bindUniform("PointLightFallOffs", ActiveNumOfLights, &PointLightFallOffs[0]);
-    //            }
-    //        }
-
-    //        Renderer->Draw(ProjectedView);
-
-    //        PreviousRenderer = Renderer;
-    //    }
-    //}
-
-    #pragma endregion
-
-#pragma region Gizmos
-
-    if (a_AmbientLight && a_AmbientLight->IsEnabled())
-        aie::Gizmos::addSphere(a_AmbientLight->GetPosition(), a_AmbientLight->GetScale().x * 0.5f, 7, 7, vec4(a_AmbientLight->m_Colour, 0.75f));
-
-    for (int i = 0; i < NumOfLights; i++)
-    {
-        aie::Gizmos::addSphere((*a_Lights)[i]->GetPosition(), (*a_Lights)[i]->GetScale().x * 0.5f, 7, 7, vec4((*a_Lights)[i]->m_Colour, 0.75f));
-    }
-
-    //// draw a simple grid with gizmos
-    //vec4 white(1);
-    //vec4 black(0, 0, 0, 1);
-    //for (int i = 0; i < 21; ++i)
-    //{
-    //    Gizmos::addLine(vec3(-10 + i, 0, 10),
-    //        vec3(-10 + i, 0, -10),
-    //        i == 10 ? white : black);
-    //    Gizmos::addLine(vec3(10, 0, -10 + i),
-    //        vec3(-10, 0, -10 + i),
-    //        i == 10 ? white : black);
-    //}
-
-    // Draw Directional Light
-    //Gizmos::addSphere(m_DirectionalLight.m_Direction * 100.f, 10.f, 10, 10, vec4((m_DirectionalLight.m_Colour * 0.5f) * m_DirectionalLight.m_Intensity, 1));
-
-    Gizmos::draw(ProjectedView);
-
-#pragma endregion
-}
 
 void ACamera::EndRender()
 {
@@ -330,6 +187,17 @@ void ACamera::SetAspectRatio(float a_AspectRatio)
 void ACamera::SetAspectRatio(float a_Width, float a_Height)
 {
 	SetAspectRatio(a_Width / a_Height);
+}
+
+void ACamera::SetRenderTarget(aie::RenderTarget* a_RenderTarget)
+{
+    m_RenderTarget = a_RenderTarget; 
+#if IS_EDITOR
+
+    m_Viewport.SetRenderTarget(m_RenderTarget);
+
+#endif // IS_EDITOR
+
 }
 
 //vec3 ACamera::GetForward()

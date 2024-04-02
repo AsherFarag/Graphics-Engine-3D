@@ -194,7 +194,8 @@ void OBJMesh::draw(bool usePatches /* = false */) {
 	int program = -1;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &program);
 
-	if (program == -1) {
+	if (program == -1)
+	{
 		printf("No shader bound!\n");
 		return;
 	}

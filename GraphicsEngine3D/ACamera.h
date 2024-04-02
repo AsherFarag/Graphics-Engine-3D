@@ -56,11 +56,14 @@ protected:
 
     UMeshRenderer* m_MeshRenderer;
 
+#if IS_EDITOR
+
     ImGui_Viewport m_Viewport;
+
+#endif // IS_EDITOR
 
 protected:
     void BeginRender();
-    void Render(ALight* a_AmbientLight, vector<ALight*>* a_Lights, list< UMeshRenderer* >* a_Meshes);
     void EndRender();
 
     void ClearScreen();
@@ -92,7 +95,7 @@ public:
     vec3 GetForward() { return m_Forward; }
 
     aie::RenderTarget* GetRenderTarget() { return m_RenderTarget; }
-    void SetRenderTarget(aie::RenderTarget* a_RenderTarget) { m_RenderTarget = a_RenderTarget; m_Viewport.SetRenderTarget(m_RenderTarget); }
+    void SetRenderTarget(aie::RenderTarget* a_RenderTarget);
 
     bool IsUsingPostProcessing() const { return m_UsePostProcessing; }
     void UsePostProcessing(bool Use) { m_UsePostProcessing = Use; }

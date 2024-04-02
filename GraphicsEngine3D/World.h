@@ -112,6 +112,5 @@ public:
 	static void DebugLog(Debug::DebugMessage a_Log);
 
 #endif // IS_EDITOR
-
 };
 

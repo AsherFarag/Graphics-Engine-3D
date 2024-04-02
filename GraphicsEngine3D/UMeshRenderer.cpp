@@ -40,7 +40,7 @@ void UMeshRenderer::OnDisabled()
 
 bool UMeshRenderer::SetMesh(const char* a_MeshName, bool a_LoadTextures, bool a_FlipTextureV)
 {
-	m_Mesh = ResourceManager::LoadMesh(a_MeshName, nullptr, a_LoadTextures, a_FlipTextureV);
+	m_Mesh = ResourceManager::LoadOBJMesh(a_MeshName, nullptr, a_LoadTextures, a_FlipTextureV);
 	SetMaterial(m_Mesh->getMaterial(0));
 	return m_Mesh != nullptr;
 }
@@ -56,7 +56,7 @@ void UMeshRenderer::Draw_ImGui()
 
 			if (ImGui::BeginMenu("Set Mesh"))
 			{
-				auto& LoadedMeshes = ResourceManager::GetLoadedMeshes();
+				auto& LoadedMeshes = ResourceManager::GetLoadedOBJMeshes();
 				for (auto i : LoadedMeshes)
 				{
 					if (i.second == GetMesh())

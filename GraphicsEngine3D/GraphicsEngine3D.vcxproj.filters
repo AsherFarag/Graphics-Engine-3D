@@ -82,9 +82,6 @@
     <Filter Include="Header Files\Engine\ImGui">
       <UniqueIdentifier>{232c1e73-4e0f-4705-b323-b7cfb6f0ef56}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\ImGui">
-      <UniqueIdentifier>{be0c940c-b9dd-4dd9-a4e6-8e3be496166b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Editor">
       <UniqueIdentifier>{69c8c7f2-2780-4e67-bafc-6ad2078b46a0}</UniqueIdentifier>
     </Filter>

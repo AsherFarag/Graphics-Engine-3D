@@ -1,5 +1,8 @@
 #include "RenderingManager.h"
 
+// --- OpenGL ---
+#include "gl_core_4_4.h"
+
 // --- Engine ---
 #include "URenderer.h"
 #include "RMaterial.h"
@@ -30,16 +33,8 @@ void RenderingManager::Draw()
 
         // Begin Render
         Camera->BeginRender();
-
-        // Get a vector of the active lights
-        vector<ALight*> ActiveLights;
-        for (auto Light : m_Lights)
-        {
-            if (Light->IsEnabled())
-                ActiveLights.push_back(Light);
-        }
-
-        Camera->Render(m_AmbientLight, &ActiveLights, &m_MeshRenderers);
+        
+        Render(Camera);
 
         // Finish Render
         Camera->EndRender();
@@ -49,15 +44,106 @@ void RenderingManager::Draw()
     }
 }
 
+#if IS_EDITOR
+
 void RenderingManager::DrawViewports()
 {
     for (auto Camera : m_RenderCameras)
         Camera->m_Viewport.Draw();
 }
 
+#endif // IS_EDITOR
+
 bool RenderingManager::End()
 {
     return true;
+}
+
+void RenderingManager::Render(ACamera* Camera)
+{
+    // Calculate the Projected View Matrix
+    mat4 ProjectedView = Camera->GetProjectionMatrix() * Camera->GetViewMatrix();
+
+    const int NumOfLights = m_Lights.size();
+    vector<vec3>  LightPositions;
+    vector<vec3>  LightColours;
+    vector<float> LightFallOffs;
+
+    for (auto Light : m_Lights)
+    {
+        if (Light->IsEnabled())
+        {
+            LightPositions.push_back(Light->GetPosition());
+            LightColours.push_back(Light->GetColour());
+            LightFallOffs.push_back(Light->m_FallOff);
+        }
+    }
+
+    // Draw Renderers
+    for (auto MeshRenderer = m_MeshRenderers.begin(); MeshRenderer != m_MeshRenderers.end(); ++MeshRenderer)
+    {
+        if (*MeshRenderer == Camera->m_MeshRenderer)
+            continue;
+
+        #pragma message("TODO: Currently each draw call rebinds the material. Set-Up Batch Rendering")
+
+        #pragma region Bind Material
+
+        auto Material = (*MeshRenderer)->GetMaterial();
+        if (Material != nullptr)
+        {
+            Material->m_Shader->bind();
+            Material->Bind();
+            Material->m_Shader->bindUniform("CameraPosition", vec4(Camera->GetPosition(), 1));
+
+            if (m_AmbientLight && m_AmbientLight->IsEnabled())
+                Material->m_Shader->bindUniform("AmbientLight", m_AmbientLight->GetColour());
+            else
+                Material->m_Shader->bindUniform("AmbientLight", vec3());
+
+            Material->m_Shader->bindUniform("NumOfLights", NumOfLights);
+            if (NumOfLights > 0)
+            {
+                Material->m_Shader->bindUniform("PointLightColors", NumOfLights, &LightColours[0]);
+                Material->m_Shader->bindUniform("PointLightPositions", NumOfLights, &LightPositions[0]);
+                Material->m_Shader->bindUniform("PointLightFallOffs", NumOfLights, &LightFallOffs[0]);
+            }
+        }
+
+        #pragma endregion 
+
+        (*MeshRenderer)->Draw(ProjectedView);
+    }
+
+#pragma region Gizmos
+
+    if (m_AmbientLight && m_AmbientLight->IsEnabled())
+        aie::Gizmos::addSphere(m_AmbientLight->GetPosition(), m_AmbientLight->GetScale().x * 0.5f, 7, 7, vec4(m_AmbientLight->m_Colour, 0.75f));
+
+    for (int i = 0; i < NumOfLights; i++)
+    {
+        aie::Gizmos::addSphere((m_Lights)[i]->GetPosition(), (m_Lights)[i]->GetScale().x * 0.5f, 7, 7, vec4((m_Lights)[i]->m_Colour, 0.75f));
+    }
+
+    //// draw a simple grid with gizmos
+    //vec4 white(1);
+    //vec4 black(0, 0, 0, 1);
+    //for (int i = 0; i < 21; ++i)
+    //{
+    //    Gizmos::addLine(vec3(-10 + i, 0, 10),
+    //        vec3(-10 + i, 0, -10),
+    //        i == 10 ? white : black);
+    //    Gizmos::addLine(vec3(10, 0, -10 + i),
+    //        vec3(-10, 0, -10 + i),
+    //        i == 10 ? white : black);
+    //}
+
+    // Draw Directional Light
+    //Gizmos::addSphere(m_DirectionalLight.m_Direction * 100.f, 10.f, 10, 10, vec4((m_DirectionalLight.m_Colour * 0.5f) * m_DirectionalLight.m_Intensity, 1));
+
+    Gizmos::draw(ProjectedView);
+
+#pragma endregion
 }
 
 void RenderingManager::CalculateDrawOrder(std::list<URenderer*>& OutDrawBuffer, std::list<RMaterial*>& OutMaterialBuffer)

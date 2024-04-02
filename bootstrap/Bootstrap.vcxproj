@@ -168,6 +168,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies/glfw/lib-vc2015;</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>

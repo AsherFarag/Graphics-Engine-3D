@@ -6,6 +6,9 @@
 using std::string;
 using std::map;
 
+// --- AssImp ---
+#include "assimp/Importer.hpp"
+
 // --- Engine ---
 #include "OBJMesh.h"
 #include "RMaterial.h"
@@ -33,12 +36,19 @@ public:
 #pragma region Mesh Resources
 
 private:
-	map<string, OBJMesh*> m_LoadedMeshes;
+	map<string, OBJMesh*> m_LoadedOBJMeshes;
 
 public:
-	static auto& GetLoadedMeshes() { return GetInstance()->m_LoadedMeshes; }
-	static OBJMesh* LoadMesh(const string& a_MeshName, RMaterial* a_Material = nullptr, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
-	static OBJMesh* GetLoadedMesh(const string& a_MeshName);
+	static auto& GetLoadedOBJMeshes() { return GetInstance()->m_LoadedOBJMeshes; }
+	static OBJMesh* LoadOBJMesh(const string& a_MeshName, RMaterial* a_Material = nullptr, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
+	static OBJMesh* GetLoadedOBJMesh(const string& a_MeshName);
+
+	//map<string, RMesh*> m_LoadedMeshes;
+
+public:
+	//static auto& GetLoadedMeshes() { return GetInstance()->m_LoadedMeshes; }
+	//static RMesh* LoadMesh(const string& a_MeshName, RMaterial* a_Material = nullptr, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
+	//static RMesh* GetLoadedMesh(const string& a_MeshName);
 
 #pragma endregion
 

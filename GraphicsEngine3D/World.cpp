@@ -38,6 +38,8 @@ World::~World()
 
 bool World::Begin()
 {
+    #pragma region Set Up
+
     ResourceManager::SetMainShader( ResourceManager::LoadShader("Phong") );
 
     ResourceManager::LoadShader("PostProcess");
@@ -68,13 +70,13 @@ bool World::Begin()
     #pragma endregion
 
     // Load Primitive Meshes
-    ResourceManager::LoadMesh("Primitives/Box", DefaultMaterial);
-    ResourceManager::LoadMesh("Primitives/Cone", DefaultMaterial);
-    ResourceManager::LoadMesh("Primitives/Cylinder", DefaultMaterial);
-    ResourceManager::LoadMesh("Primitives/Pyramid", DefaultMaterial);
-    ResourceManager::LoadMesh("Primitives/Sphere", DefaultMaterial);
+    ResourceManager::LoadOBJMesh("Primitives/Box", DefaultMaterial);
+    ResourceManager::LoadOBJMesh("Primitives/Cone", DefaultMaterial);
+    ResourceManager::LoadOBJMesh("Primitives/Cylinder", DefaultMaterial);
+    ResourceManager::LoadOBJMesh("Primitives/Pyramid", DefaultMaterial);
+    ResourceManager::LoadOBJMesh("Primitives/Sphere", DefaultMaterial);
 
-    ResourceManager::LoadMesh("Robot/Robot", nullptr, true, true);
+    ResourceManager::LoadOBJMesh("Robot/Robot", nullptr, true, true);
 
     // Default Light Set up
     m_RenderingManager = new RenderingManager();
@@ -88,7 +90,7 @@ bool World::Begin()
     m_MainCamera->SetPosition(vec3(-10, 1, 0));
 
     // Create SoulSpear
-    for (int i = 0; i < 64; i++)
+    for (int i = 0; i < 1; i++)
     {
         int Rows = 8;
         int Cols = 8;
@@ -107,7 +109,7 @@ bool World::Begin()
     AStaticMesh* Sky = new AStaticMesh("Primitives/Sphere");
     Sky->GetMesh()->SetMaterial(SkyMaterial);
     Sky->SetName("Sky");
-    Sky->SetScale({ 1000.f, 1000.f, -1000.f });
+    Sky->SetScale({ 500, 500.f, -500.f });
     
 #if IS_EDITOR
 
@@ -118,11 +120,11 @@ bool World::Begin()
 
 #endif // IS_EDITOR
 
-
-
-
     #pragma endregion
 
+#pragma region Test
+
+#pragma endregion
     for (auto Actor : m_Actors)
     {
         Actor->Begin();
@@ -145,8 +147,9 @@ void World::Draw()
 {
     auto EngineInstance = GraphicsEngine3DApp::GetInstance();
 
-    // Get the Rendering Manager to draw URenderers
+    // Get the Rendering Manager to draw 
     m_RenderingManager->Draw();
+
 #if IS_EDITOR
 #pragma region ImGui
 
@@ -287,7 +290,13 @@ void World::Draw()
 
 
 #pragma endregion
+
+#else
+    
+//m_MainCamera->GetRenderTarget()->bindRead();
+    
 #endif // IS_EDITOR
+
 }
 
 void World::End()
@@ -302,11 +311,14 @@ void World::End()
     delete m_RenderingManager;
 }
 
-
+#if IS_EDITOR
 void World::DebugLog(Debug::DebugMessage a_Log)
 {
     GetWorld()->m_DebugLog.PrintMessage(a_Log);
 }
+#endif // IS_EDITOR
+
+
 
 #pragma region Object Management
 

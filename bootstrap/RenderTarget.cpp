@@ -149,6 +149,7 @@ void RenderTarget::rescaleFrameBuffer(float width, float height)
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthTarget, 0);
 	}
 
+	// Rescale Each Target
 	for (int i = 0; i < m_targetCount; i++)
 	{
 		glBindTexture(GL_TEXTURE_2D, m_targets[i].getHandle());

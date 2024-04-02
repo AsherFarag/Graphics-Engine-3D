@@ -35,8 +35,16 @@ public:
 
     bool StartUp();
     void Draw();
-    void DrawViewports();
     bool End();
+
+    void Render(ACamera* Camera);
+
+
+#if IS_EDITOR
+
+    void DrawViewports();
+
+#endif // IS_EDITOR
 
 protected:
     list<URenderer*> m_Renderers;
