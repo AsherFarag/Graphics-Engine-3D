@@ -7,6 +7,11 @@ using std::string;
 #include <vector>
 #include <map>
 
+// --- AssImp ---
+#include "assimp/Importer.hpp"
+#include <assimp/scene.h>
+#include <assimp/cimport.h>
+
 // --- GLM ---
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
@@ -43,6 +48,7 @@ public:
 
 	// will fail if a mesh has already been loaded in to this instance
 	bool load(const char* filename, bool loadTextures = true, bool flipTextureV = false, RMaterial* a_Material = nullptr);
+	bool Load(const char* a_Filename, const char* a_FileType = ".obj", unsigned int pFlags = 0, bool loadTextures = true, bool flipTextureV = false, RMaterial* a_Material = nullptr);
 
 	// allow option to draw as patches for tessellation
 	void draw(bool usePatches = false);
@@ -60,14 +66,16 @@ private:
 
 	struct MeshChunk
 	{
-		unsigned int	vao, vbo, ibo;
-		unsigned int	indexCount;
-		int				materialID;
+		unsigned int	VAO, VBO, IBO;
+		unsigned int	IndexCount;
+		int				MaterialID;
 	};
 
 	string m_filename;
 	std::vector<MeshChunk>	m_meshChunks;
 	std::vector<RMaterial*>	m_materials;
+
+	void Initialise(MeshChunk* a_MeshChunk, unsigned int a_VertexCount, const Vertex* a_Vertices, unsigned int a_IndexCount = 0, unsigned int* a_Indices = nullptr);
 };
 
 } // namespace aie

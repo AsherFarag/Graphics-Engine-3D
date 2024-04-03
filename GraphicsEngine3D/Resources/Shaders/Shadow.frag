@@ -1,9 +1,12 @@
-// FRAGMENT SHADER – GENERATE SHADOW
-#version 410
+#version 330 core
+out vec4 FragColor;
+  
+in vec2 TexCoords;
 
-out float FragDepth;
+uniform sampler2D depthMap;
 
-void main() 
-{
-      FragDepth = gl_FragCoord.z;
+void main()
+{             
+    float depthValue = texture(depthMap, TexCoords).r;
+    FragColor = vec4(vec3(depthValue), 1.0);
 }

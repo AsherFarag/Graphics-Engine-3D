@@ -1,10 +1,10 @@
-// VERTEX SHADER – GENERATE SHADOW
-#version 410
+#version 330 core
+layout (location = 0) in vec3 aPos;
 
-layout(location = 0) in vec4 Position;
-uniform mat4 LightMatrix;
+uniform mat4 LightSpaceMatrix;
+uniform mat4 Model;
 
-void main() 
+void main()
 {
-      gl_Position = LightMatrix * Position;
-}
+    gl_Position = LightSpaceMatrix * Model * vec4(aPos, 1.0);
+} 

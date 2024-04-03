@@ -38,7 +38,7 @@ public:
     bool End();
 
     void Render(ACamera* Camera, mat4 ProjectedView);
-    void DrawShadows(ACamera* Camera);
+    void DrawShadows(ACamera* Camera, mat4 ProjectedView);
 
 
 #if IS_EDITOR
@@ -84,5 +84,8 @@ public:
 
     bool AddRenderCamera(ACamera* a_NewRenderCamera);
     bool RemoveRenderCamera(ACamera* a_NewRenderCamera);
+
+    aie::ShaderProgram* m_ShadowProgram;
+
 };
 

@@ -11,7 +11,7 @@
 
 RenderingManager::RenderingManager()
 {
-
+    m_ShadowProgram = ResourceManager::LoadShader("Shadow");
 }
 
 RenderingManager::~RenderingManager()
@@ -31,11 +31,14 @@ void RenderingManager::Draw()
         if (Camera->IsEnabled() == false)
             continue;
 
+        mat4 ProjectedView = Camera->GetProjectionMatrix() * Camera->GetViewMatrix();
+        DrawShadows(Camera, ProjectedView);
+
         // Begin Render
         Camera->BeginRender();
-        
+
         // Calculate the Projected View Matrix
-        mat4 ProjectedView = Camera->GetProjectionMatrix() * Camera->GetViewMatrix();
+
         Render(Camera, ProjectedView);
 
         // Finish Render
@@ -61,10 +64,10 @@ bool RenderingManager::End()
     return true;
 }
 
-void RenderingManager::Render(mat4 ProjectedView)
+void RenderingManager::Render(ACamera* Camera, mat4 ProjectedView)
 {
     // Calculate the Projected View Matrix
-    mat4 ProjectedView = Camera->GetProjectionMatrix() * Camera->GetViewMatrix();
+    //mat4 ProjectedView = Camera->GetProjectionMatrix() * Camera->GetViewMatrix();
 
     const int NumOfLights = m_Lights.size();
     vector<vec3>  LightPositions;
@@ -148,7 +151,7 @@ void RenderingManager::Render(mat4 ProjectedView)
 #pragma endregion
 }
 
-void RenderingManager::DrawShadows(ACamera* Camera)
+void RenderingManager::DrawShadows(ACamera* Camera, mat4 ProjectedView)
 {
     unsigned int DepthMapFBO;
     glGenFramebuffers(1, &DepthMapFBO);
@@ -169,11 +172,30 @@ void RenderingManager::DrawShadows(ACamera* Camera)
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    float near_plane = 1.0f, far_plane = 7.5f;
+    glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+
+    glm::mat4 lightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+
+    m_ShadowProgram->bind();
+    m_ShadowProgram->bindUniform("LightSpaceMatrix", lightSpaceMatrix);
+
     glViewport(0, 0, m_AmbientLight->m_ShadowResolution.x, m_AmbientLight->m_ShadowResolution.y);
     glBindFramebuffer(GL_FRAMEBUFFER, DepthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
     //ConfigureShaderAndMatrices();
-    Render(Camera);
+    //Render(Camera, ProjectedView);
+
+    for (auto MeshRenderer = m_MeshRenderers.begin(); MeshRenderer != m_MeshRenderers.end(); ++MeshRenderer)
+    {
+        m_ShadowProgram->bindUniform("Model", *(*MeshRenderer)->GetOwner()->GetTransform());
+        (*MeshRenderer)->GetMesh()->draw();
+    }
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

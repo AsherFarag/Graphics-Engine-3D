@@ -23,9 +23,9 @@ namespace aie
 OBJMesh::~OBJMesh()
 {
 	for (auto& c : m_meshChunks) {
-		glDeleteVertexArrays(1, &c.vao);
-		glDeleteBuffers(1, &c.vbo);
-		glDeleteBuffers(1, &c.ibo);
+		glDeleteVertexArrays(1, &c.VAO);
+		glDeleteBuffers(1, &c.VBO);
+		glDeleteBuffers(1, &c.IBO);
 	}
 }
 
@@ -112,21 +112,21 @@ bool OBJMesh::load(const char* filename, bool loadTextures /* = true */, bool fl
 		MeshChunk chunk;
 
 		// generate buffers
-		glGenBuffers(1, &chunk.vbo);
-		glGenBuffers(1, &chunk.ibo);
-		glGenVertexArrays(1, &chunk.vao);
+		glGenBuffers(1, &chunk.VBO);
+		glGenBuffers(1, &chunk.IBO);
+		glGenVertexArrays(1, &chunk.VAO);
 
 		// bind vertex array aka a mesh wrapper
-		glBindVertexArray(chunk.vao);
+		glBindVertexArray(chunk.VAO);
 
 		// set the index buffer data
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk.ibo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk.IBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER,
 					 s.mesh.indices.size() * sizeof(unsigned int),
 					 s.mesh.indices.data(), GL_STATIC_DRAW);
 
 		// store index count for rendering
-		chunk.indexCount = (unsigned int)s.mesh.indices.size();
+		chunk.IndexCount = (unsigned int)s.mesh.indices.size();
 
 		// create vertex data
 		std::vector<Vertex> vertices;
@@ -153,7 +153,7 @@ bool OBJMesh::load(const char* filename, bool loadTextures /* = true */, bool fl
 			calculateTangents(vertices, s.mesh.indices);
 
 		// bind vertex buffer
-		glBindBuffer(GL_ARRAY_BUFFER, chunk.vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, chunk.VBO);
 
 		// fill vertex buffer
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
@@ -180,13 +180,71 @@ bool OBJMesh::load(const char* filename, bool loadTextures /* = true */, bool fl
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		// set chunk material
-		chunk.materialID = s.mesh.material_ids.empty() ? -1 : s.mesh.material_ids[0];
+		chunk.MaterialID = s.mesh.material_ids.empty() ? -1 : s.mesh.material_ids[0];
 
 		m_meshChunks.push_back(chunk);
 	}
 	
 	// load obj
 	return true;
+}
+
+bool OBJMesh::Load(const char* a_Filename, const char* a_FileType, unsigned int pFlags, bool loadTextures, bool flipTextureV, RMaterial* a_Material)
+{
+	// === Step 1 ===
+	// Construct the full file path with file name
+
+	// Set File type extension
+	m_FileType = a_FileType;
+
+	// Construct the file path
+	m_FilePath = string(RESOURCE_PATH) + MESH_FILE_PATH + a_Filename;
+
+	// Get the name of the File
+	m_ResourceName = m_FilePath.substr(m_FilePath.find_last_of('/') + 1);
+
+	// Attach file extension
+	m_FilePath.append(m_FileType);
+
+	// Read vertices from the model
+	const aiScene* Scene = aiImportFile(m_FilePath.c_str(), pFlags);
+
+	m_meshChunks.resize(Scene->mNumMeshes);
+	for (int i = 0; i < Scene->mNumMeshes; i++)
+	{
+		aiMesh* Mesh = Scene->mMeshes[i];
+
+		// Excract indicies from the Mesh
+		int NumFaces = Mesh->mNumFaces;
+		std::vector<unsigned int> Indices;
+		for (int i = 0; i < NumFaces; i++)
+		{
+			Indices.push_back(Mesh->mFaces[i].mIndices[0]);
+			Indices.push_back(Mesh->mFaces[i].mIndices[2]);
+			Indices.push_back(Mesh->mFaces[i].mIndices[1]);
+			// generate a second triangle for quads
+			if (Mesh->mFaces[i].mNumIndices == 4)
+			{
+				Indices.push_back(Mesh->mFaces[i].mIndices[0]);
+				Indices.push_back(Mesh->mFaces[i].mIndices[3]);
+				Indices.push_back(Mesh->mFaces[i].mIndices[2]);
+			}
+		}
+
+		// Extract vertex data
+		int NumV = Mesh->mNumVertices;
+		Vertex* Vertices = new Vertex[NumV];
+		for (int i = 0; i < NumV; i++)
+		{
+			Vertices[i].position = glm::vec4(Mesh->mVertices[i].x,
+				Mesh->mVertices[i].y, Mesh->mVertices[i].z, 1);
+			// TODO, normals and UVs
+		}
+		Initialise(&m_meshChunks[i], NumV, Vertices, Indices.size(), Indices.data());
+		delete[] Vertices;
+	}
+
+	return false;
 }
 
 void OBJMesh::draw(bool usePatches /* = false */) {
@@ -239,8 +297,8 @@ void OBJMesh::draw(bool usePatches /* = false */) {
 	for (auto& c : m_meshChunks) {
 
 		// bind material
-		if (currentMaterial != c.materialID) {
-			currentMaterial = c.materialID;
+		if (currentMaterial != c.MaterialID) {
+			currentMaterial = c.MaterialID;
 			if (kaUniform >= 0)
 				glUniform3fv(kaUniform, 1, &m_materials[currentMaterial]->Ambient[0]);
 			if (kdUniform >= 0)											
@@ -298,11 +356,11 @@ void OBJMesh::draw(bool usePatches /* = false */) {
 		}
 
 		// bind and draw geometry
-		glBindVertexArray(c.vao);
+		glBindVertexArray(c.VAO);
 		if (usePatches)
-			glDrawElements(GL_PATCHES, c.indexCount, GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_PATCHES, c.IndexCount, GL_UNSIGNED_INT, 0);
 		else
-			glDrawElements(GL_TRIANGLES, c.indexCount, GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, c.IndexCount, GL_UNSIGNED_INT, 0);
 	}
 }
 
@@ -369,6 +427,50 @@ void OBJMesh::calculateTangents(std::vector<Vertex>& vertices, const std::vector
 	}
 
 	delete[] tan1;
+}
+
+void OBJMesh::Initialise(MeshChunk* a_MeshChunk, unsigned int a_VertexCount, const Vertex* a_Vertices, unsigned int a_IndexCount, unsigned int* a_Indices)
+{
+
+	// generate buffers
+	glGenBuffers(1, &a_MeshChunk->VBO);
+	glGenVertexArrays(1, &a_MeshChunk->VAO);
+
+	// bind vertex array aka a mesh wrapper
+	glBindVertexArray(a_MeshChunk->VAO);
+
+	// bind vertex buffer
+	glBindBuffer(GL_ARRAY_BUFFER, a_MeshChunk->VBO);
+
+	// fill vertex buffer
+	glBufferData(GL_ARRAY_BUFFER, a_VertexCount * sizeof(Vertex), a_Vertices, GL_STATIC_DRAW);
+
+	// enable first element as position
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+
+	// bind indices if there are any
+	if (a_IndexCount != 0) 
+	{
+		glGenBuffers(1, &a_MeshChunk->IBO);
+
+		// bind vertex buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, a_MeshChunk->IBO);
+
+		// fill vertex buffer
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, a_IndexCount * sizeof(unsigned int), a_Indices, GL_STATIC_DRAW);
+
+		a_MeshChunk->IndexCount = a_IndexCount;
+	}
+	else 
+	{
+		a_MeshChunk->IndexCount = a_VertexCount;
+	}
+
+	// unbind buffers
+	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 }
