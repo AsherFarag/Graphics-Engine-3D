@@ -21,6 +21,14 @@ RenderingManager::~RenderingManager()
 
 bool RenderingManager::StartUp()
 {
+    m_DepthShader = ResourceManager::LoadShader("Shadow");
+
+    glGenFramebuffers(1, &ShadowDepthMapFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, ShadowDepthMapFBO);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     return true;
 }       
 
@@ -174,6 +182,30 @@ void RenderingManager::DrawShadows(ACamera* Camera)
     glClear(GL_DEPTH_BUFFER_BIT);
     //ConfigureShaderAndMatrices();
     Render(Camera);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void RenderingManager::RenderShadow(ALight* Light, float AspectRatio)
+{
+    auto LightProjection = perspective(30.f, AspectRatio, 0.1f, 1000.f);
+    auto LightView = lookAt(Light->GetPosition(), Light->GetPosition() + Light->GetForward(), vec3(0, 1, 0));
+    auto LightProjectionView = LightProjection * LightView;
+
+    // Bind Depth Shader
+    m_DepthShader->bind();
+    m_DepthShader->bindUniform("LightSpace", LightProjectionView);
+
+    glViewport(0, 0, 1024, 1024);
+    glBindFramebuffer(GL_FRAMEBUFFER, ShadowDepthMapFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, Light->m_DepthMap, 0);
+    glClear(GL_DEPTH_BUFFER_BIT); // only drawing depth map
+
+    for (auto Mesh : m_MeshRenderers)
+    {
+        m_DepthShader->bindUniform("ModelMatrix", *Mesh->GetOwner()->GetTransform());
+        Mesh->GetMesh()->draw();
+    }
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

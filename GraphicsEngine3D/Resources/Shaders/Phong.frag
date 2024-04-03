@@ -30,6 +30,25 @@ uniform int   NumOfLights;
 uniform vec3  PointLightColors[MAX_LIGHTS];
 uniform vec3  PointLightPositions[MAX_LIGHTS];
 uniform float PointLightFallOffs[MAX_LIGHTS];
+uniform mat4  PointLightSpaces[MAX_LIGHTS];
+
+// --- Shadows ---
+uniform sampler2D PointLightShadowMaps[MAX_LIGHTS];
+
+float GetVisibility(vec3 FragPosLightSpace, vec3 Normal, vec3 LightDir, sampler2D ShadowMap)
+{
+      // Perspective Divide
+      vec3 ProjCoords = FragPosLightSpace.xyz / FragPosLightSpace.z;
+
+      ProjCoords = ProjCoords * 0.5 + 0.5;
+
+      float Visibility = 1.f;
+
+      if (texture(ShadowMap, ProjCoords.xy) < ProjCoords.z)
+          Visibility - 0.5f;
+      
+      return Visibility;
+}
 
 vec3 Diffuse(vec3 Colour, vec3 Normal, vec3 Direction)
 {
@@ -79,7 +98,12 @@ void main()
             Distance = Distance * PointLightFallOffs[i];
             vec3 Colour = PointLightColors[i] / (Distance);
 
-            DiffuseTotal += Diffuse(Colour, N, Direction);
+            vec4 FragPosLightSpace = PointLightSpaces[i] * gl_FragCoord;
+            
+            // Shadow
+            float Visibility = GetVisibility(FragPosLightSpace N, Direction, PointLightShadowMaps[i]);
+
+            DiffuseTotal += Visibility * Diffuse(Colour, N, Direction);
             SpecularTotal += Specular(Colour, N, Direction, V);
       }
 
@@ -87,6 +111,8 @@ void main()
       vec3 Ambient  = AmbientLight * Ka * TextureDiffuse;
       vec3 Diffuse  = Kd * TextureDiffuse  * DiffuseTotal;
       vec3 Specular = Ks * TextureSpecular * SpecularTotal;
+
+
 
       // Output Colour
       FragColour = vec4( Ambient + Diffuse + Specular, 1 );

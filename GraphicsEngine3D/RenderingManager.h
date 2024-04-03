@@ -37,8 +37,19 @@ public:
     void Draw();
     bool End();
 
-    void Render(ACamera* Camera, mat4 ProjectedView);
+
     void DrawShadows(ACamera* Camera);
+
+#pragma region Render Passes
+
+protected:
+    // Generate Depth Map
+    void RenderShadow(ALight* Light, float AspectRatio);
+    // Render 
+    void Render(ACamera* Camera, mat4 ProjectedView);
+
+#pragma endregion
+
 
 
 #if IS_EDITOR
@@ -69,6 +80,9 @@ protected:
 
     bool AddRenderer(URenderer* a_Renderer);
     bool RemoveRenderer(URenderer* a_Renderer);
+
+    aie::ShaderProgram* m_DepthShader;
+    unsigned int ShadowDepthMapFBO = 0;
 
 public:
     bool AddLight(ALight* a_Light);

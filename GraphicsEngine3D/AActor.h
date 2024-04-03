@@ -16,6 +16,8 @@ class UBaseComponent;
 class AActor :
     public UBaseObject
 {
+	INSPECTABLE;
+
 public:
     AActor();
     virtual ~AActor();
@@ -57,6 +59,8 @@ public:
 	void SetScale(vec3 a_Scale) { m_Scale = a_Scale; m_Dirty = true; }
 
 	void UpdateTransform(bool a_Force = false);
+
+	vec3 GetForward() { return vec3(cos(m_Rotation.y) * cos(m_Rotation.x), sin(m_Rotation.y) * cos(m_Rotation.x), sin(m_Rotation.x)); }
 
 	#pragma endregion
 
@@ -129,13 +133,5 @@ protected:
 	virtual void OnDraw_ImGui();
 
 #pragma endregion
-
-#if IS_EDITOR
-
-	// Allow the Inspector to access properties
-public:
-	friend class Inspector;
-
-#endif
 };
 

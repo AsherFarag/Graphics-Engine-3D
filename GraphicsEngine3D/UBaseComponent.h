@@ -21,6 +21,7 @@ protected:
     virtual void OnDestroyed() {};
 
 public:
+    AActor* GetOwner() { return m_Owner; }
     void SetOwner(AActor* a_Owner);
 
 #pragma region ImGui

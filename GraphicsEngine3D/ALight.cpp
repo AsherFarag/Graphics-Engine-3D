@@ -29,6 +29,17 @@ void ALight::SetAmbient(bool a_IsAmbient)
 	//}
 }
 
+void ALight::GenerateDepthMap(unsigned int a_Resolution)
+{
+	glGenTextures(1, &m_DepthMap);
+	glBindTexture(GL_TEXTURE_2D, m_DepthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, a_Resolution, a_Resolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+}
+
 void ALight::OnDestroyed()
 {
 	if (IsAmbient())

@@ -1,6 +1,9 @@
 #pragma once
 #include "AActor.h"
 
+// --- OpenGL ---
+#include "gl_core_4_4.h"
+
 class ALight :
     public AActor
 {
@@ -33,13 +36,12 @@ protected:
 
     vec2 m_ShadowResolution;
 
+public:
+    GLuint m_DepthMap{ 0 };
+    void GenerateDepthMap(unsigned int a_Resolution);
+
 protected:
     virtual void OnDestroyed() override;
-
-    struct ShadowBuffer
-    {
-
-    };
 
 #pragma region ImGui
 
