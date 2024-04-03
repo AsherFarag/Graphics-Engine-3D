@@ -6,7 +6,7 @@ using std::vector;
 using std::list;
 
 // --- AIE ---
-#include "RenderTarget.h"
+#include "AIERenderTarget.h"
 
 // --- GLM ---
 #include "glm/trigonometric.hpp"
@@ -24,7 +24,7 @@ class ACamera :
     public AActor
 {
 public:
-    ACamera(aie::RenderTarget* a_RenderTarget = nullptr);
+    ACamera(aie::AIERenderTarget* a_RenderTarget = nullptr);
     virtual ~ACamera();
 
     friend class RenderingManager;
@@ -37,8 +37,6 @@ public:
     float m_Phi = 0.f; // Up & Down
 
 protected:
-    vec2 m_LastMousePosition;
-
     vec3 m_Forward = vec3();
 
     float m_AspectRatio = 16 / 9;
@@ -50,7 +48,7 @@ protected:
     mat4 m_ProjectionViewTransform;
     
     // Owner
-    aie::RenderTarget* m_RenderTarget = nullptr;
+    aie::AIERenderTarget* m_RenderTarget = nullptr;
 
     bool m_UsePostProcessing = false;
 
@@ -94,8 +92,8 @@ public:
 
     vec3 GetForward() { return m_Forward; }
 
-    aie::RenderTarget* GetRenderTarget() { return m_RenderTarget; }
-    void SetRenderTarget(aie::RenderTarget* a_RenderTarget);
+    aie::AIERenderTarget* GetRenderTarget() { return m_RenderTarget; }
+    void SetRenderTarget(aie::AIERenderTarget* a_RenderTarget);
 
     bool IsUsingPostProcessing() const { return m_UsePostProcessing; }
     void UsePostProcessing(bool Use) { m_UsePostProcessing = Use; }

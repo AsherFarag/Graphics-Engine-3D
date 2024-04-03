@@ -184,7 +184,7 @@
     <ClCompile Include="imgui_glfw3.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Renderer2D.cpp" />
-    <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="AIERenderTarget.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -198,7 +198,7 @@
     <ClInclude Include="imgui_glfw3.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Renderer2D.h" />
-    <ClInclude Include="RenderTarget.h" />
+    <ClInclude Include="AIERenderTarget.h" />
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,20 +2,20 @@
 #include "ImGui_Window.h"
 
 // --- AIE --- 
-#include "RenderTarget.h"
+#include "AIERenderTarget.h"
 
 class ImGui_Viewport :
     public ImGui_Window
 {
 public:
 	ImGui_Viewport();
-	ImGui_Viewport(aie::RenderTarget* a_RenderTarget);
+	ImGui_Viewport(aie::AIERenderTarget* a_RenderTarget);
 	virtual ~ImGui_Viewport();
 
-	void SetRenderTarget(aie::RenderTarget* a_NewRenderTarget) { m_RenderTarget = a_NewRenderTarget; }
+	void SetRenderTarget(aie::AIERenderTarget* a_NewRenderTarget) { m_RenderTarget = a_NewRenderTarget; }
 
 protected:
-	aie::RenderTarget* m_RenderTarget;
+	aie::AIERenderTarget* m_RenderTarget;
 
 protected:
 	virtual void BeginDraw();

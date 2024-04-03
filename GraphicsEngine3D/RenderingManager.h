@@ -37,7 +37,7 @@ public:
     void Draw();
     bool End();
 
-    void Render(ACamera* Camera, mat4 ProjectedView);
+    void Render(ACamera* Camera);
     void DrawShadows(ACamera* Camera);
 
 

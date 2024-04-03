@@ -1,17 +1,17 @@
-#include "RenderTarget.h"
+#include "AIERenderTarget.h"
 #include "gl_core_4_4.h"
 #include <vector>
 
 namespace aie {
 
-RenderTarget::RenderTarget()
+AIERenderTarget::AIERenderTarget()
 	: m_width(0),
 	m_height(0),
 	m_targetCount(0),
 	m_targets(nullptr) {
 }
 
-RenderTarget::RenderTarget(unsigned int targetCount, unsigned int width, unsigned int height)
+AIERenderTarget::AIERenderTarget(unsigned int targetCount, unsigned int width, unsigned int height)
 	: m_width(0),
 	m_height(0),
 	m_targetCount(0),
@@ -21,7 +21,7 @@ RenderTarget::RenderTarget(unsigned int targetCount, unsigned int width, unsigne
 	initialise(targetCount, width, height);
 }
 
-bool RenderTarget::initialise(unsigned int targetCount, unsigned int width, unsigned int height,bool use_depth_texture) {
+bool AIERenderTarget::initialise(unsigned int targetCount, unsigned int width, unsigned int height,bool use_depth_texture) {
 
 	//use_depth_texture = false;
 
@@ -100,7 +100,7 @@ bool RenderTarget::initialise(unsigned int targetCount, unsigned int width, unsi
 	return true;
 }
 
-RenderTarget::~RenderTarget() {
+AIERenderTarget::~AIERenderTarget() {
 	delete[] m_targets;
     if (m_depthTarget)
         glDeleteTextures(1, &m_depthTarget);
@@ -109,15 +109,15 @@ RenderTarget::~RenderTarget() {
 	glDeleteFramebuffers(1, &m_fbo);
 }
 
-void RenderTarget::bind() {
+void AIERenderTarget::bind() {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 }
 
-void RenderTarget::unbind() {
+void AIERenderTarget::unbind() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void RenderTarget::bindRead() const
+void AIERenderTarget::bindRead() const
 {
 	for (int i = 0; i < m_targetCount; i++) 
 	{
@@ -129,7 +129,7 @@ void RenderTarget::bindRead() const
 	glBindTexture(GL_TEXTURE_2D, m_depthTarget);
 }
 
-void RenderTarget::rescaleFrameBuffer(float width, float height)
+void AIERenderTarget::rescaleFrameBuffer(float width, float height)
 {
 	// Rescale Depth
 	if (m_rbo)

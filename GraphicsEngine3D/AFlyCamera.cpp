@@ -8,7 +8,7 @@
 #include "World.h"
 #include "Input.h"
 
-AFlyCamera::AFlyCamera(aie::RenderTarget* a_RenderTarget)
+AFlyCamera::AFlyCamera(aie::AIERenderTarget* a_RenderTarget)
 	: ACamera(a_RenderTarget)
 {
 }

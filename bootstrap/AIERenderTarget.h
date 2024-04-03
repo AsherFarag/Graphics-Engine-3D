@@ -4,12 +4,12 @@
 
 namespace aie {
 	
-class RenderTarget {
+class AIERenderTarget {
 public:
 
-	RenderTarget();
-	RenderTarget(unsigned int targetCount, unsigned int width, unsigned int height);
-	virtual ~RenderTarget();
+	AIERenderTarget();
+	AIERenderTarget(unsigned int targetCount, unsigned int width, unsigned int height);
+	virtual ~AIERenderTarget();
 
 	bool initialise(unsigned int targetCount, unsigned int width, unsigned int height,bool use_depth = false);
 

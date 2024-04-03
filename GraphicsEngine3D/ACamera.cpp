@@ -18,7 +18,7 @@
 #include "UMeshRenderer.h"
 #include "ResourceManager.h"
 
-ACamera::ACamera(aie::RenderTarget* a_RenderTarget)
+ACamera::ACamera(aie::AIERenderTarget* a_RenderTarget)
 	: AActor()
 {
 	m_Name = "Camera";
@@ -40,7 +40,7 @@ ACamera::ACamera(aie::RenderTarget* a_RenderTarget)
 #if IS_EDITOR
     m_RenderTarget = a_RenderTarget;
     if (m_RenderTarget == nullptr)
-        m_RenderTarget = new aie::RenderTarget();
+        m_RenderTarget = new aie::AIERenderTarget();
 
     m_Viewport.SetName((string("Viewport##") + std::to_string(ID)).c_str());
     m_Viewport.SetRenderTarget(m_RenderTarget);
@@ -192,7 +192,7 @@ void ACamera::SetAspectRatio(float a_Width, float a_Height)
 	SetAspectRatio(a_Width / a_Height);
 }
 
-void ACamera::SetRenderTarget(aie::RenderTarget* a_RenderTarget)
+void ACamera::SetRenderTarget(aie::AIERenderTarget* a_RenderTarget)
 {
     m_RenderTarget = a_RenderTarget; 
 #if IS_EDITOR

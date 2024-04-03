@@ -14,24 +14,19 @@
 
 #if IS_EDITOR
 
-class InspectorContext
-{
-public:
-
-	void SetStartCollapsed(bool a_Val)
-	{
-
-	}
-};
-
 struct Inspector
 {
-	void DrawProperty(const char* Format, int& Property)
+	void DrawProperty(int& Property, const char* Format = "%i")
 	{
 		ImGui::Text(Format, Property);
 	}
 
-	void DrawProperty(const char* Format, float& Property)
+	void DrawProperty(float& Property, const char* Format = "%.3f")
+	{
+		ImGui::Text(Format, Property);
+	}
+
+	void DrawProperty(bool& Property, const char* Format = "%i")
 	{
 		ImGui::Text(Format, Property);
 	}
@@ -40,27 +35,29 @@ struct Inspector
 	void DrawProperty(const char* Name, std::vector< T >& Property)
 	{
 		// Draw a property for size
-		DrawProperty("Size", Property.size());
+		DrawProperty(Property.size(), "Size: %i");
 
 		int Index = 0;
-
-		for (auto& Prop : Property)
+		if (ImGui::TreeNode("Components"))
 		{
-			std::string CurrentIndex = std::to_string(Index++);
-			std::string ElementName = ("Element " + CurrentIndex).c_str();
+			for (auto& Prop : Property)
+			{
+				std::string CurrentIndex = std::to_string(Index++);
+				std::string ElementName = ("Element %i:" + CurrentIndex).c_str();
 
-			DrawProperty(ElementName.c_str(), Prop, Num);
+				DrawProperty(ElementName.c_str(), Prop, Num);
+			}
 		}
 	}
 
-	void DrawProperty(InspectorContext& Context, const char* Name, UMeshRenderer& Property)
+	void DrawProperty(const char* Name, UMeshRenderer& Property)
 	{
 
 	}
 
 	#pragma region Actors
 
-	void DrawProperty(InspectorContext& Context, const char* Name, AActor& Property)
+	void DrawProperty(const char* Name, AActor& Property)
 	{
 
 	}

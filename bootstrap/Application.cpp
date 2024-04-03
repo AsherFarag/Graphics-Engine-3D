@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Input.h"
 #include "imgui_glfw3.h"
-#include "RenderTarget.h"
+#include "AIERenderTarget.h"
 
 namespace aie {
 

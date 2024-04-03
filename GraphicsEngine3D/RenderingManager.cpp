@@ -33,10 +33,8 @@ void RenderingManager::Draw()
 
         // Begin Render
         Camera->BeginRender();
-        
-        // Calculate the Projected View Matrix
-        mat4 ProjectedView = Camera->GetProjectionMatrix() * Camera->GetViewMatrix();
-        Render(Camera, ProjectedView);
+
+        Render(Camera);
 
         // Finish Render
         Camera->EndRender();
@@ -61,7 +59,7 @@ bool RenderingManager::End()
     return true;
 }
 
-void RenderingManager::Render(mat4 ProjectedView)
+void RenderingManager::Render(ACamera* Camera)
 {
     // Calculate the Projected View Matrix
     mat4 ProjectedView = Camera->GetProjectionMatrix() * Camera->GetViewMatrix();

@@ -144,7 +144,7 @@
     <Position X="15.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QgAAADAAAIAAAAABIAGAAAAAABAAQQCAACAAAAEABAA=</HashCode>
-      <FileName>RenderTarget.h</FileName>
+      <FileName>AIERenderTarget.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="aie::Shader" Collapsed="true">

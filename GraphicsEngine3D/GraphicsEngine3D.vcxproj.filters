@@ -177,6 +177,12 @@
     <ClCompile Include="Editor.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="RTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsEngine3DApp.h">
@@ -233,9 +239,6 @@
     <ClInclude Include="AStaticMesh.h">
       <Filter>Header Files\Engine\Objects\Actors\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Header Files\Engine\Objects\Actors\Lights</Filter>
-    </ClInclude>
     <ClInclude Include="ALight.h">
       <Filter>Header Files\Engine\Objects\Actors\Lights</Filter>
     </ClInclude>
@@ -271,6 +274,12 @@
     </ClInclude>
     <ClInclude Include="Property.h">
       <Filter>Header Files\Engine\Resources\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="RTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTarget.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

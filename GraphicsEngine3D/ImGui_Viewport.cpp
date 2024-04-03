@@ -8,7 +8,7 @@ ImGui_Viewport::ImGui_Viewport()
 {
 }
 
-ImGui_Viewport::ImGui_Viewport(aie::RenderTarget* a_RenderTarget)
+ImGui_Viewport::ImGui_Viewport(aie::AIERenderTarget* a_RenderTarget)
 {
 	m_WindowName = "Viewport";
 	SetRenderTarget(a_RenderTarget);

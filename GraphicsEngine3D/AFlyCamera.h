@@ -4,12 +4,13 @@ class AFlyCamera :
     public ACamera
 {
 public:
-    AFlyCamera(aie::RenderTarget* a_RenderTarget = nullptr);
+    AFlyCamera(aie::AIERenderTarget* a_RenderTarget = nullptr);
     virtual ~AFlyCamera();
 
     virtual void Update() override;
 
 public:
+    vec2 m_LastMousePosition;
 
     // Position Move Speed
     float m_ForwardMoveSpeed = 1.f;
