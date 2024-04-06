@@ -21,7 +21,9 @@ public:
     float m_MaxMoveSpeedMultiplier = 100.f;
 
     float m_LookSensitivity = 1.f;
-    float m_MouseScrollSensitivity = 0.15f;
+    float m_MouseScrollSensitivity = 1.f;
+
+private:
     float m_LastMouseScroll = 0.f;
 
 #pragma region ImGui

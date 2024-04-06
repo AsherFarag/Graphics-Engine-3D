@@ -178,10 +178,10 @@
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
     <ClCompile Include="RTexture.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Engine\Resources</Filter>
     </ClCompile>
     <ClCompile Include="RenderTarget.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -276,10 +276,10 @@
       <Filter>Header Files\Engine\Resources\Material</Filter>
     </ClInclude>
     <ClInclude Include="RTexture.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Engine\Resources</Filter>
     </ClInclude>
     <ClInclude Include="RenderTarget.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Engine\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

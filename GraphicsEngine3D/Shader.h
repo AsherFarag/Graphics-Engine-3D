@@ -24,7 +24,8 @@ enum eShaderStage : unsigned int {
 };
 
 // individual sharable shader stages
-class Shader {
+class Shader 
+{
 public:
 
 	Shader() : m_stage(0), m_handle(0), m_lastError(nullptr) {}
@@ -50,7 +51,8 @@ protected:
 };
 
 // combines shaders together into a single program for the GPU
-class ShaderProgram {
+class ShaderProgram
+{
 public:
 
 	ShaderProgram() : m_program(0), m_lastError(nullptr) {

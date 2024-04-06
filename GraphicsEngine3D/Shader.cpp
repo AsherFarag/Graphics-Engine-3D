@@ -110,7 +110,8 @@ void ShaderProgram::attachShader(const std::shared_ptr<Shader>& shader) {
 	m_shaders[shader->getStage()] = shader;
 }
 
-bool ShaderProgram::link() {
+bool ShaderProgram::link() 
+{
 	m_program = glCreateProgram();
 	for (auto& s : m_shaders)
 		if (s != nullptr)
@@ -131,7 +132,8 @@ bool ShaderProgram::link() {
 	return true;
 }
 
-void ShaderProgram::bind() {
+void ShaderProgram::bind() 
+{
 	assert(m_program > 0 && "Invalid shader program");
 	glUseProgram(m_program);
 }

@@ -27,11 +27,18 @@ void AFlyCamera::Update()
 
 #pragma region Movement Input
 
-	// Change the Speed Multiplier if the user has scrolled the mouse wheel
-	if (Input->isKeyDown(aie::INPUT_KEY_LEFT_SHIFT))
-		m_MoveSpeedMultiplier -= ((m_LastMouseScroll - Input->getMouseScroll()) * m_MouseScrollSensitivity) * 25.f;
+	// Scroll Input
+	if (Input->isKeyDown(aie::INPUT_KEY_LEFT_SHIFT) && Input->getMouseScroll() != m_LastMouseScroll)
+	{
+		constexpr float ScrollSpeedMultiplier = 25.f;
+		vec3 Translation = m_Forward * ScrollSpeedMultiplier * DeltaTime;
+		// Get the direction from the scroll amount
+		m_Position += Translation * ((m_LastMouseScroll - Input->getMouseScroll()) < 0.f ? 1.f : -1.f);
+	}
 	else
+	{
 		m_MoveSpeedMultiplier -= (m_LastMouseScroll - Input->getMouseScroll()) * m_MouseScrollSensitivity;
+	}
 
 	m_MoveSpeedMultiplier = clamp(m_MoveSpeedMultiplier, 0.f, m_MaxMoveSpeedMultiplier);
 	m_LastMouseScroll = Input->getMouseScroll();

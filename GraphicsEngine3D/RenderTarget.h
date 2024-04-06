@@ -9,6 +9,15 @@
 // --- Engine ---
 #include "RTexture.h"
 
+/*
+*	class RenderTarget
+*	- Description:
+*	  Stores buffers for colour attachments and stencils with OpenGL
+*	- Use:
+*	  Can be used to direct rendering into a buffer inside this class.
+*	  These buffers are useful for applying post-processing and other effects.
+*/
+
 class RenderTarget
 {
 public:
@@ -27,5 +36,13 @@ private:
 	RTexture m_DepthStencil;
 	std::vector<RTexture> m_ColourAttachments;
 
+	// Getters & Setters
+public:
+	unsigned int GetWidth() { return m_Width; }
+	unsigned int GetHeight() { return m_Height; }
+	void SetWidth(unsigned int a_Width) { m_Width = a_Width; }
+	void SetHeight(unsigned int a_Height) { m_Height = a_Height; }
+
+	bool HasDepth() { return HasDepthAndStencil; }
 };
 

@@ -15,12 +15,7 @@
 #include "RenderingManager.h"
 #include "ResourceManager.h"
 
-#if IS_EDITOR
 
-#include "Editor.h"
-#include "ImGui_DebugLog.h"
-
-#endif
 
 World::World()
 {
