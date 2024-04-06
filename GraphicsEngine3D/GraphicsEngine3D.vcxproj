@@ -196,8 +196,10 @@
     <ClCompile Include="UBaseComponent.cpp" />
     <ClCompile Include="UBaseObject.cpp" />
     <ClCompile Include="RMesh.cpp" />
+    <ClCompile Include="ULight.cpp" />
     <ClCompile Include="UMeshRenderer.cpp" />
     <ClCompile Include="URenderer.cpp" />
+    <ClCompile Include="UTransform.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -230,8 +232,10 @@
     <ClInclude Include="UBaseComponent.h" />
     <ClInclude Include="UBaseObject.h" />
     <ClInclude Include="RMesh.h" />
+    <ClInclude Include="ULight.h" />
     <ClInclude Include="UMeshRenderer.h" />
     <ClInclude Include="URenderer.h" />
+    <ClInclude Include="UTransform.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>

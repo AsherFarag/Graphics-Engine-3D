@@ -10,6 +10,8 @@ AActor::AActor()
 {
 	m_Name = "Actor";
 	m_World->AddActor(this);
+
+	m_Transform = AddComponent<UTransform>();
 }
 
 AActor::~AActor()
@@ -18,20 +20,39 @@ AActor::~AActor()
 
 void AActor::Update()
 {
-	UpdateTransform();
 }
 
-void AActor::UpdateTransform(bool a_Force)
+vec3& AActor::GetActorPosition()
 {
-	if (m_Dirty || a_Force)
-	{
-		m_Transform = mat4(1);
-		m_Transform = translate(m_Transform, m_Position);
-		m_Transform = rotate(m_Transform, radians(m_Rotation.x), vec3(1.f, 0.f, 0.f));
-		m_Transform = rotate(m_Transform, radians(m_Rotation.y), vec3(0.f, 1.f, 0.f));
-		m_Transform = rotate(m_Transform, radians(m_Rotation.z), vec3(0.f, 0.f, 1.f));
-		m_Transform = scale(m_Transform, m_Scale);
-	}
+	return m_Transform->GetPosition();
+}
+
+quat& AActor::GetActorRotation()
+{
+	return m_Transform->GetRotation();
+}
+vec3& AActor::GetActorRotationEular()
+{
+	return m_Transform->GetRotationEular();
+}
+vec3& AActor::GetActorScale()
+{
+	return m_Transform->GetScale();
+}
+
+void AActor::SetActorPosition(const vec3& a_Position)
+{
+	m_Transform->SetPosition(a_Position);
+}
+
+void AActor::SetActorRotation(const quat& a_Rotation)
+{
+	m_Transform->SetRotation(a_Rotation);
+}
+
+void AActor::SetActorScale(const vec3& a_Scale)
+{
+	m_Transform->SetScale(a_Scale);
 }
 
 void AActor::SetActive(bool NewActive, bool PropagateToChildren, bool PropagateToComponents)
@@ -82,20 +103,20 @@ void AActor::Draw_ImGui()
 		ImGui::TreePop();
 	}
 
-	#pragma region Transform
+	//#pragma region Transform
 
-	if (ImGui::DragFloatXYZ(false, "Position", &m_Position[0], 0.01f))
-		SetPosition(m_Position);
+	//if (ImGui::DragFloatXYZ(false, "Position", &m_Position[0], 0.01f))
+	//	SetActorPosition(m_Position);
 
-	static float Rotation[] = { 0.0, 0.0, 0.0 };
-	if (ImGui::DragFloatXYZ(false, "Rotation", &m_Rotation[0], 0.1f))
-		SetRotation(m_Rotation);
+	//static float Rotation[] = { 0.0, 0.0, 0.0 };
+	//if (ImGui::DragFloatXYZ(false, "Rotation", &m_Rotation[0], 0.1f))
+	//	SetActorRotation(m_Rotation);
 
-	static float Scale[] = { 1, 1, 1 };
-	if (ImGui::DragFloatXYZ(false, "Scale", &m_Scale[0], 0.01f))
-		SetScale(m_Scale);
+	//static float Scale[] = { 1, 1, 1 };
+	//if (ImGui::DragFloatXYZ(false, "Scale", &m_Scale[0], 0.01f))
+	//	SetActorScale(m_Scale);
 
-	#pragma endregion
+	//#pragma endregion
 
 	OnDraw_ImGui();
 
@@ -113,6 +134,3 @@ void AActor::Draw_ImGui()
 	}
 }
 
-void AActor::OnDraw_ImGui()
-{
-}

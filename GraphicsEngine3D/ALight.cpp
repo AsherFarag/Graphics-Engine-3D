@@ -43,7 +43,7 @@ void ALight::OnDraw_ImGui()
 
 	ImGui::ColorEdit3("Colour", &m_Colour[0]);
 	ImGui::DragFloat("Intensity", &m_Intensity, 0.01f);
-	m_Intensity = max(0.f, m_Intensity);
+	m_Intensity = glm::max(0.f, m_Intensity);
 
 	ImGui::SliderFloat("Fall Off", &m_FallOff, 1.f, 5.f);
 

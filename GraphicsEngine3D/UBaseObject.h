@@ -1,7 +1,16 @@
 #pragma once
+// --- STD ---
+#include <typeinfo>
+
 // --- GLM ---
 #include <glm/mat4x4.hpp>
-using namespace glm;
+using glm::vec2;
+using glm::vec3;
+using glm::vec4;
+using glm::mat2;
+using glm::mat3;
+using glm::mat4;
+using glm::quat;
 
 // --- Engine ---
 #include "GraphicsEngine3DApp.h"
@@ -9,36 +18,26 @@ using namespace glm;
 
 class UBaseObject
 {
+	INSPECTABLE;
+
 public:
 	UBaseObject();
 	virtual ~UBaseObject();
 
-	size_t GetId() const { return ID; }
-	bool Destroy(float a_LifeTime = -1.f);
-
-#if IS_EDITOR
-
-	// Allow the Inspector to access properties
-public:
-	friend class Inspector;
-
-#endif
+	static constexpr auto& GetParentClass() { return typeid(UBaseObject); }
 
 protected:
-	// A Reference to the engine instance
-	GraphicsEngine3DApp* Engine = nullptr;
-	// A reference to the world that owns this object
-	World* m_World = nullptr;
+	GraphicsEngine3DApp* Engine = nullptr; 	// A Reference to the engine instance
+	World* m_World = nullptr;			 	// A reference to the world that owns this object
 
+	unsigned int ID;
 	bool m_Enabled = false;
+	bool m_Valid = true;
+
+protected:
 	virtual void OnEnabled() {};
 	virtual void OnDisabled() {};
-
-	// An object is valid if it is not pending to be destroyed
-	bool m_Valid = true;
 	virtual void OnDestroyed() {};
-
-	int32 ID;
 
 public:
 	World* GetWorld() const;
@@ -48,6 +47,9 @@ public:
 	void SetEnabled(bool a_Enabled);
 
 	bool IsValid() const { return m_Valid; }
+
+	size_t GetId() const { return ID; }
+	bool Destroy(float a_LifeTime = -1.f);
 
 };
 

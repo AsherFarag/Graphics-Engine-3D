@@ -33,18 +33,18 @@ void AFlyCamera::Update()
 		constexpr float ScrollSpeedMultiplier = 25.f;
 		vec3 Translation = m_Forward * ScrollSpeedMultiplier * DeltaTime;
 		// Get the direction from the scroll amount
-		m_Position += Translation * ((m_LastMouseScroll - Input->getMouseScroll()) < 0.f ? 1.f : -1.f);
+		GetActorPosition() += Translation * ((m_LastMouseScroll - Input->getMouseScroll()) < 0.f ? 1.f : -1.f);
 	}
 	else
 	{
 		m_MoveSpeedMultiplier -= (m_LastMouseScroll - Input->getMouseScroll()) * m_MouseScrollSensitivity;
 	}
 
-	m_MoveSpeedMultiplier = clamp(m_MoveSpeedMultiplier, 0.f, m_MaxMoveSpeedMultiplier);
+	m_MoveSpeedMultiplier = glm::clamp(m_MoveSpeedMultiplier, 0.f, m_MaxMoveSpeedMultiplier);
 	m_LastMouseScroll = Input->getMouseScroll();
 
-	float ThetaR = radians(m_Rotation.y);
-	float PhiR = radians(m_Rotation.z);
+	float ThetaR = glm::radians(GetActorRotation().y);
+	float PhiR = glm::radians(GetActorRotation().z);
 
 	constexpr vec3 Up(0.f, 1.f, 0.f);
 	vec3 Right = cross(m_Forward, Up);
@@ -52,35 +52,35 @@ void AFlyCamera::Update()
 
 	if (Input->isKeyDown(aie::INPUT_KEY_W))
 	{
-		m_Position += m_Forward * m_ForwardMoveSpeed * DeltaTime * m_MoveSpeedMultiplier;
+		GetActorPosition() += m_Forward * m_ForwardMoveSpeed * DeltaTime * m_MoveSpeedMultiplier;
 	}
 	if (Input->isKeyDown(aie::INPUT_KEY_S))
 	{
-		m_Position -= m_Forward * m_ForwardMoveSpeed * DeltaTime * m_MoveSpeedMultiplier;
+		GetActorPosition() -= m_Forward * m_ForwardMoveSpeed * DeltaTime * m_MoveSpeedMultiplier;
 	}
 	if (Input->isKeyDown(aie::INPUT_KEY_D))
 	{
-		m_Position += Right * m_StrafeMoveSpeed * DeltaTime * m_MoveSpeedMultiplier;
+		GetActorPosition() += Right * m_StrafeMoveSpeed * DeltaTime * m_MoveSpeedMultiplier;
 	}
 	if (Input->isKeyDown(aie::INPUT_KEY_A))
 	{
-		m_Position -= Right * m_StrafeMoveSpeed * DeltaTime * m_MoveSpeedMultiplier;
+		GetActorPosition() -= Right * m_StrafeMoveSpeed * DeltaTime * m_MoveSpeedMultiplier;
 	}
 	if (Input->isKeyDown(aie::INPUT_KEY_UP))
 	{
-		m_Position += Up * m_ElevationMoveSpeed * DeltaTime * m_MoveSpeedMultiplier;
+		GetActorPosition() += Up * m_ElevationMoveSpeed * DeltaTime * m_MoveSpeedMultiplier;
 	}
 	if (Input->isKeyDown(aie::INPUT_KEY_DOWN))
 	{
-		m_Position -= Up * m_ElevationMoveSpeed * DeltaTime * m_MoveSpeedMultiplier;
+		GetActorPosition() -= Up * m_ElevationMoveSpeed * DeltaTime * m_MoveSpeedMultiplier;
 	}
 	if (Input->isKeyDown(aie::INPUT_KEY_RIGHT))
 	{
-		m_Rotation.y -= m_LookSensitivity * DeltaTime;
+		GetActorRotation().y -= m_LookSensitivity * DeltaTime;
 	}
 	if (Input->isKeyDown(aie::INPUT_KEY_LEFT))
 	{
-		m_Rotation.y += m_LookSensitivity * DeltaTime;
+		GetActorRotation().y += m_LookSensitivity * DeltaTime;
 	}
 
 	float MouseDeltaX = Input->getMouseX() - m_LastMousePosition.x;
@@ -95,7 +95,7 @@ void AFlyCamera::Update()
 
 			glm::quat Quat = normalize(cross(angleAxis(PitchDelta, Right), angleAxis(-YawDelta, Up)));
 			m_Forward = rotate(Quat, m_Forward);
-			m_Rotation = vec3(Quat.x * Quat.w, Quat.y * Quat.w, Quat.z * Quat.w);
+			GetActorRotation() = vec3(Quat.x * Quat.w, Quat.y * Quat.w, Quat.z * Quat.w);
 		}
 
 		//m_Rotation.y -= m_LookSensitivity * (MouseX - m_LastMousePosition.x) * DeltaTime;
@@ -106,6 +106,7 @@ void AFlyCamera::Update()
 
 #pragma endregion
 
+	m_Transform->Update();
 }
 
 void AFlyCamera::OnDraw_ImGui()

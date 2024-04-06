@@ -11,11 +11,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 // --- Engine ---
+#include "UTransform.h"
 class UBaseComponent;
 
 class AActor :
     public UBaseObject
 {
+	INSPECTABLE;
+
 public:
     AActor();
     virtual ~AActor();
@@ -24,14 +27,7 @@ public:
 	virtual void Update();
 
 protected:
-    // --- Transforms ---
-    mat4 m_Transform = mat4(1);
-
-	vec3 m_Position = vec3();
-	vec3 m_Rotation = vec3(); // In Degrees
-	vec3 m_Scale = vec3(1);
-
-	bool m_Dirty = false;
+	UTransform* m_Transform;
 
 	// --- Components ---
 	//					  Type_Hash, Component Ref
@@ -46,17 +42,17 @@ public:
 
 	#pragma region --- Transforms ---
 
-	mat4* GetTransform() { UpdateTransform(); return &m_Transform; }
+	UTransform& GetTransform() { return *m_Transform; }
 
-	vec3 GetPosition()	{ return m_Position; }
-	vec3 GetRotation()	{ return m_Rotation; }
-	vec3 GetScale()		{ return m_Scale;	 }
+	vec3& GetActorPosition();
+	quat& GetActorRotation();
+	vec3& GetActorRotationEular();
+	vec3& GetActorScale();
+	vec3  GetForward();
 
-	void SetPosition(vec3 a_Position) { m_Position = a_Position; m_Dirty = true; }
-	void SetRotation(vec3 a_Rotation) { m_Rotation = a_Rotation; m_Dirty = true; }
-	void SetScale(vec3 a_Scale) { m_Scale = a_Scale; m_Dirty = true; }
-
-	void UpdateTransform(bool a_Force = false);
+	void SetActorPosition(const vec3& a_Position);
+	void SetActorRotation(const quat& a_Rotation);
+	void SetActorScale	 (const vec3& a_Scale);
 
 	#pragma endregion
 
@@ -126,16 +122,8 @@ public:
 	void Draw_ImGui();
 
 protected:
-	virtual void OnDraw_ImGui();
+	virtual void OnDraw_ImGui() {}
 
 #pragma endregion
-
-#if IS_EDITOR
-
-	// Allow the Inspector to access properties
-public:
-	friend class Inspector;
-
-#endif
 };
 

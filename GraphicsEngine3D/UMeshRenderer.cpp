@@ -20,8 +20,8 @@ UMeshRenderer::~UMeshRenderer()
 void UMeshRenderer::Draw(mat4 a_ProjectionViewMatrix)
 {
 	// bind transforms for lighting
-	m_Material->m_Shader->bindUniform("ProjectionViewModel", a_ProjectionViewMatrix * *m_Owner->GetTransform());
-	m_Material->m_Shader->bindUniform("ModelMatrix", *m_Owner->GetTransform());
+	m_Material->m_Shader->bindUniform("ProjectionViewModel", a_ProjectionViewMatrix * m_Owner->GetTransform().GetTransform());
+	m_Material->m_Shader->bindUniform("ModelMatrix", m_Owner->GetTransform().GetTransform());
 
 	m_Mesh->draw(false);
 }

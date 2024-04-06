@@ -82,7 +82,7 @@ bool World::Begin()
 
     // Camera Set Up
     m_MainCamera = new AFlyCamera();
-    m_MainCamera->SetPosition(vec3(-10, 1, 0));
+    m_MainCamera->SetActorPosition(vec3(-10, 1, 0));
 
     // Create SoulSpear
     for (int i = 0; i < 1; i++)
@@ -93,18 +93,18 @@ bool World::Begin()
         // Static Mesh Set Up
         StaticMesh = new AStaticMesh("soulspear/soulspear", true, true);
 
-        StaticMesh->SetPosition(vec3(((i % Rows) * 2.f - i * 2) * 0.5f, 0, (i % Cols) * 2.f));
+        StaticMesh->SetActorPosition(vec3(((i % Rows) * 2.f - i * 2) * 0.5f, 0, (i % Cols) * 2.f));
     }
 
     AStaticMesh* Plane = new AStaticMesh("Primitives/Box");
     Plane->SetName("Plane");
-    Plane->SetScale({ 20.f, 0.1f, 20.f });
-    Plane->SetPosition({ 0.f, -0.051f, 0.f });
+    Plane->SetActorScale({ 20.f, 0.1f, 20.f });
+    Plane->SetActorPosition({ 0.f, -0.051f, 0.f });
 
     AStaticMesh* Sky = new AStaticMesh("Primitives/Sphere");
     Sky->GetMesh()->SetMaterial(SkyMaterial);
     Sky->SetName("Sky");
-    Sky->SetScale({ 500, 500.f, -500.f });
+    Sky->SetActorScale({ 500, 500.f, -500.f });
     
 #if IS_EDITOR
 
@@ -117,9 +117,6 @@ bool World::Begin()
 
     #pragma endregion
 
-#pragma region Test
-
-#pragma endregion
     for (auto Actor : m_Actors)
     {
         Actor->Begin();
@@ -224,7 +221,7 @@ void World::Draw()
             vec3 SpawnPos = vec3(0);
             if (m_MainCamera)
             {
-                SpawnPos = m_MainCamera->GetPosition() + m_MainCamera->GetForward() * 5.f;
+                SpawnPos = m_MainCamera->GetActorPosition() + m_MainCamera->GetForward() * 5.f;
             }
 
             if (ImGui::MenuItem("Light"))
@@ -248,7 +245,7 @@ void World::Draw()
 
             if (NewActor)
             {
-                NewActor->SetPosition(SpawnPos);
+                NewActor->SetActorPosition(SpawnPos);
                 m_InspectedActor = NewActor;
             }
 

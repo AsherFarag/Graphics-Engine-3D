@@ -35,32 +35,28 @@ public:
 
     bool StartUp();
     void Draw();
-    bool End();
+    void Reset();
 
     void Render(ACamera* Camera);
     void DrawShadows(ACamera* Camera);
 
-
-#if IS_EDITOR
-
-    void DrawViewports();
-
-#endif // IS_EDITOR
-
 protected:
     list<URenderer*> m_Renderers;
     list<UMeshRenderer*> m_MeshRenderers;
+    vector<ACamera*> m_RenderCameras;
+
+    int m_NumOfLights = 0;
+    vector<ALight*> m_Lights;
+    ALight* m_AmbientLight = nullptr;
 
     void CalculateDrawOrder(list<URenderer*>& OutDrawBuffer, std::list<RMaterial*>& OutMaterialBuffer);
 
-    vector<ACamera*> m_RenderCameras;
+
 
     #pragma region  --- Lights --- 
 
 protected:
-    int m_NumOfLights = 0;
-    vector<ALight*> m_Lights;
-    ALight* m_AmbientLight = nullptr;
+
 
     int GetActiveNumOfLights();
     vector<vec3> GetPointLightPositions();
@@ -84,5 +80,11 @@ public:
 
     bool AddRenderCamera(ACamera* a_NewRenderCamera);
     bool RemoveRenderCamera(ACamera* a_NewRenderCamera);
+
+#if IS_EDITOR
+
+    void DrawViewports();
+
+#endif // IS_EDITOR
 };
 

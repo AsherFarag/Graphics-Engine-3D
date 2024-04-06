@@ -35,7 +35,7 @@ ACamera::ACamera(aie::AIERenderTarget* a_RenderTarget)
     m_MeshRenderer->SetMaterial(ResourceManager::GetMaterial("Camera"));
 
     // Set Mesh Size as Camera Model is Huge
-    SetScale(vec3(0.1f));
+    SetActorScale(vec3(0.1f));
 
 #if IS_EDITOR
     m_RenderTarget = a_RenderTarget;
@@ -73,7 +73,8 @@ void ACamera::Begin()
 
 void ACamera::Update()
 {
-    m_Rotation.z = clamp(m_Rotation.z, -87.5f, 87.5f);
+    GetActorRotation().z = glm::clamp(GetActorRotation().z, -87.5f, 87.5f);
+    m_Transform->Update();
 
 	if (m_RenderTarget)
     {
@@ -158,7 +159,7 @@ void ACamera::ApplyPostProcessing()
 
 void ACamera::SetViewMatrix()
 {	
-	m_ViewTransform = lookAt(m_Position, m_Position + GetForward(), vec3(0, 1, 0));
+	m_ViewTransform = lookAt(GetActorPosition(), GetActorPosition() + GetForward(), vec3(0, 1, 0));
 }
 
 void ACamera::SetProjectionMatrix(float a_FOVDegrees, float a_AspectRatio, float a_Near, float a_Far)
@@ -168,7 +169,7 @@ void ACamera::SetProjectionMatrix(float a_FOVDegrees, float a_AspectRatio, float
 	m_Near = a_Near;
 	m_Far = a_Far;
 
-	m_ProjectionViewTransform = perspective(radians(m_FOVDegrees), m_AspectRatio, m_Near, m_Far);
+	m_ProjectionViewTransform = glm::perspective(glm::radians(m_FOVDegrees), m_AspectRatio, m_Near, m_Far);
 }
 
 void ACamera::SetProjectionMatrix(float a_FOVDegrees, float a_Width, float a_Height, float a_Near, float a_Far)
@@ -178,7 +179,7 @@ void ACamera::SetProjectionMatrix(float a_FOVDegrees, float a_Width, float a_Hei
 
 void ACamera::UpdateProjectionMatrix()
 {
-    m_ProjectionViewTransform = perspective(radians(m_FOVDegrees), m_AspectRatio, m_Near, m_Far);
+    m_ProjectionViewTransform = glm::perspective(glm::radians(m_FOVDegrees), m_AspectRatio, m_Near, m_Far);
 }
 
 void ACamera::SetAspectRatio(float a_AspectRatio)

@@ -44,6 +44,13 @@ void RenderingManager::Draw()
     }
 }
 
+void RenderingManager::Reset()
+{
+    m_Renderers.clear();
+    m_MeshRenderers.clear();
+    m_RenderCameras.clear();
+}
+
 #if IS_EDITOR
 
 void RenderingManager::DrawViewports()
@@ -53,11 +60,6 @@ void RenderingManager::DrawViewports()
 }
 
 #endif // IS_EDITOR
-
-bool RenderingManager::End()
-{
-    return true;
-}
 
 void RenderingManager::Render(ACamera* Camera)
 {
@@ -73,7 +75,7 @@ void RenderingManager::Render(ACamera* Camera)
     {
         if (Light->IsEnabled())
         {
-            LightPositions.push_back(Light->GetPosition());
+            LightPositions.push_back(Light->GetActorPosition());
             LightColours.push_back(Light->GetColour());
             LightFallOffs.push_back(Light->m_FallOff);
         }
@@ -94,7 +96,7 @@ void RenderingManager::Render(ACamera* Camera)
         {
             Material->m_Shader->bind();
             Material->Bind();
-            Material->m_Shader->bindUniform("CameraPosition", vec4(Camera->GetPosition(), 1));
+            Material->m_Shader->bindUniform("CameraPosition", vec4(Camera->GetActorPosition(), 1));
 
             if (m_AmbientLight && m_AmbientLight->IsEnabled())
                 Material->m_Shader->bindUniform("AmbientLight", m_AmbientLight->GetColour());
@@ -118,11 +120,11 @@ void RenderingManager::Render(ACamera* Camera)
 #pragma region Gizmos
 
     if (m_AmbientLight && m_AmbientLight->IsEnabled())
-        aie::Gizmos::addSphere(m_AmbientLight->GetPosition(), m_AmbientLight->GetScale().x * 0.5f, 7, 7, vec4(m_AmbientLight->m_Colour, 0.75f));
+        aie::Gizmos::addSphere(m_AmbientLight->GetActorPosition(), m_AmbientLight->GetActorScale().x * 0.5f, 7, 7, vec4(m_AmbientLight->m_Colour, 0.75f));
 
     for (int i = 0; i < NumOfLights; i++)
     {
-        aie::Gizmos::addSphere((m_Lights)[i]->GetPosition(), (m_Lights)[i]->GetScale().x * 0.5f, 7, 7, vec4((m_Lights)[i]->m_Colour, 0.75f));
+        aie::Gizmos::addSphere((m_Lights)[i]->GetActorPosition(), (m_Lights)[i]->GetActorScale().x * 0.5f, 7, 7, vec4((m_Lights)[i]->m_Colour, 0.75f));
     }
 
     //// draw a simple grid with gizmos
@@ -205,7 +207,7 @@ vector<vec3> RenderingManager::GetPointLightPositions()
     vector<vec3> PointLightPositions;
     for (auto L : m_Lights)
         if (L->IsEnabled())
-         PointLightPositions.push_back(L->m_Position);
+         PointLightPositions.push_back(L->GetActorPosition());
 
     return PointLightPositions;
 }

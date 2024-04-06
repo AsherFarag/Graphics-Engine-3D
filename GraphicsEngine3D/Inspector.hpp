@@ -16,36 +16,39 @@
 
 struct Inspector
 {
-	void DrawProperty(int& Property, const char* Format = "%i")
+	void DrawProperty(const char* Name, int& Property)
 	{
-		ImGui::Text(Format, Property);
+		ImGui::Text((Name + std::string(": ")).c_str(), Property);
 	}
 
-	void DrawProperty(float& Property, const char* Format = "%.3f")
+	void DrawProperty(const char* Name, float& Property)
 	{
-		ImGui::Text(Format, Property);
+		ImGui::Text((Name + std::string(": ")).c_str(), Property);
 	}
-
-	void DrawProperty(bool& Property, const char* Format = "%i")
+	void DrawProperty(const char* Name, double& Property)
 	{
-		ImGui::Text(Format, Property);
+		ImGui::Text((Name + std::string(": ")).c_str(), Property);
+	}
+	void DrawProperty(const char* Name, bool& Property)
+	{
+		ImGui::Checkbox((Name + std::string(": ")).c_str(), &Property);
 	}
 
 	template < typename T >
 	void DrawProperty(const char* Name, std::vector< T >& Property)
 	{
 		// Draw a property for size
-		DrawProperty(Property.size(), "Size: %i");
+		DrawProperty("Size", Property.size());
 
 		int Index = 0;
-		if (ImGui::TreeNode("Components"))
+		if (ImGui::TreeNode(Name))
 		{
-			for (auto& Prop : Property)
+			for (auto& Element : Property)
 			{
 				std::string CurrentIndex = std::to_string(Index++);
-				std::string ElementName = ("Element %i:" + CurrentIndex).c_str();
+				std::string ElementName("Element %i:", CurrentIndex);
 
-				DrawProperty(ElementName.c_str(), Prop, Num);
+				DrawProperty(ElementName.c_str(), Element);
 			}
 		}
 	}
@@ -54,13 +57,36 @@ struct Inspector
 	{
 
 	}
-
-	#pragma region Actors
+#pragma region Actors
 
 	void DrawProperty(const char* Name, AActor& Property)
 	{
-
+		DrawProperty(Name, Property.m_Components);
 	}
+
+#pragma endregion
+
+
+#pragma region Components
+
+	void DrawProperty(const char* Name, UTransform& Property)
+	{
+		vec3 Position = Property.m_Position;
+		if (ImGui::DragFloatXYZ(false, "Position", &Position[0], 0.01f))
+			Property.SetPosition(Position);
+		
+		vec3 Rotation = Property.GetRotationEular();
+		if (ImGui::DragFloatXYZ(false, "Rotation", &Rotation[0], 0.1f))
+			Property.SetRotation(Rotation);
+		
+		vec3 Scale = Property.m_Scale;
+		if (ImGui::DragFloatXYZ(false, "Scale", &Scale[0], 0.01f))
+			Property.SetScale(Scale);
+	}
+
+#pragma endregion
+
+
 
 };
 
