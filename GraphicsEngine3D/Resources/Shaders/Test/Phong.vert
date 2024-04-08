@@ -4,7 +4,7 @@ layout( location = 0 ) in vec4 Position;
 layout( location = 1 ) in vec4 Normal;
 layout( location = 2 ) in vec2 TexCoords;
 layout( location = 3 ) in vec4 Tangent;
-layout( location = 3 ) in mat4 MatrixModel;
+layout( location = 3 ) in mat4 ModelMatrix;
 
 out vec4 vPosition;
 out vec3 vNormal;
@@ -17,13 +17,13 @@ uniform mat4 ProjectionView;
 
 void main()
 {
-      vPosition    = MatrixModel * Position;
-      vNormal      = ((MatrixModel) * Normal).xyz; //(MatrixModel * Normal).xyz; 
+      vPosition    = ModelMatrix * Position;
+      vNormal      = ((ModelMatrix) * Normal).xyz; //(ModelMatrix * Normal).xyz; 
       vTexCoords   = TexCoords;
-      vTangent     = (inverse(MatrixModel) * vec4(Tangent.xyz,0)).xyz;
+      vTangent     = (inverse(ModelMatrix) * vec4(Tangent.xyz,0)).xyz;
       vBiTangent   = cross(vNormal, vTangent) * Tangent.w;
 
-      gl_Position  = (ProjectionView * MatrixModel) * Position;
+      gl_Position  = (ProjectionView * ModelMatrix) * Position;
 
       vDepth = gl_Position.z;
 }
