@@ -39,7 +39,7 @@ private:
 	map<string, OBJMesh*> m_LoadedOBJMeshes;
 
 public:
-	static auto& GetLoadedOBJMeshes() { return GetInstance()->m_LoadedOBJMeshes; }
+	static auto&	GetLoadedOBJMeshes() { return GetInstance()->m_LoadedOBJMeshes; }
 	static OBJMesh* LoadOBJMesh(const string& a_MeshName, RMaterial* a_Material = nullptr, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
 	static OBJMesh* GetLoadedOBJMesh(const string& a_MeshName);
 
@@ -79,7 +79,6 @@ public:
 	static void SetMainShader(ShaderProgram* a_Shader) { GetInstance()->m_MainShader = a_Shader; }
 
 #pragma endregion
-
 
 #pragma region Unimplemented
 	template < typename T >

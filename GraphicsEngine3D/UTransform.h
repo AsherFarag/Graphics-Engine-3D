@@ -47,7 +47,7 @@ private:
 
 #if IS_EDITOR
 public:
-    virtual void Draw_ImGui() {}
+    virtual void Draw_ImGui();
 #endif // IS_EDITOR
 
 };

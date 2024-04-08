@@ -306,6 +306,17 @@ void OBJMesh::draw(bool usePatches /* = false */) {
 	}
 }
 
+void OBJMesh::Draw(unsigned int NumOfInstances, mat4* ModelMatricies)
+{
+	glBindVertexArray(m_meshChunks[0].vao);
+	glDrawElements(GL_TRIANGLES, m_meshChunks[0].indexCount, GL_UNSIGNED_INT, 0);
+
+	//// bind and draw geometry
+	//glBindVertexArray(m_meshChunks[0].vao);
+	//glDrawElementsInstanced(GL_TRIANGLES, static_cast<unsigned int>(m_meshChunks[0].indexCount), GL_UNSIGNED_INT, 0, NumOfInstances);
+	//glBindVertexArray(0); // Cleanup
+}
+
 void OBJMesh::calculateTangents(std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) {
 	unsigned int vertexCount = (unsigned int)vertices.size();
 	glm::vec4* tan1 = new glm::vec4[vertexCount * 2];

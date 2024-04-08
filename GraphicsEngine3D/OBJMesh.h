@@ -54,6 +54,8 @@ public:
 	size_t getMaterialCount() const { return m_materials.size();  }
 	RMaterial* getMaterial(size_t index) { if (index < m_materials.size()) { return m_materials[index]; } return nullptr; }
 
+	void Draw(unsigned int NumOfInstances, mat4* ModelMatricies);
+
 private:
 
 	void calculateTangents(std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);

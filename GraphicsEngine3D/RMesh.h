@@ -26,15 +26,6 @@ public:
 		vec4 m_Tangent;		// Added to attribute location 3
 	};
 
-	enum EPrimativeShape
-	{
-		EPS_Quad,
-		EPS_Box,
-		EPS_Cylinder,
-		EPS_Pyramid,
-		EPS_Sphere,
-		EPS_Cone,
-	};
 
 private:
 	struct MeshChunk
@@ -47,6 +38,16 @@ private:
 		// Not - Implemented
 		unsigned int m_IndexCount;
 		unsigned int m_MaterialID;
+	};
+
+	enum EPrimativeShape
+	{
+		EPS_Quad,
+		EPS_Box,
+		EPS_Cylinder,
+		EPS_Pyramid,
+		EPS_Sphere,
+		EPS_Cone,
 	};
 
 	MeshChunk m_MeshChunk;

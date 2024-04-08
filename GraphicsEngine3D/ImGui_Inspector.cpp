@@ -12,8 +12,8 @@ void ImGui_Inspector::BeginDraw()
 
 void ImGui_Inspector::OnDraw()
 {
-	typeid(InspectedActor)
-	m_Inspector.DrawProperty( , );
+	//typeid(InspectedActor)
+	//m_Inspector.DrawProperty( , );
 }
 
 void ImGui_Inspector::EndDraw()

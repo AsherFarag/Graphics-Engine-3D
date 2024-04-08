@@ -116,6 +116,23 @@ private:
 	std::shared_ptr<Shader> m_shaders[eShaderStage::SHADER_STAGE_Count];
 
 	char*			m_lastError;
+
+	// Shader Uniforms
+	int kaUniform;
+	int kdUniform;
+	int ksUniform;
+	int keUniform;
+	int opacityUniform;
+	int specPowUniform;
+
+	// Shader Uniforms: Texture Samplers
+	int alphaTexUniform;
+	int ambientTexUniform;
+	int diffuseTexUniform;
+	int specTexUniform;
+	int specHighlightTexUniform;
+	int normalTexUniform;
+	int dispTexUniform;
 };
 
 }

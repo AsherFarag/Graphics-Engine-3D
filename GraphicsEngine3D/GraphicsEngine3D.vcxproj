@@ -187,6 +187,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="RenderingManager.cpp" />
+    <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="RMaterial.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="Property.h" />
     <ClInclude Include="RenderingManager.h" />
+    <ClInclude Include="RenderManager.h" />
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RMaterial.h" />

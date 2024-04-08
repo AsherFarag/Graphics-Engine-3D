@@ -79,9 +79,6 @@
     <Filter Include="Header Files\Engine\Rendering">
       <UniqueIdentifier>{d1bb4ef8-89f2-4823-9b0d-6e3c8b47285a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Engine\ImGui">
-      <UniqueIdentifier>{232c1e73-4e0f-4705-b323-b7cfb6f0ef56}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Editor">
       <UniqueIdentifier>{69c8c7f2-2780-4e67-bafc-6ad2078b46a0}</UniqueIdentifier>
     </Filter>
@@ -195,6 +192,9 @@
     <ClCompile Include="UTransform.cpp">
       <Filter>Source Files\Engine\Objects\Components</Filter>
     </ClCompile>
+    <ClCompile Include="RenderManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsEngine3DApp.h">
@@ -297,6 +297,9 @@
       <Filter>Header Files\Engine\Objects\Components</Filter>
     </ClInclude>
     <ClInclude Include="ULight.h">
+      <Filter>Header Files\Engine\Objects\Actors\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

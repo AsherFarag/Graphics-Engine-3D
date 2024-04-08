@@ -21,7 +21,7 @@
 class RenderTarget
 {
 public:
-	RenderTarget(unsigned int a_Width, unsigned int a_Height, GLenum a_Type = GL_UNSIGNED_BYTE, unsigned int NumColourAttachments = 1, bool UseDepthAndStencil = true);
+	RenderTarget(unsigned int a_Width, unsigned int a_Height, GLenum a_Type = GL_UNSIGNED_BYTE, unsigned int NumColourAttachments = 1, bool a_UseDepthStencil = true);
 
 private:
 	unsigned int ID;
@@ -30,7 +30,7 @@ private:
 	unsigned int m_Height;
 	GLenum		 m_Type;
 
-	bool HasDepthAndStencil;
+	bool UseDepthStencil;
 
 	GLenum m_Target = GL_TEXTURE_2D;
 	RTexture m_DepthStencil;
@@ -43,6 +43,6 @@ public:
 	void SetWidth(unsigned int a_Width) { m_Width = a_Width; }
 	void SetHeight(unsigned int a_Height) { m_Height = a_Height; }
 
-	bool HasDepth() { return HasDepthAndStencil; }
+	bool HasDepth() { return UseDepthStencil; }
 };
 
