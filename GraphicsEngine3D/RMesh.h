@@ -20,11 +20,11 @@
 struct Vertex
 {
 	vec4 Position;	// Added to attribute location 0
-	vec4 Normal;		// Added to attribute location 1
+	vec4 Normal;	// Added to attribute location 1
 	vec2 TexCoord;	// Added to attribute location 2
 
 	// Normal-Mapping Data
-	vec4 Tangent;		// Added to attribute location 3
+	vec4 Tangent;	// Added to attribute location 3
 };
 
 class MeshChunk

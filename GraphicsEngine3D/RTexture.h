@@ -6,6 +6,7 @@
 
 enum ETextureType
 {
+    ETT_DEFAULT,
     ETT_DIFFUSE,
     ETT_ALPHA,
     ETT_AMBIENT,

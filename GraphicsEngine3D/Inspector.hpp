@@ -8,9 +8,6 @@
 
 // --- Engine ---
 // Properties
-#include "UBaseObject.h"
-#include "AActor.h"
-#include "UMeshRenderer.h"
 
 #if IS_EDITOR
 

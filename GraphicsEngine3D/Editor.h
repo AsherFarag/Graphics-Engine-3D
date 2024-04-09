@@ -2,15 +2,17 @@
 
 #include "imgui.h"
 
+enum EEditorStyle
+{
+	ES_MIDNIGHT,
+};
+
 class Editor
 {
 #pragma region Style
 
 public:
-	enum EEditorStyle
-	{
-		ES_MIDNIGHT,
-	};
+
 
 	static void SetEditorStyle(EEditorStyle Style);
 

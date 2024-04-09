@@ -192,11 +192,11 @@
     <ClCompile Include="UTransform.cpp">
       <Filter>Source Files\Engine\Objects\Components</Filter>
     </ClCompile>
-    <ClCompile Include="RenderManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RMaterialInstance.cpp">
       <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderManager.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
