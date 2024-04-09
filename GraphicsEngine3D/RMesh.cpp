@@ -7,26 +7,96 @@
 #include <assimp/scene.h>
 #include <assimp/cimport.h>
 
-RMesh::~RMesh()
+RMesh::RMesh(char* Path)
 {
-	glDeleteVertexArrays(1, &m_MeshChunk.m_VAO);
-	glDeleteBuffers(1, &m_MeshChunk.m_VBO);
-	glDeleteBuffers(1, &m_MeshChunk.m_IBO);
+	LoadModel(Path);
+}
+
+void RMesh::Draw()
+{
+	for (unsigned int i = 0; i < m_MeshChunks.size(); i++)
+		m_MeshChunks[i].Draw();
+}
+
+void RMesh::LoadModel(string Path, unsigned int ProcessSteps)
+{
+	Assimp::Importer Import;
+	const aiScene* Scene = Import.ReadFile(Path, ProcessSteps);
+
+	if (!Scene || Scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !Scene->mRootNode)
+	{
+		std::cout << "ERROR::ASSIMP::" << Import.GetErrorString() << std::endl;
+		//World::LOG(Debug::Error, true, Import.GetErrorString());
+		return;
+	}
+
+	ProcessNode(Scene->mRootNode, Scene);
+}
+
+void RMesh::ProcessNode(aiNode* a_Node, const aiScene* a_Scene)
+{
+	// process all the node's meshes (if any)
+	for (unsigned int i = 0; i < a_Node->mNumMeshes; i++)
+	{
+		aiMesh* mesh = a_Scene->mMeshes[a_Node->mMeshes[i]];
+		m_MeshChunks.push_back(ProcessMeshChunk(mesh, a_Scene));
+	}
+	// then do the same for each of its children
+	for (unsigned int i = 0; i < a_Node->mNumChildren; i++)
+	{
+		ProcessNode(a_Node->mChildren[i], a_Scene);
+	}
+}
+
+MeshChunk RMesh::ProcessMeshChunk(aiMesh* a_Mesh, const aiScene* a_Scene)
+{
+	std::vector<Vertex> vertices;
+	std::vector<unsigned int> indices;
+	std::vector<Texture> textures;
+
+	// Process Verticies
+	for (unsigned int i = 0; i < a_Mesh->mNumVertices; ++i)
+	{
+		Vertex vertex;
+		vertex.Position = vec4(a_Mesh->mVertices[i].x,		 a_Mesh->mVertices[i].y,	   a_Mesh->mVertices[i].z, 1);
+		vertex.Normal	= vec4(a_Mesh->mNormals[i].x,		 a_Mesh->mNormals[i].y,		   a_Mesh->mNormals[i].z,  1);
+		vertex.Tangent  = vec4(a_Mesh->mTangents[i].x,		 a_Mesh->mTangents[i].y,	   a_Mesh->mTangents[i].z, 1);
+		vertex.TexCoord = vec2(a_Mesh->mTextureCoords[i]->x, a_Mesh->mTextureCoords[i]->y);
+
+		vertices.push_back(vertex);
+	}
+
+	// Process Indicies
+	for (int i = 0; i < a_Mesh->mNumFaces; i++)
+	{
+		indices.push_back(a_Mesh->mFaces[i].mIndices[0]);
+		indices.push_back(a_Mesh->mFaces[i].mIndices[2]);
+		indices.push_back(a_Mesh->mFaces[i].mIndices[1]);
+
+		// generate a second triangle for quads
+		if (a_Mesh->mFaces[i].mNumIndices == 4)
+		{
+			indices.push_back(a_Mesh->mFaces[i].mIndices[0]);
+			indices.push_back(a_Mesh->mFaces[i].mIndices[3]);
+			indices.push_back(a_Mesh->mFaces[i].mIndices[2]);
+		}
+	}
+
 }
 
 void RMesh::Initialise(unsigned int a_VertexCount, const Vertex* a_Vertices, unsigned int a_IndexCount, unsigned int* a_Indices)
 {
-	assert(m_MeshChunk.m_VAO == 0);
+	assert(m_MeshChunk.VAO == 0);
 
 	// generate buffers
-	glGenBuffers(1, &m_MeshChunk.m_VBO);
-	glGenVertexArrays(1, &m_MeshChunk.m_VAO);
+	glGenBuffers(1, &m_MeshChunk.VBO);
+	glGenVertexArrays(1, &m_MeshChunk.VAO);
 
 	// bind vertex array aka a mesh wrapper
-	glBindVertexArray(m_MeshChunk.m_VAO);
+	glBindVertexArray(m_MeshChunk.VAO);
 
 	// bind vertex buffer
-	glBindBuffer(GL_ARRAY_BUFFER, m_MeshChunk.m_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_MeshChunk.VBO);
 
 	// fill vertex buffer
 	glBufferData(GL_ARRAY_BUFFER, a_VertexCount * sizeof(Vertex), a_Vertices, GL_STATIC_DRAW);
@@ -37,10 +107,10 @@ void RMesh::Initialise(unsigned int a_VertexCount, const Vertex* a_Vertices, uns
 
 	// bind indices if there are any
 	if (a_IndexCount != 0) {
-		glGenBuffers(1, &m_MeshChunk.m_IBO);
+		glGenBuffers(1, &m_MeshChunk.IBO);
 
 		// bind vertex buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_MeshChunk.m_IBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_MeshChunk.IBO);
 
 		// fill vertex buffer
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, a_IndexCount * sizeof(unsigned int), a_Indices, GL_STATIC_DRAW);
@@ -88,7 +158,7 @@ void RMesh::Initialise(const char* a_FileName)
 	Vertex* Vertices = new Vertex[NumV];
 	for (int i = 0; i < NumV; i++)
 	{
-		Vertices[i].m_Position = glm::vec4(Mesh->mVertices[i].x,
+		Vertices[i].Position = glm::vec4(Mesh->mVertices[i].x,
 			Mesh->mVertices[i].y, Mesh->mVertices[i].z, 1);
 		// TODO, normals and UVs
 	}
@@ -132,34 +202,34 @@ void RMesh::Initialise(EPrimativeShape a_PrimativeMesh)
 void RMesh::InitialiseQuad()
 {
 	// Check that it has not already been initialised
-	assert(m_MeshChunk.m_VAO == 0);
+	assert(m_MeshChunk.VAO == 0);
 
 	// Generate the buffer
-	glGenBuffers(1, &m_MeshChunk.m_VBO);
-	glGenVertexArrays(1, &m_MeshChunk.m_VAO);
+	glGenBuffers(1, &m_MeshChunk.VBO);
+	glGenVertexArrays(1, &m_MeshChunk.VAO);
 
 	// Bind the vertex array, this will be our mesh buffer
-	glBindVertexArray(m_MeshChunk.m_VAO);
+	glBindVertexArray(m_MeshChunk.VAO);
 
 	// Bind the vertex buffer
-	glBindBuffer(GL_ARRAY_BUFFER, m_MeshChunk.m_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_MeshChunk.VBO);
 
 	// Define the 6 verticies for 2 triangles
 	Vertex Vertices[6];
-	Vertices[0].m_Position = { -0.5f, 0.f,  0.5f, 1 };
-	Vertices[1].m_Position = {  0.5f, 0.f,  0.5f, 1 };
-	Vertices[2].m_Position = { -0.5f, 0.f, -0.5f, 1 };
+	Vertices[0].Position = { -0.5f, 0.f,  0.5f, 1 };
+	Vertices[1].Position = {  0.5f, 0.f,  0.5f, 1 };
+	Vertices[2].Position = { -0.5f, 0.f, -0.5f, 1 };
 
-	Vertices[3].m_Position = { -0.5f, 0.f, -0.5f, 1 };
-	Vertices[4].m_Position = {  0.5f, 0.f,  0.5f, 1 };
-	Vertices[5].m_Position = {  0.5f, 0.f, -0.5f, 1 };
+	Vertices[3].Position = { -0.5f, 0.f, -0.5f, 1 };
+	Vertices[4].Position = {  0.5f, 0.f,  0.5f, 1 };
+	Vertices[5].Position = {  0.5f, 0.f, -0.5f, 1 };
 
-	Vertices[0].m_TexCoord = { 0,1 }; // Bottom Left
-	Vertices[1].m_TexCoord = { 1,1 }; // Bottom Right
-	Vertices[2].m_TexCoord = { 0,0 }; // Top Left
-	Vertices[3].m_TexCoord = { 0,0 }; // Top Right
-	Vertices[4].m_TexCoord = { 1,1 };
-	Vertices[5].m_TexCoord = { 1,0 };
+	Vertices[0].TexCoord = { 0,1 }; // Bottom Left
+	Vertices[1].TexCoord = { 1,1 }; // Bottom Right
+	Vertices[2].TexCoord = { 0,0 }; // Top Left
+	Vertices[3].TexCoord = { 0,0 }; // Top Right
+	Vertices[4].TexCoord = { 1,1 };
+	Vertices[5].TexCoord = { 1,0 };
 
 	// Fill Vertex Buffer
 	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(Vertex), Vertices, GL_STATIC_DRAW);
@@ -178,16 +248,16 @@ void RMesh::InitialiseQuad()
 
 void RMesh::InitialiseFullScreenQuad()
 {
-	assert(m_MeshChunk.m_VAO == 0);
+	assert(m_MeshChunk.VAO == 0);
 
 	// generate buffers
-	glGenBuffers(1, &m_MeshChunk.m_VBO);
-	glGenVertexArrays(1, &m_MeshChunk.m_VAO);
+	glGenBuffers(1, &m_MeshChunk.VBO);
+	glGenVertexArrays(1, &m_MeshChunk.VAO);
 
 	// bind vertex array aka a mesh wrapper
-	glBindVertexArray(m_MeshChunk.m_VAO);
+	glBindVertexArray(m_MeshChunk.VAO);
 	// bind vertex buffer
-	glBindBuffer(GL_ARRAY_BUFFER, m_MeshChunk.m_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_MeshChunk.VBO);
 
 	// define vertices
 	float vertices[] =
@@ -252,7 +322,7 @@ bool RMesh::Load(const char* a_FileName, bool a_LoadTextures, bool a_FlipTexture
 	Vertex* Vertices = new Vertex[NumV];
 	for (int i = 0; i < NumV; i++)
 	{
-		Vertices[i].m_Position = glm::vec4(Mesh->mVertices[i].x,
+		Vertices[i].Position = glm::vec4(Mesh->mVertices[i].x,
 			Mesh->mVertices[i].y, Mesh->mVertices[i].z, 1);
 		// TODO, normals and UVs
 	}
@@ -262,18 +332,14 @@ bool RMesh::Load(const char* a_FileName, bool a_LoadTextures, bool a_FlipTexture
 	return true;
 }
 
-void RMesh::Draw()
-{
-	glBindVertexArray(m_MeshChunk.m_VAO);
-	if (m_MeshChunk.m_IBO != 0)
-	{
-		glDrawElements(GL_TRIANGLES, 3 * m_MeshChunk.m_TriCount, GL_UNSIGNED_INT, 0);
-	}
-	{
-		glDrawArrays(GL_TRIANGLES, 0, 3 * m_MeshChunk.m_TriCount);
-	}
-}
-
-void RMesh::BatchDraw(std::vector<mat4> a_MeshTransforms)
-{
-}
+//void RMesh::Draw()
+//{
+//	glBindVertexArray(m_MeshChunk.VAO);
+//	if (m_MeshChunk.IBO != 0)
+//	{
+//		glDrawElements(GL_TRIANGLES, 3 * m_MeshChunk.m_TriCount, GL_UNSIGNED_INT, 0);
+//	}
+//	{
+//		glDrawArrays(GL_TRIANGLES, 0, 3 * m_MeshChunk.m_TriCount);
+//	}
+//}
