@@ -195,6 +195,9 @@
     <ClCompile Include="RenderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RMaterialInstance.cpp">
+      <Filter>Source Files\Engine\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsEngine3DApp.h">
@@ -301,6 +304,9 @@
     </ClInclude>
     <ClInclude Include="RenderManager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RMaterialInstance.h">
+      <Filter>Header Files\Engine\Resources\Material</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

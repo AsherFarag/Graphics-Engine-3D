@@ -4,8 +4,60 @@
 #include <fstream>
 #include <sstream>
 
-RMaterial::RMaterial() : Ambient(1), Diffuse(1), Specular(0), Emissive(0), SpecularPower(1), Opacity(1)
+#include "RMaterialInstance.h"
+
+RMaterial::RMaterial()
 {
+}
+
+RMaterial::~RMaterial()
+{
+    UnbindAllMaterialInstances();
+}
+
+RMaterialInstance* RMaterial::CreateMaterialInstance()
+{
+    TODO_IMPLEMENT;
+    return nullptr;
+}
+
+void RMaterial::BindMaterialInstance(RMaterialInstance* a_Instance)
+{
+    if (std::find(m_Instances.begin(), m_Instances.end(), a_Instance) != m_Instances.end())
+        return;
+
+    m_Instances.push_back(a_Instance);
+    a_Instance->m_MasterMaterial = this;
+}
+
+void RMaterial::UnbindMaterialInstance(RMaterialInstance* a_Instance)
+{
+    // Quick check to see if we are the master
+    if (a_Instance->m_MasterMaterial != this)
+        return;
+
+    // Find the instance in the vector of instances
+    auto it = std::find(m_Instances.begin(), m_Instances.end(), a_Instance);
+    if (it == m_Instances.end()) // Cannot find
+        return;
+
+    (*it)->m_MasterMaterial = nullptr;
+    m_Instances.erase(it);
+}
+
+void RMaterial::UnbindAllMaterialInstances()
+{
+    for (int i = 0; i < m_Instances.size(); ++i)
+    {
+        m_Instances[i]->m_MasterMaterial = nullptr;
+    }
+
+    m_Instances.clear();
+}
+
+bool RMaterial::Load(const string& a_FileName)
+{
+    return false;
 }
 
 void RMaterial::Bind()

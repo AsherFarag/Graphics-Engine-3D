@@ -12,6 +12,7 @@ using std::map;
 // --- Engine ---
 #include "OBJMesh.h"
 #include "RMaterial.h"
+#include "RTexture.h"
 
 #include "Shader.h"
 
@@ -46,7 +47,7 @@ public:
 	//map<string, RMesh*> m_LoadedMeshes;
 
 public:
-	//static auto& GetLoadedMeshes() { return GetInstance()->m_LoadedMeshes; }
+	//static auto&  GetLoadedMeshes() { return GetInstance()->m_LoadedMeshes; }
 	//static RMesh* LoadMesh(const string& a_MeshName, RMaterial* a_Material = nullptr, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
 	//static RMesh* GetLoadedMesh(const string& a_MeshName);
 
@@ -107,13 +108,20 @@ public:
 	static T* LoadResource(const string& a_ResourceName)
 	{
 		// If the resource is already loaded, then return it
-		T* FoundResource = GetResource<T>();
+		T* FoundResource = GetResource<T>(a_ResourceName);
 		if (FoundResource)
 			return FoundResource;
 
 
 	}
 #pragma endregion
+
+#pragma region Texture Resources
+
+	static RTexture* LoadTexture(const string& a_TextureName);
+
+#pragma endregion
+
 
 };
 

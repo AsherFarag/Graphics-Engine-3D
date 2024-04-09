@@ -6,13 +6,29 @@
 #include "Shader.h"
 using namespace aie;
 
+class RMaterialInstance;
+
 class RMaterial :
     public RResource
 {
 public:
 	RMaterial();
-	~RMaterial() {}
+	~RMaterial();
 
+	RMaterialInstance* CreateMaterialInstance();
+	void BindMaterialInstance(RMaterialInstance* a_Instance);
+	void UnbindMaterialInstance(RMaterialInstance* a_Instance);
+	void UnbindAllMaterialInstances();
+
+private:
+	ShaderProgram* m_Shader = nullptr;
+
+	std::vector<RMaterialInstance*> m_Instances;
+
+protected:
+	virtual bool Load(const string& a_FileName);
+
+public:
 	void Bind();
 
 	void BindAmbient();
@@ -26,22 +42,6 @@ public:
 	bool LoadShader(const char* a_FileName);
 	bool LoadTexture(const char* a_FileName);
 
-	ShaderProgram* m_Shader;
 
-	vec3 Ambient;
-	vec3 Diffuse;
-	vec3 Specular;
-	vec3 Emissive;
-
-	float SpecularPower;
-	float Opacity;
-
-	Texture DiffuseTexture;				// bound slot 0
-	Texture AlphaTexture;				// bound slot 1
-	Texture AmbientTexture;				// bound slot 2
-	Texture SpecularTexture;			// bound slot 3
-	Texture SpecularHighlightTexture;	// bound slot 4
-	Texture NormalTexture;				// bound slot 5
-	Texture DisplacementTexture;		// bound slot 6
 };
 

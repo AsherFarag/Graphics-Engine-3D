@@ -27,6 +27,8 @@ protected:
 	string m_ResourceName;	 //	The File name			E.g. 'Soulspear'
 	string m_FileType;		 // The File Extension		E.g. '.obj'
 
+	virtual bool Load(const string& a_FileName) = 0;
+
 public:
 	const string GetFilePath()		const { return m_FilePath; }
 	const string GetResourceName()  const { return m_ResourceName; }

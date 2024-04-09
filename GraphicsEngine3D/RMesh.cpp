@@ -26,7 +26,7 @@ void RMesh::LoadModel(string Path, unsigned int ProcessSteps)
 	if (!Scene || Scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !Scene->mRootNode)
 	{
 		std::cout << "ERROR::ASSIMP::" << Import.GetErrorString() << std::endl;
-		//World::LOG(Debug::Error, true, Import.GetErrorString());
+		LOG(Error, true, Import.GetErrorString());
 		return;
 	}
 

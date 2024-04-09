@@ -33,3 +33,28 @@
 #include "ImGui_Window.h"
 
 #endif
+
+//
+//  --- Includes
+//
+#include <vector>
+
+#define PRINT_TODO_MESSAGES 1
+
+#if PRINT_TODO_MESSAGES
+
+#define Stringize( L )     #L 
+#define MakeString( M, L ) M(L)
+#define $Line MakeString( Stringize, __LINE__ )
+#define PRAGMA(p) _Pragma(#p)
+
+#define TODO(Message)	PRAGMA(message(__FILE__ "(" $Line ") : TODO: " Message))
+#define TODO_IMPLEMENT	PRAGMA(message(__FILE__ "(" $Line ") : Not Implemented"))
+
+#else
+
+#define TODO(Message)
+
+#endif // PRINT_TODO_MESSAGES
+
+
