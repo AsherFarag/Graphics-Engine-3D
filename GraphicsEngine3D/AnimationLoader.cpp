@@ -10,18 +10,6 @@ AnimationLoader* AnimationLoader::GetInstance()
 	return &Instance;
 }
 
-// 0 1 0 1 1 1
-// 1 0 0 0 0 1
-// 1 1 0 1 1 1 |
-// 
-// 
-// 0 1 0 1 1 1
-// 1 0 0 0 0 1
-// 0 0 0 0 0 1 &
-
-// 0 1 0 1 1 0
-// 1 0 1 0 0 1 ~
-
 AnimationHandle AnimationLoader::LoadAnimation( const string& a_Name, const aiScene* a_Scene, size_t a_Index )
 {
 	if ( !a_Scene->HasAnimations() || a_Index >= a_Scene->mNumAnimations )

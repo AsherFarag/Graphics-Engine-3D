@@ -16,8 +16,8 @@ struct KeyFrame
 };
 
 using PositionKeyFrame = KeyFrame< vec3 >;
-using RotationKeyFrame = KeyFrame< glm::quat >;
-using ScaleKeyFrame = KeyFrame< vec3 >;
+using RotationKeyFrame = KeyFrame< quat >;
+using ScaleKeyFrame	   = KeyFrame< vec3 >;
 
 template < typename T >
 struct AnimationTrack
@@ -71,7 +71,6 @@ struct AnimationTrack
 			}
 		}
 	}
-
 };
 
 using PositionAnimationTrack = AnimationTrack< PositionKeyFrame >;
@@ -89,6 +88,8 @@ class Animation : public RResource
 {
 public:
 	std::map< string, BoneAnimation > BoneAnimations;
+
+	void EvaluatePose( SkeletonHandle a_Skeleton, double a_Time, std::vector<mat4>& o_Transforms );
 };
 
 using AnimationHandle = std::shared_ptr < Animation >;

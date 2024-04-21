@@ -179,6 +179,7 @@
     <ClCompile Include="ACamera.cpp" />
     <ClCompile Include="AFlyCamera.cpp" />
     <ClCompile Include="ALight.cpp" />
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationLoader.cpp" />
     <ClCompile Include="AOrbitCamera.cpp" />
     <ClCompile Include="AStaticMesh.cpp" />

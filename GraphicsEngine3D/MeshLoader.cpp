@@ -54,9 +54,11 @@ void ForEachBoneDescendent( const aiNode* a_Node, Func&& Function )
 SkeletonHandle MeshLoader::LoadSkeleton( const aiNode* a_BoneRootNode )
 {
     SkeletonHandle skeleton = std::make_shared<RSkeleton>();
-
+    
+    // Add root bone to the skeleton's bones
     skeleton->m_Bones.emplace_back().Name = a_BoneRootNode->mName.C_Str();
 
+    // Recursive loop for adding each child bone 
     ForEachBoneDescendent( a_BoneRootNode,
         [&skeleton]( const aiNode* a_Node )
         {
@@ -69,18 +71,18 @@ SkeletonHandle MeshLoader::LoadSkeleton( const aiNode* a_BoneRootNode )
 
             if ( it == skeleton->m_Bones.end() )
             {
-                LOG( Error, ( "Child Bone doesn't have parent" + string( a_Node->mName.C_Str() ) ).c_str() );
+                LOG( Error, ( "Child Bone doesn't have parent " + string( a_Node->mName.C_Str() ) ).c_str() );
                 return;
             }
 
-            int parent = it - skeleton->m_Bones.begin();
+            int parentIndex = it - skeleton->m_Bones.begin();
 
             auto& bone = skeleton->m_Bones.emplace_back();
             bone.Name = a_Node->mName.C_Str();
-            bone.Parent = parent;
+            bone.Parent = parentIndex;
 
             // Assimp loads matricies as Row Major so we must convert it to Column major
-            bone.BindTransform = glm::transpose( glm::make_mat4x4( ( &a_Node->mTransformation.a1 ) ) );
+            bone.LocalTransform = glm::transpose( glm::make_mat4x4( ( &a_Node->mTransformation.a1 ) ) );
         }
     );
 

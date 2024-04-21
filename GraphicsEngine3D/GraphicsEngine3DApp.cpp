@@ -81,12 +81,20 @@ bool GraphicsEngine3DApp::startup()
 
 	if ( !m_World->Begin() )
 		return false;
-
-	Assimp::Importer Import; Import.SetPropertyBool( AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false );
-	const aiScene* Scene = Import.ReadFile( "Content/Mesh/TheBoss.fbx", aiPostProcessSteps::aiProcess_Debone | aiPostProcessSteps::aiProcess_OptimizeMeshes | aiPostProcessSteps::aiProcess_RemoveRedundantMaterials );
 	
-	skellie = MeshLoader::GetInstance()->LoadSkeleton( Scene->mRootNode->FindNode("mixamorig:Hips"));
+	Assimp::Importer importer;
+	importer.SetPropertyBool( AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false );
+	importer.SetPropertyFloat( AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f );
 
+	unsigned int propertyFlags = aiProcess_GlobalScale
+							   | aiProcess_Debone
+							   | aiProcess_OptimizeMeshes
+							   | aiProcess_RemoveRedundantMaterials
+							   | aiProcess_PopulateArmatureData;
+
+	const aiScene* Scene = importer.ReadFile( "Content/Mesh/TheBoss.fbx", propertyFlags );
+	skellie = MeshLoader::GetInstance()->LoadSkeleton( Scene->mRootNode->FindNode("mixamorig:Hips"));
+	
 	AnimationHandle Anim = AnimationLoader::GetInstance()-> LoadAnimation( "SomeAnim", Scene, 0 );
 	
 	

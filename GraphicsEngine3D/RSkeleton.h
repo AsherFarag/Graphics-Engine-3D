@@ -7,7 +7,7 @@ struct Bone
 {
     int Parent = NO_PARENT_INDEX;
     string Name;
-    mat4 BindTransform = mat4(1);
+    mat4 LocalTransform = mat4(1);
 };
 
 class RSkeleton :
