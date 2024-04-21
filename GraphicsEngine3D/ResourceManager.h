@@ -16,114 +16,72 @@ using std::map;
 
 #include "Shader.h"
 
-class ResourceManager
+#include "MeshLoader.h"
+#include "ShaderLoader.h"
+#include "MaterialLoader.h"
+#include "TextureLoader.h"
+
+//class ResourceManager
+//{
+//private:
+//	ResourceManager();
+//	~ResourceManager();
+//
+//	// Allow access to destructor
+//	friend class GraphicsEngine3DApp;
+//
+//public:
+//	ResourceManager(ResourceManager& Other) = delete;
+//	void operator=(const ResourceManager&) = delete;
+//
+//	static ResourceManager* GetInstance();
+//
+//private:
+//	aie::ShaderProgram* m_MainShader;
+//
+//	map<string, OBJMesh*> m_LoadedOBJMeshes;
+//	map<string, RMaterial*> m_LoadedMaterials;
+//	map<string, ShaderProgram*> m_LoadedShaders;
+//
+//public:
+//	static auto&	GetLoadedOBJMeshes() { return GetInstance()->m_LoadedOBJMeshes; }
+//	static OBJMesh* LoadOBJMesh(const string& a_MeshName, RMaterial* a_Material = nullptr, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
+//	static OBJMesh* GetLoadedOBJMesh(const string& a_MeshName);
+//
+//	static auto& GetLoadedMaterials() { return GetInstance()->m_LoadedMaterials; }
+//	static RMaterial* InstantiateMaterial( const string& a_MaterialName, aie::ShaderProgram* a_ShaderProgram = nullptr );
+//	static RMaterial* GetMaterial( const string& a_MaterialName );
+//
+//	static void ReloadShaders();
+//	static ShaderProgram* LoadShader( const string& a_FileName );
+//	static ShaderProgram* GetShader( const string& a_ShaderName );
+//
+//	static void SetMainShader( ShaderProgram* a_Shader ) { GetInstance()->m_MainShader = a_Shader; }
+//};
+//
+//static ResourceManager* s_ResourceInstance;
+
+namespace Resource
 {
-protected:
-	ResourceManager();
-	~ResourceManager();
+	// - Meshes -
+	static MeshHandle LoadMesh( const std::string& a_Path, bool a_GenerateMaterials ) { return MeshLoader::GetInstance()->LoadMesh( a_Path, a_GenerateMaterials ); }
+	static MeshHandle GetMesh( const std::string& a_Name ) { return MeshLoader::GetInstance()->GetMesh( a_Name ); }
 
-	// Allow access to destructor
-	friend class GraphicsEngine3DApp;
+	// - Shaders -
+	static ShaderHandle LoadShader( const std::string& a_Path ) { return ShaderLoader::GetInstance()->LoadShader( a_Path ); }
+	static ShaderHandle GetShader( const std::string& a_Name ) { return ShaderLoader::GetInstance()->GetShader( a_Name ); }
 
-	//  Type  , Map< Name,	Resource >
-	map<size_t, map<size_t, RResource*>> m_LoadedResources;
+	// - Materials -
+	static MaterialHandle GetMaterial( const string& a_Name ) { return MaterialLoader::GetInstance()->GetMaterial( a_Name ); }
+	static MaterialHandle InstantiateMaterial( const string& a_Name, ShaderHandle a_Shader = nullptr ) { return MaterialLoader::GetInstance()->InstantiateMaterial( a_Name, a_Shader ); }
+	static MaterialInstanceHandle GetMaterialInstance( const string& a_Name ) { return MaterialLoader::GetInstance()->GetMaterialInstance( a_Name ); }
+	static MaterialInstanceHandle InstantiateMaterialInstance( MaterialHandle a_Master, const string& a_Name = nullptr )		{ return MaterialLoader::GetInstance()->InstantiateMaterialInstance( a_Master, a_Name ); }
+	static MaterialInstanceHandle InstantiateMaterialInstance( const string& a_MasterName, const string& a_Name = nullptr ) { return MaterialLoader::GetInstance()->InstantiateMaterialInstance( a_MasterName, a_Name ); }
 
-public:
-	ResourceManager(ResourceManager& Other) = delete;
-	void operator=(const ResourceManager&) = delete;
+	// - Textures -
+	static TextureHandle LoadTexture( const string& a_Path, GLenum a_Target, GLenum a_InternalFormat, bool a_srgb = false ) { return TextureLoader::GetInstance()->LoadTexture( a_Path, a_Target, a_InternalFormat, a_srgb ); }
+	static TextureHandle GetTexture( const std::string& a_Name ) { return TextureLoader::GetInstance()->GetTexture( a_Name ); }
 
-	static ResourceManager* GetInstance();
-
-#pragma region Mesh Resources
-
-private:
-	map<string, OBJMesh*> m_LoadedOBJMeshes;
-
-public:
-	static auto&	GetLoadedOBJMeshes() { return GetInstance()->m_LoadedOBJMeshes; }
-	static OBJMesh* LoadOBJMesh(const string& a_MeshName, RMaterial* a_Material = nullptr, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
-	static OBJMesh* GetLoadedOBJMesh(const string& a_MeshName);
-
-	//map<string, RMesh*> m_LoadedMeshes;
-
-public:
-	//static auto&  GetLoadedMeshes() { return GetInstance()->m_LoadedMeshes; }
-	//static RMesh* LoadMesh(const string& a_MeshName, RMaterial* a_Material = nullptr, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
-	//static RMesh* GetLoadedMesh(const string& a_MeshName);
-
-#pragma endregion
-
-#pragma region Material Resources
-
-	map<string, RMaterial*> m_LoadedMaterials;
-
-public:
-	static auto& GetLoadedMaterials() { return GetInstance()->m_LoadedMaterials; }
-	//static RMaterial* LoadMaterial(const string& a_MaterialName, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
-	static RMaterial* InstantiateMaterial(const string& a_MaterialName, aie::ShaderProgram* a_ShaderProgram = nullptr);
-	static RMaterial* GetMaterial(const string& a_MaterialName);
-
-#pragma endregion
-
-#pragma region Shaders
-
-protected:
-	aie::ShaderProgram* m_MainShader;
-
-	map<string, ShaderProgram*> m_LoadedShaders;
-
-public:
-	static void ReloadShaders();
-	static ShaderProgram* LoadShader(const string& a_FileName);
-	static ShaderProgram* GetShader(const string& a_ShaderName);
-
-	static void SetMainShader(ShaderProgram* a_Shader) { GetInstance()->m_MainShader = a_Shader; }
-
-#pragma endregion
-
-#pragma region Unimplemented
-	template < typename T >
-	static T* GetResource(const string& a_ResourceName)
-	{
-		auto& Type = typeid(T);
-		auto TypeHash = Type.hash_code();
-
-		ResourceManager* Instance = GetInstance();
-
-		// Attempt to find a map of resource type T
-		auto MapIterator = Instance->m_LoadedResources.find(TypeHash);
-		if (MapIterator == Instance->m_LoadedResources.end())
-			return nullptr;
-
-		// Attempt to find the resource with a hash of a_ResourceName
-		auto ResourceNameHash = std::hash<string>{}(a_ResourceName);
-		auto ResourceIterrator = MapIterator->second.find(ResourceNameHash);
-		if (ResourceIterrator == MapIterator->second.end())
-			return nullptr;
-
-		return (T*)ResourceIterrator->second;
-	}
-
-	template < typename T >
-	static T* LoadResource(const string& a_ResourceName)
-	{
-		// If the resource is already loaded, then return it
-		T* FoundResource = GetResource<T>(a_ResourceName);
-		if (FoundResource)
-			return FoundResource;
-
-
-	}
-#pragma endregion
-
-#pragma region Texture Resources
-
-	static RTexture* LoadTexture(const string& a_TextureName);
-
-#pragma endregion
-
-
-};
-
-static ResourceManager* s_ResourceInstance;
+	//static void LoadScene( const std::string& a_Path, std::vector< MeshHandle >& o_Meshes, std::vector< MaterialHandle >& o_Materials, std::vector< TextureHandle >& o_Textures );
+}
 

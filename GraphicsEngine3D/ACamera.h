@@ -45,7 +45,7 @@ protected:
     float m_Far = 1000.f;
 
     mat4 m_ViewTransform;
-    mat4 m_ProjectionViewTransform;
+    mat4 m_ProjectionTransform;
     
     // Owner
     aie::AIERenderTarget* m_RenderTarget = nullptr;
@@ -55,8 +55,9 @@ protected:
     UMeshRenderer* m_MeshRenderer;
 
 #if IS_EDITOR
-
+public:
     ImGui_Viewport m_Viewport;
+    friend class RenderManager;
 
 #endif // IS_EDITOR
 
@@ -68,14 +69,14 @@ protected:
 
     void ApplyPostProcessing();
     float m_PostProcessPercent = 0.f;
-    aie::ShaderProgram* m_PostProcessShader;
-    RMesh m_PostProcessQuad;
+    aie::ShaderProgram* m_PostProcessShader = nullptr;
+    RMesh* m_PostProcessQuad = nullptr;
 
 #pragma region Getters & Setters
 public:
-    mat4 GetViewMatrix() { return m_ViewTransform; }
-    mat4 GetProjectionMatrix() { return m_ProjectionViewTransform; }
-    mat4 GetProjectionViewMatrix() { return m_ProjectionViewTransform; }
+    const mat4& GetViewMatrix()       { return m_ViewTransform; }
+    const mat4& GetProjectionMatrix() { return m_ProjectionTransform; }
+    mat4 GetProjectionViewMatrix()    { return m_ProjectionTransform * m_ViewTransform; }
 
     void SetViewMatrix();
     void SetProjectionMatrix(float a_FOVDegrees, float a_AspectRatio, float a_Near, float a_Far);

@@ -1,9 +1,9 @@
 #include "AStaticMesh.h"
 
 AStaticMesh::AStaticMesh()
-	: AStaticMesh(EPM_Box)
 {
-	
+	m_Name = "Static Mesh";
+	m_MeshRenderer = AddComponent<UMeshRenderer>( this );
 }
 
 AStaticMesh::AStaticMesh(EPrimitiveMesh a_Primitive)
@@ -33,16 +33,16 @@ AStaticMesh::AStaticMesh(EPrimitiveMesh a_Primitive)
 	}
 
 	m_Name = "Static Mesh";
-	m_Mesh = AddComponent<UMeshRenderer>(this);
-	m_Mesh->SetMesh(PrimitiveFileName.c_str(), false);
+	m_MeshRenderer = AddComponent<UMeshRenderer>(this);
+	m_MeshRenderer->SetMesh(PrimitiveFileName.c_str(), false);
 }
 
 AStaticMesh::AStaticMesh(const char* a_FilePath, bool a_LoadTextures, bool a_FlipTextureV)
 	: AActor()
 {
 	m_Name = "Static Mesh";
-	m_Mesh = AddComponent<UMeshRenderer>(this);
-	m_Mesh->SetMesh(a_FilePath, a_LoadTextures, a_FlipTextureV);
+	m_MeshRenderer = AddComponent<UMeshRenderer>(this);
+	m_MeshRenderer->SetMesh(a_FilePath, a_LoadTextures, a_FlipTextureV);
 }
 
 AStaticMesh::~AStaticMesh()

@@ -40,6 +40,11 @@ vec3& AActor::GetActorScale()
 	return m_Transform->GetScale();
 }
 
+vec3 AActor::GetForward()
+{
+	return vec3();
+}
+
 void AActor::SetActorPosition(const vec3& a_Position)
 {
 	m_Transform->SetPosition(a_Position);

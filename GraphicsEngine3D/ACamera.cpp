@@ -22,20 +22,20 @@ ACamera::ACamera(aie::AIERenderTarget* a_RenderTarget)
 	: AActor()
 {
 	m_Name = "Camera";
-    m_PostProcessQuad.InitialiseFullScreenQuad();
+    //m_PostProcessQuad->InitialiseFullScreenQuad();
 
-    m_PostProcessShader = ResourceManager::LoadShader("PostProcess");
-    m_PostProcessShader->bindUniform("PostProcess", 0);
-    m_PostProcessShader->bindUniform("colourTarget", 0);
+    //m_PostProcessShader = ResourceManager::LoadShader("PostProcess");
+    //m_PostProcessShader->bindUniform("PostProcess", 0);
+    //m_PostProcessShader->bindUniform("colourTarget", 0);
 
-    World::GetRenderingManager()->AddRenderCamera(this);
+    //World::GetRenderingManager()->AddRenderCamera(this);
 
-    m_MeshRenderer = AddComponent<UMeshRenderer>(this);
-    m_MeshRenderer->SetMesh("FilmCamera");
-    m_MeshRenderer->SetMaterial(ResourceManager::GetMaterial("Camera"));
+    //m_MeshRenderer = AddComponent<UMeshRenderer>(this);
+    //m_MeshRenderer->SetMesh("FilmCamera");
+    //m_MeshRenderer->SetMaterial(ResourceManager::GetMaterial("Camera"));
 
     // Set Mesh Size as Camera Model is Huge
-    SetActorScale(vec3(0.1f));
+    //SetActorScale(vec3(0.1f));
 
 #if IS_EDITOR
     m_RenderTarget = a_RenderTarget;
@@ -57,13 +57,13 @@ ACamera::~ACamera()
 
 void ACamera::Begin()
 {
-#pragma message(" - Fix up rescaling frame buffer in ACamera - ")
     if (m_RenderTarget && !m_RenderTarget->initialise(1, 640, 480, true))
     {
-        LOG(Error, true, "Could not initialise camera render target");
+        LOG(Error, "Could not initialise camera render target");
 
         return;
     }
+
 #if IS_EDITOR
 
     m_Viewport.SetRenderTarget(m_RenderTarget);
@@ -148,7 +148,7 @@ void ACamera::ApplyPostProcessing()
 
     glDisable(GL_DEPTH_TEST);
 
-    m_PostProcessQuad.Draw();
+    m_PostProcessQuad->Draw();
 
     glEnable(GL_DEPTH_TEST);
 
@@ -169,7 +169,7 @@ void ACamera::SetProjectionMatrix(float a_FOVDegrees, float a_AspectRatio, float
 	m_Near = a_Near;
 	m_Far = a_Far;
 
-	m_ProjectionViewTransform = glm::perspective(glm::radians(m_FOVDegrees), m_AspectRatio, m_Near, m_Far);
+	m_ProjectionTransform = glm::perspective(glm::radians(m_FOVDegrees), m_AspectRatio, m_Near, m_Far);
 }
 
 void ACamera::SetProjectionMatrix(float a_FOVDegrees, float a_Width, float a_Height, float a_Near, float a_Far)
@@ -179,7 +179,7 @@ void ACamera::SetProjectionMatrix(float a_FOVDegrees, float a_Width, float a_Hei
 
 void ACamera::UpdateProjectionMatrix()
 {
-    m_ProjectionViewTransform = glm::perspective(glm::radians(m_FOVDegrees), m_AspectRatio, m_Near, m_Far);
+    m_ProjectionTransform = glm::perspective(glm::radians(m_FOVDegrees), m_AspectRatio, m_Near, m_Far);
 }
 
 void ACamera::SetAspectRatio(float a_AspectRatio)

@@ -16,18 +16,21 @@ using glm::mat4;
 
 #define RESOURCE_PATH "Resources/"
 
+#define DEFINE_CONSTRUCTORS( Name ) \
+	Name() = default; \
+	Name(const Name&) = default; \
+	Name(Name&&) = default; \
+	Name& operator=(const Name&) = default; \
+	Name& operator=(Name&&) = default;
+
 class RResource
 {
-public:
-
-	friend class ResourceManager;
-
 protected:
 	string m_FilePath;		 // Full File path			E.g. 'FilePath/Soulspear.obj'
 	string m_ResourceName;	 //	The File name			E.g. 'Soulspear'
 	string m_FileType;		 // The File Extension		E.g. '.obj'
 
-	virtual bool Load(const string& a_FileName) = 0;
+	void ConstuctResourceInfo( const string& a_Path );
 
 public:
 	const string GetFilePath()		const { return m_FilePath; }
@@ -35,3 +38,4 @@ public:
 	const string GetFileType()		const { return m_FileType; }
 };
 
+using ResourceHandle = std::shared_ptr< RResource >;

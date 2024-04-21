@@ -104,8 +104,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ForcedIncludeFiles>Config.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>Config.h;Log.h</ForcedIncludeFiles>
       <AdditionalIncludeDirectories>$(SolutionDir)bootstrap;$(SolutionDir)dependencies/imgui;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,8 +123,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ForcedIncludeFiles>Config.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>Config.h;Log.h</ForcedIncludeFiles>
       <AdditionalIncludeDirectories>$(SolutionDir)bootstrap;$(SolutionDir)dependencies/imgui;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,7 +143,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;IS_EDITOR;IS_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)bootstrap;$(SolutionDir)dependencies/imgui;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>Config.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>Config.h;Log.h</ForcedIncludeFiles>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -159,8 +162,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ForcedIncludeFiles>Config.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>Config.h;Log.h</ForcedIncludeFiles>
       <AdditionalIncludeDirectories>$(SolutionDir)bootstrap;$(SolutionDir)dependencies/imgui;$(SolutionDir)dependencies/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -175,6 +179,7 @@
     <ClCompile Include="ACamera.cpp" />
     <ClCompile Include="AFlyCamera.cpp" />
     <ClCompile Include="ALight.cpp" />
+    <ClCompile Include="AnimationLoader.cpp" />
     <ClCompile Include="AOrbitCamera.cpp" />
     <ClCompile Include="AStaticMesh.cpp" />
     <ClCompile Include="Editor.cpp" />
@@ -185,6 +190,8 @@
     <ClCompile Include="ImGui_Viewport.cpp" />
     <ClCompile Include="ImGui_Window.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MaterialLoader.cpp" />
+    <ClCompile Include="MeshLoader.cpp" />
     <ClCompile Include="RMaterialInstance.cpp" />
     <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="RenderingManager.cpp" />
@@ -195,6 +202,8 @@
     <ClCompile Include="RResource.cpp" />
     <ClCompile Include="RTexture.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShaderLoader.cpp" />
+    <ClCompile Include="TextureLoader.cpp" />
     <ClCompile Include="UBaseComponent.cpp" />
     <ClCompile Include="UBaseObject.cpp" />
     <ClCompile Include="RMesh.cpp" />
@@ -209,6 +218,8 @@
     <ClInclude Include="ACamera.h" />
     <ClInclude Include="AFlyCamera.h" />
     <ClInclude Include="ALight.h" />
+    <ClInclude Include="Animation.h" />
+    <ClInclude Include="AnimationLoader.h" />
     <ClInclude Include="AOrbitCamera.h" />
     <ClInclude Include="AStaticMesh.h" />
     <ClInclude Include="Config.h" />
@@ -220,6 +231,9 @@
     <ClInclude Include="ImGui_Viewport.h" />
     <ClInclude Include="ImGui_Window.h" />
     <ClInclude Include="Inspector.hpp" />
+    <ClInclude Include="Log.h" />
+    <ClInclude Include="MaterialLoader.h" />
+    <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="RMaterialInstance.h" />
     <ClInclude Include="MathF.h" />
     <ClInclude Include="OBJMesh.h" />
@@ -232,6 +246,8 @@
     <ClInclude Include="RResource.h" />
     <ClInclude Include="RTexture.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShaderLoader.h" />
+    <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="UBaseComponent.h" />
     <ClInclude Include="UBaseObject.h" />

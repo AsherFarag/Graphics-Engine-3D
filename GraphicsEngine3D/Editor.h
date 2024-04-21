@@ -9,15 +9,7 @@ enum EEditorStyle
 
 class Editor
 {
-#pragma region Style
-
 public:
-
-
 	static void SetEditorStyle(EEditorStyle Style);
-
-#pragma endregion
-
-
 };
 

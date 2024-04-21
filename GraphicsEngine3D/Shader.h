@@ -72,6 +72,9 @@ public:
 
 	unsigned int getHandle() const { return m_program; }
 
+	bool UsesLights() { return useLights; }
+	void SetUseLights( bool a_UseLights ) { useLights = a_UseLights; }
+
 	int getUniform(const char* name);
 
 	void bindUniform(int ID, int value);
@@ -133,6 +136,10 @@ private:
 	int specHighlightTexUniform;
 	int normalTexUniform;
 	int dispTexUniform;
+
+	bool useLights = true;
 };
 
 }
+
+using ShaderHandle = std::shared_ptr<aie::ShaderProgram>;

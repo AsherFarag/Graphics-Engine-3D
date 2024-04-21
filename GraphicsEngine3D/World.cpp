@@ -8,23 +8,20 @@
 
 // --- Engine ---
 #include "UBaseObject.h"
+#include "AActor.h"
 #include "ACamera.h"
 #include "AFlyCamera.h"
 #include "AStaticMesh.h"
 #include "ALight.h"
-#include "RenderingManager.h"
+#include "RenderManager.h"
 #include "ResourceManager.h"
 
 
 
 World::World()
 {
-    // - Set Up Managers -
-    m_RenderingManager = new RenderingManager();
-
     m_Objects = std::list<UBaseObject*>();
     m_Actors = std::list<AActor*>();
-
 }
 
 World::~World()
@@ -33,89 +30,11 @@ World::~World()
 
 bool World::Begin()
 {
-    #pragma region Set Up
-
-    ResourceManager::SetMainShader( ResourceManager::LoadShader("Phong") );
-
-    ResourceManager::LoadShader("PostProcess");
-
-    #pragma region Default Material Set up
-
-    RMaterial* DefaultMaterial = ResourceManager::InstantiateMaterial("Default");
-    DefaultMaterial->Ambient = vec3(0.8f);
-    DefaultMaterial->SpecularPower = 1.f;
-
-    // textures
-    DefaultMaterial->DiffuseTexture.load("Resources/Mesh/Default.tga");
-    DefaultMaterial->NormalTexture.load("Resources/Mesh/DefaultNormal.tga");
-
-    RMaterial* SkyMaterial = ResourceManager::InstantiateMaterial("Sky");
-    SkyMaterial->Ambient = vec3(1.f);
-
-    // textures
-    SkyMaterial->DiffuseTexture.load("Resources/Mesh/Sky.jpeg");
-
-    RMaterial* CameraMaterial = ResourceManager::InstantiateMaterial("Camera");
-    CameraMaterial->Ambient = vec3(0.1f, 0.3f, 1.f);
-
-    // textures
-    CameraMaterial->DiffuseTexture.load("Resources/Mesh/Default.tga");
-
-
-    #pragma endregion
-
-    // Load Primitive Meshes
-    ResourceManager::LoadOBJMesh("Primitives/Box", DefaultMaterial);
-    ResourceManager::LoadOBJMesh("Primitives/Cone", DefaultMaterial);
-    ResourceManager::LoadOBJMesh("Primitives/Cylinder", DefaultMaterial);
-    ResourceManager::LoadOBJMesh("Primitives/Pyramid", DefaultMaterial);
-    ResourceManager::LoadOBJMesh("Primitives/Sphere", DefaultMaterial);
-
-    ResourceManager::LoadOBJMesh("Robot/Robot", nullptr, true, true);
-
-    // Default Light Set up
-    m_RenderingManager = new RenderingManager();
-    ALight* AmbientLight = new ALight();
-    AmbientLight->SetName("Ambient Light");
-    AmbientLight->SetAmbient(true);
-    m_RenderingManager->SetAmbientLight(AmbientLight);
-
-    // Camera Set Up
     m_MainCamera = new AFlyCamera();
-    m_MainCamera->SetActorPosition(vec3(-10, 1, 0));
+    auto mesh = new AStaticMesh();
+    mesh->GetMesh()->SetMesh( Resource::LoadMesh( "Box.obj", false ) );
+    mesh->GetMesh()->SetMaterial( Resource::GetMaterialInstance( "Default" ) );
 
-    // Create SoulSpear
-    for (int i = 0; i < 1; i++)
-    {
-        int Rows = 8;
-        int Cols = 8;
-        AStaticMesh* StaticMesh;
-        // Static Mesh Set Up
-        StaticMesh = new AStaticMesh("soulspear/soulspear", true, true);
-
-        StaticMesh->SetActorPosition(vec3(((i % Rows) * 2.f - i * 2) * 0.5f, 0, (i % Cols) * 2.f));
-    }
-
-    AStaticMesh* Plane = new AStaticMesh("Primitives/Box");
-    Plane->SetName("Plane");
-    Plane->SetActorScale({ 20.f, 0.1f, 20.f });
-    Plane->SetActorPosition({ 0.f, -0.051f, 0.f });
-
-    AStaticMesh* Sky = new AStaticMesh("Primitives/Sphere");
-    Sky->GetMesh()->SetMaterial(SkyMaterial);
-    Sky->SetName("Sky");
-    Sky->SetActorScale({ 500, 500.f, -500.f });
-    
-#if IS_EDITOR
-
-    Editor::SetEditorStyle(Editor::ES_MIDNIGHT);
-
-    m_DebugLog = Debug::ImGui_DebugLog();
-    m_DebugLog.PrintMessage(Debug::DebugMessage(false, "===== Begin World =====", Debug::Default, ImVec4(0, 1, 0, 1)));
-
-#endif // IS_EDITOR
-
-    #pragma endregion
 
     for (auto Actor : m_Actors)
     {
@@ -136,159 +55,24 @@ void World::Update()
 }
 
 void World::Draw()
-{
-    auto EngineInstance = GraphicsEngine3DApp::GetInstance();
+{ 
+    auto renderManager =GraphicsEngine3DApp::GetInstance()->m_RenderManager;
 
-    // Get the Rendering Manager to draw 
-    m_RenderingManager->Draw();
+    renderManager->RenderPreProcess( m_MainCamera );
 
-#if IS_EDITOR
-#pragma region ImGui
+    // Draw whatever you want here
+    // ======================================================
 
-    ImGuiWindowFlags Window_Flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus;
-    ImGui::SetNextWindowPos(ImVec2(0, 20));
-    ImGui::SetNextWindowSize(ImVec2(EngineInstance->getWindowWidth(), EngineInstance->getWindowHeight()));
-    if (ImGui::Begin("Editor", nullptr, Window_Flags))
-    {
-        ImGuiID idWind = ImGui::GetID("Editor");
+    Gizmos::addSphere( vec3( 0 ), 10, 10, 10, vec4( 1 ) );
 
-        ImGui::DockSpace(idWind, ImVec2(0, 0));
-    }
-    ImGui::End();
+    // ======================================================
 
-#pragma region Scene Hierarchy
+    renderManager->Render( m_MainCamera );
 
-    // Create Scene Hierarchy Window
-    ImGui::Begin("Scene Hierarchy", nullptr);
+    // Currently does nothing
+    renderManager->RenderPostProcess( nullptr );
 
-    // Print num of Actors
-    ImGui::Text("Number of Actors: %i", m_Actors.size());
-
-    int ActorCount = 1;
-    // Create a List of Actors
-    if (ImGui::BeginListBox("Actors", ImGui::GetContentRegionAvail()))
-    {
-        if (ImGui::Button("Destroy All Actors"))
-        {
-            for (auto Actor : m_Actors)
-            {
-                if (Actor == m_MainCamera)
-                    continue;
-
-                Actor->Destroy();
-            }
-        }
-
-        for (auto Actor : m_Actors)
-        {
-            bool IsSelected = (m_InspectedActor == nullptr ? false : Actor->GetId() == m_InspectedActor->GetId());
-            if (ImGui::Selectable((std::to_string(ActorCount) + ": " + Actor->GetName()).c_str(), IsSelected))
-                m_InspectedActor = Actor;
-
-            ActorCount++;
-        }
-        ImGui::EndListBox();
-    }
-
-    ImGui::End();
-
-#pragma endregion
-
-#pragma region Inspector
-
-    ImGui::Begin("Inspector");
-    if (m_InspectedActor)
-    {
-        m_InspectedActor->Draw_ImGui();
-        ImVec4 OldColour = ImGui::GetStyle().Colors[ImGuiCol_Button];
-        ImGui::GetStyle().Colors[ImGuiCol_Button] = ImVec4(0.8f, 0.15f, 0.25f, 1);
-        if (ImGui::Button("DESTROY"))
-        {
-            m_InspectedActor->Destroy();
-            m_InspectedActor = nullptr;
-        }
-        ImGui::GetStyle().Colors[ImGuiCol_Button] = OldColour;
-    }
-    ImGui::End();
-
-#pragma endregion
-
-    if (ImGui::BeginMainMenuBar())
-    {
-        if (ImGui::BeginMenu("Add Actor"))
-        {
-            AActor* NewActor = nullptr;
-            vec3 SpawnPos = vec3(0);
-            if (m_MainCamera)
-            {
-                SpawnPos = m_MainCamera->GetActorPosition() + m_MainCamera->GetForward() * 5.f;
-            }
-
-            if (ImGui::MenuItem("Light"))
-                NewActor = new ALight();
-
-            if (ImGui::MenuItem("Static Mesh"))
-            {
-                AStaticMesh* StaticMesh;
-                // Static Mesh Set Up
-                StaticMesh = new AStaticMesh();
-                //StaticMesh->GetMesh()->SetMaterial(m_SoulspearMat);
-
-                NewActor = StaticMesh;
-            }
-
-            if (ImGui::MenuItem("Camera"))
-            {
-                auto C = new ACamera();
-                C->Begin();
-            }
-
-            if (NewActor)
-            {
-                NewActor->SetActorPosition(SpawnPos);
-                m_InspectedActor = NewActor;
-            }
-
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
-    }
-
-#pragma region Shaders
-
-    ImGui::Begin("Shader");
-
-    if (ImGui::Button("Reload Shaders"))
-    {
-        ResourceManager::ReloadShaders();
-        World::DebugLog(Debug::DebugMessage(true, " --- Reloaded Shaders ---"));
-    }
-
-    ImGui::End();
-
-
-
-#pragma endregion
-
-#pragma region Debug Log
-
-    m_DebugLog.Draw();
-
-#pragma endregion
-
-    m_ResourceManagerView.Draw();
-
-    m_RenderingManager->DrawViewports();
-
-
-#pragma endregion
-
-#else
-    
-//m_MainCamera->GetRenderTarget()->bindRead();
-    
-#endif // IS_EDITOR
-
+    m_MainCamera->m_Viewport.Draw();
 }
 
 void World::End()
@@ -298,17 +82,9 @@ void World::End()
     {
         Object->Destroy();
     }
+
     DestroyPendingObjects();
-
-    delete m_RenderingManager;
 }
-
-#if IS_EDITOR
-void World::DebugLog(Debug::DebugMessage a_Log)
-{
-    GetWorld()->m_DebugLog.PrintMessage(a_Log);
-}
-#endif // IS_EDITOR
 
 
 

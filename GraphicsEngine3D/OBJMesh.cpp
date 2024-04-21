@@ -83,23 +83,23 @@ bool OBJMesh::load(const char* filename, bool loadTextures /* = true */, bool fl
 		for (auto& m : materials)
 		{
 			std::string MaterialName = m_ResourceName.append(std::to_string(index));
-			m_materials[index] = ResourceManager::InstantiateMaterial(MaterialName.c_str());
+			//m_materials[index] = ResourceManager::InstantiateMaterial(MaterialName.c_str());
 
-			m_materials[index]->Ambient = glm::vec3(m.ambient[0], m.ambient[1], m.ambient[2]);
-			m_materials[index]->Diffuse = glm::vec3(m.diffuse[0], m.diffuse[1], m.diffuse[2]);
-			m_materials[index]->Specular = glm::vec3(m.specular[0], m.specular[1], m.specular[2]);
-			m_materials[index]->Emissive = glm::vec3(m.emission[0], m.emission[1], m.emission[2]);
-			m_materials[index]->SpecularPower = m.shininess;
-			m_materials[index]->Opacity = m.dissolve;
+			//m_materials[index]->Ambient = glm::vec3(m.ambient[0], m.ambient[1], m.ambient[2]);
+			//m_materials[index]->Diffuse = glm::vec3(m.diffuse[0], m.diffuse[1], m.diffuse[2]);
+			//m_materials[index]->Specular = glm::vec3(m.specular[0], m.specular[1], m.specular[2]);
+			//m_materials[index]->Emissive = glm::vec3(m.emission[0], m.emission[1], m.emission[2]);
+			//m_materials[index]->SpecularPower = m.shininess;
+			//m_materials[index]->Opacity = m.dissolve;
 
-			// textures
-			m_materials[index]->AlphaTexture.load((folder + m.alpha_texname).c_str());
-			m_materials[index]->AmbientTexture.load((folder + m.ambient_texname).c_str());
-			m_materials[index]->DiffuseTexture.load((folder + m.diffuse_texname).c_str());
-			m_materials[index]->SpecularTexture.load((folder + m.specular_texname).c_str());
-			m_materials[index]->SpecularHighlightTexture.load((folder + m.specular_highlight_texname).c_str());
-			m_materials[index]->NormalTexture.load((folder + m.bump_texname).c_str());
-			m_materials[index]->DisplacementTexture.load((folder + m.displacement_texname).c_str());
+			//// textures
+			//m_materials[index]->AlphaTexture.load((folder + m.alpha_texname).c_str());
+			//m_materials[index]->AmbientTexture.load((folder + m.ambient_texname).c_str());
+			//m_materials[index]->DiffuseTexture.load((folder + m.diffuse_texname).c_str());
+			//m_materials[index]->SpecularTexture.load((folder + m.specular_texname).c_str());
+			//m_materials[index]->SpecularHighlightTexture.load((folder + m.specular_highlight_texname).c_str());
+			//m_materials[index]->NormalTexture.load((folder + m.bump_texname).c_str());
+			//m_materials[index]->DisplacementTexture.load((folder + m.displacement_texname).c_str());
 
 			++index;
 		}
@@ -239,7 +239,7 @@ void OBJMesh::draw(bool usePatches /* = false */) {
 	for (auto& c : m_meshChunks) {
 
 		// bind material
-		if (currentMaterial != c.materialID) {
+		/*if (currentMaterial != c.materialID) {
 			currentMaterial = c.materialID;
 			if (kaUniform >= 0)
 				glUniform3fv(kaUniform, 1, &m_materials[currentMaterial]->Ambient[0]);
@@ -295,7 +295,7 @@ void OBJMesh::draw(bool usePatches /* = false */) {
 				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial]->DisplacementTexture.getHandle());
 			else if (dispTexUniform >= 0)
 				glBindTexture(GL_TEXTURE_2D, 0);
-		}
+		}*/
 
 		// bind and draw geometry
 		glBindVertexArray(c.vao);

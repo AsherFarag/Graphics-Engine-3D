@@ -9,32 +9,18 @@ ALight::ALight(vec3 a_Colour, float a_Intensity)
 	m_Colour = a_Colour;
 	m_Intensity = a_Intensity;
 
-	if (World::GetRenderingManager()->AddLight(this) == false)
-	{
-		Destroy();
-	}
-}
-
-void ALight::SetAmbient(bool a_IsAmbient)
-{
-	// If the new state is the same as the old state,
-	// Do nothing
-	//if (a_IsAmbient == m_IsAmbient)
-	//	return;
-
-	m_IsAmbient = a_IsAmbient;
-	//if (m_IsAmbient)
+	//if (World::GetRenderingManager()->AddLight(this) == false)
 	//{
-	//	World::GetRenderingManager()->SetAmbientLight(this);
+	//	Destroy();
 	//}
 }
 
 void ALight::OnDestroyed()
 {
-	if (IsAmbient())
-		World::GetRenderingManager()->SetAmbientLight(nullptr);
-	else
-		World::GetRenderingManager()->RemoveLight(this);
+	//if (IsAmbient())
+	//	World::GetRenderingManager()->SetAmbientLight(nullptr);
+	//else
+	//	World::GetRenderingManager()->RemoveLight(this);
 }
 
 void ALight::OnDraw_ImGui()
@@ -51,6 +37,6 @@ void ALight::OnDraw_ImGui()
 	if (ImGui::Checkbox("Is Ambient", &NewAmbient))
 	{
 		SetAmbient(NewAmbient);
-		NewAmbient ? World::GetRenderingManager()->SetAmbientLight(this) : World::GetRenderingManager()->SetAmbientLight(nullptr);
+		//NewAmbient ? World::GetRenderingManager()->SetAmbientLight(this) : World::GetRenderingManager()->SetAmbientLight(nullptr);
 	}
 }

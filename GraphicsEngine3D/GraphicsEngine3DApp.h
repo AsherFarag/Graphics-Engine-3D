@@ -12,17 +12,11 @@
 
 // --- ImGui ---
 #include "imgui.h"
+#include "ImGui_ResourceManager.h"
 
 // --- Engine ---
 class World;
-
-#pragma region Macros
-
-#define IS_DEBUG true
-
-#define AIE "./bin/"
-
-#pragma endregion
+class RenderManager;
 
 class GraphicsEngine3DApp
 	: public aie::Application
@@ -38,21 +32,29 @@ public:
 
 	static GraphicsEngine3DApp* GetInstance();
 
-	friend class World;
-
-protected:
-	World* m_World;
-
-public:
-
 	virtual bool startup();
 	virtual void shutdown();
 
 	virtual void update(float deltaTime);
 	virtual void draw();
 
-	bool LaunchShaders();
-	bool LoadShaders(aie::ShaderProgram& a_ShaderToLoad, const char* a_FilePath, std::string a_ErrorName);
+	static RenderManager* GetRenderManager() { return GetInstance()->m_RenderManager; }
+
+protected:
+	friend class World;
+	World* m_World;
+	// Managers
+	RenderManager* m_RenderManager;
+	// Time taken for the update function
+	float m_UpdateTime;
+
+#if IS_EDITOR
+
+public:
+	Debug::ImGui_DebugLog m_DebugLog;
+	ImGui_ResourceManager m_ResourceManagerView;
+
+#endif // IS_EDITOR
 };
 
 static GraphicsEngine3DApp* s_Instance;

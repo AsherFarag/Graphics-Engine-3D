@@ -1,18 +1,34 @@
 #pragma once
 #include "RResource.h"
+#include "RTexture.h"
+#include "RMaterial.h"
 
-class RTexture;
-class RMaterial;
+// --- STD ---
+#include <memory>
+
+//
+// Master materials should have a default set of properties.
+// A Material instance should only override the properties that are different.
+// Set up a property system or something
+//
+// P.s. Master Materials in unreal complile into their own shader and material instances just bind the uniforms they need to.
 
 class RMaterialInstance :
     public RResource
 {
+	friend class RenderManager;
+	friend class MaterialLoader;
+
+private:
+
+	MaterialHandle m_MasterMaterial;
+
 public:
-	RMaterialInstance(RMaterial* a_MasterMaterial = nullptr);
+	DEFINE_CONSTRUCTORS( RMaterialInstance );
 
-	friend class RMaterial;
+	RMaterialInstance( MaterialHandle a_MasterMaterial );
 
-public:	TODO("Make these members private with getters");
+	bool Load( const string& a_FileName );
 	vec3 Ambient  = vec3(1);
 	vec3 Diffuse  = vec3(1);
 	vec3 Specular = vec3(1);
@@ -21,18 +37,17 @@ public:	TODO("Make these members private with getters");
 	float SpecularPower = 1.f;
 	float Opacity		= 1.f;
 
-	RTexture* DiffuseTexture			 = nullptr;	// bound slot 0
-	RTexture* AlphaTexture				 = nullptr;	// bound slot 1
-	RTexture* AmbientTexture			 = nullptr;	// bound slot 2
-	RTexture* SpecularTexture			 = nullptr;	// bound slot 3
-	RTexture* SpecularHighlightTexture	 = nullptr;	// bound slot 4
-	RTexture* NormalTexture				 = nullptr;	// bound slot 5
-	RTexture* DisplacementTexture		 = nullptr;	// bound slot 6
+	TextureHandle DiffuseTexture			 = nullptr;	// bound slot 0
+	TextureHandle AlphaTexture				 = nullptr;	// bound slot 1
+	TextureHandle AmbientTexture			 = nullptr;	// bound slot 2
+	TextureHandle SpecularTexture			 = nullptr;	// bound slot 3
+	TextureHandle SpecularHighlightTexture	 = nullptr;	// bound slot 4
+	TextureHandle NormalTexture				 = nullptr;	// bound slot 5
+	TextureHandle DisplacementTexture		 = nullptr;	// bound slot 6
 
-	const RMaterial* GetMaster() const { return m_MasterMaterial; }
+	auto& GetMaster() { return m_MasterMaterial; }
 
-private:
-	// This is the owner of this material instance.
-	RMaterial* m_MasterMaterial;
+	void Bind();
 };
 
+using MaterialInstanceHandle = std::shared_ptr< RMaterialInstance >;

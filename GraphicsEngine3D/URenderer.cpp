@@ -8,7 +8,7 @@
 URenderer::URenderer(AActor* a_Owner)
 	: UBaseComponent(a_Owner)
 {
-	SetRenderingManager(World::GetRenderingManager());
+	
 }
 
 URenderer::~URenderer()

@@ -51,10 +51,6 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{64ca5872-d97d-47bf-80b2-3b6a8b01644e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Header Files\Engine\Objects\Actors\Cameras">
       <UniqueIdentifier>{0f5de61a-cd33-4767-b1f5-0c5f41037b84}</UniqueIdentifier>
     </Filter>
@@ -99,6 +95,12 @@
     </Filter>
     <Filter Include="Source Files\Engine\Objects\Components\Lights">
       <UniqueIdentifier>{f1deaead-9eb2-4d9b-aeed-671b38b1f6d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Resources\Loaders">
+      <UniqueIdentifier>{105edc62-014f-4aa5-92a8-bb639c1f0d13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Resources\Loaders">
+      <UniqueIdentifier>{341ebccd-1585-42d9-b85f-cad4ef60a2f9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +199,21 @@
     </ClCompile>
     <ClCompile Include="RenderManager.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureLoader.cpp">
+      <Filter>Source Files\Engine\Resources\Loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialLoader.cpp">
+      <Filter>Source Files\Engine\Resources\Loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshLoader.cpp">
+      <Filter>Source Files\Engine\Resources\Loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderLoader.cpp">
+      <Filter>Source Files\Engine\Resources\Loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationLoader.cpp">
+      <Filter>Source Files\Engine\Resources\Loaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -302,11 +319,32 @@
     <ClInclude Include="ULight.h">
       <Filter>Header Files\Engine\Objects\Actors\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="RenderManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RMaterialInstance.h">
       <Filter>Header Files\Engine\Resources\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderManager.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialLoader.h">
+      <Filter>Header Files\Engine\Resources\Loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshLoader.h">
+      <Filter>Header Files\Engine\Resources\Loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderLoader.h">
+      <Filter>Header Files\Engine\Resources\Loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureLoader.h">
+      <Filter>Header Files\Engine\Resources\Loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files\Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationLoader.h">
+      <Filter>Header Files\Engine\Resources\Loaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

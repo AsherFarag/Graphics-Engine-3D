@@ -1,12 +1,13 @@
 #pragma once
 
 #pragma region STD
+
 #include <vector>
+
 #pragma endregion
 
 
 #pragma region Engine
-#include "RenderTarget.h"
 
 #include "RMesh.h"
 #include "OBJMesh.h"
@@ -16,69 +17,93 @@
 #include "URenderer.h"
 #include "UMeshRenderer.h"
 
+class RenderTarget;
 class ACamera;
+class ALight;
+
 #pragma endregion
 
-struct MeshBatch
-{
-	OBJMesh* Mesh;
-	unsigned int NumOfInstances;
-	mat4* ModelMatricies;
-};
+#if IS_EDITOR
 
-struct MaterialBatch
-{
-	RMaterial* Material;
-	std::vector<MeshBatch> MeshBatches;
-};
+#define DEBUG_RENDER_STAT(Stat, Op, Val) m_RenderStats.Stat Op Val
+#define DEBUG_RENDER_STAT_FUNC(Func, Args) m_RenderStats.Func(Args)
 
-struct RenderBatch
-{
-	std::vector<MaterialBatch> MaterialBatches;
-};
+#else
 
-// === Render Manager ===
-//	
-// 
-// 
-//
+#define DEBUG_RENDER_STAT(Stat, Op, Val)
+#define DEBUG_RENDER_STAT_FUNC( Func, Args )
 
+#endif // IS_EDITOR
+
+
+const int MAX_LIGHTS = 4;
 
 class RenderManager
 {
+	friend class World;
+	friend class UMeshRenderer;
+
 public:
 	RenderManager();
 	~RenderManager();
-
-	void RenderToTarget(RenderTarget* a_Target, ACamera* a_Camera);
-
-private:
-
-	std::vector<UMeshRenderer> m_MeshRenderers;
+	
+	void Reset();
 
 private:
+
+	std::vector<UMeshRenderer*> m_MeshRenderers;
+	std::vector<UMeshRenderer*> m_DrawBuffer;
+
+	int m_NumOfLights = 0;
+	std::vector<ALight*> m_Lights;
 
 	// --- Render Pipeline ---
 	// Generates a render batch that can be rendered
-	void RenderPreProcess(ACamera* a_Camera, RenderBatch& OutBatch);
+	void RenderPreProcess(ACamera* a_Camera);
 	// Binds a material and then batch draws the meshes using that material
-	void Render(ACamera* a_Camera, const RenderBatch& a_RenderBatch);
+	void Render(ACamera* a_Camera);
 	// Finished up the Render, such as applying post-processing
-	void RenderPostProcess(RenderTarget* a_Target) {}
+	void RenderPostProcess(RenderTarget* a_Target);
+	
+	ShaderHandle			m_ShaderInUse			= nullptr;
+	MaterialHandle			m_MaterialInUse			= nullptr;
+	MaterialInstanceHandle	m_MaterialInstanceInUse = nullptr;
+	void UseMaterial( MaterialHandle a_Material);
+	void UseMaterialInstance( MaterialInstanceHandle a_MaterialInstance );
 
+	void BindLights( ShaderHandle a_Shader );
 
+	void BindMaterial( MaterialHandle a_Material);
 
-	void BindMaterial(RMaterial* a_Material);
+protected:
+
+	bool AddRenderer(URenderer* a_Renderer);
+	bool RemoveRenderer(URenderer* a_Renderer);
+
+	void AddMeshRenderer( UMeshRenderer* a_Renderer );
+	void RemoveMeshRenderer( UMeshRenderer* a_Renderer );
+
+	TODO("Fix up light system");
+#pragma region  --- Lights --- 
+
+public:
+	bool AddLight(ALight* a_Light);
+	bool RemoveLight(ALight* a_Light);
+
+#pragma endregion
 
 #if IS_EDITOR
 
 	struct RenderStats
 	{
-		// --- Per Frame Stats
+		// --- Per Frame Stats ---
 		unsigned int DrawnMaterials = 0;
 		unsigned int DrawnMeshes = 0;
 		unsigned int DrawCalls = 0;
 		unsigned int Instances = 0;
+		float PreProcessTime = 0.f;
+		float RenderTime = 0.f;
+		float PostProcessTime = 0.f;
 
 
 		void ResetFrameStats()
@@ -91,16 +116,23 @@ private:
 
 		void PrintStats()
 		{
-			ImGui::Text("Drawn Materials: %i", DrawnMaterials);
-			ImGui::Text("Drawn Meshes: %i", DrawnMeshes);
-			ImGui::Text("Draw Calls: %i", DrawCalls);
-			ImGui::Text("Instances: %i", Instances);
+			if ( ImGui::TreeNode( "Render Stats" ) )
+			{
+				ImGui::Text( "Drawn Materials: %i", DrawnMaterials );
+				ImGui::Text( "Drawn Meshes: %i", DrawnMeshes );
+				ImGui::Text( "Draw Calls: %i", DrawCalls );
+				ImGui::Text( "Instances: %i", Instances );
+				ImGui::Text( "Pre-Process Time: %.4fms", PreProcessTime );
+				ImGui::Text( "Render Time: %.4fms", RenderTime );
+				ImGui::Text( "Post-Process Time: %.4fms", PostProcessTime );
+
+				ImGui::TreePop();
+			}
 		}
 	};
 
 	RenderStats m_RenderStats;
 
 #endif // IS_EDITOR
-
 };
 

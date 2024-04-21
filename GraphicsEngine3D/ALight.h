@@ -17,13 +17,13 @@ public:
     void SetColour(vec3 NewColour) { m_Colour = NewColour; }
 
     bool IsAmbient() const { return m_IsAmbient; }
-    void SetAmbient(bool a_IsAmbient);
+    void SetAmbient( bool a_IsAmbient ) { m_IsAmbient = a_IsAmbient; }
 
     const float GetIntensity() { return m_Intensity; }
-    void SetIntensity(float NewIntensity) { m_Intensity = NewIntensity; }
+    void SetIntensity( float NewIntensity ) { m_Intensity = NewIntensity; }
 
     const float GetFallOff() { return m_FallOff; }
-    void SetFallOff(float NewFallOff) { m_FallOff = NewFallOff; }
+    void SetFallOff( float NewFallOff ) { m_FallOff = NewFallOff; }
 
 protected:
     bool m_IsAmbient = false;

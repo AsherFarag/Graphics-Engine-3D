@@ -1,8 +1,8 @@
 #pragma once
+#include "UBaseObject.h"
 #include "RResource.h"
 
 // --- AIE ---
-#include "Texture.h"
 #include "Shader.h"
 using namespace aie;
 
@@ -11,37 +11,33 @@ class RMaterialInstance;
 class RMaterial :
     public RResource
 {
+	friend class RenderManager;
+	friend class MaterialLoader;
+
 public:
 	RMaterial();
 	~RMaterial();
 
-	RMaterialInstance* CreateMaterialInstance();
-	void BindMaterialInstance(RMaterialInstance* a_Instance);
-	void UnbindMaterialInstance(RMaterialInstance* a_Instance);
-	void UnbindAllMaterialInstances();
+	ShaderHandle GetShader() { return m_Shader; }
+	bool IsValid();
 
 private:
-	ShaderProgram* m_Shader = nullptr;
+	ShaderHandle m_Shader = nullptr;
 
-	std::vector<RMaterialInstance*> m_Instances;
+	bool Load(const string& a_FileName);
 
-protected:
-	virtual bool Load(const string& a_FileName);
+	//void Bind();
 
-public:
-	void Bind();
+	//void BindAmbient();
+	//void BindDiffuse();
+	//void BindSpecular();
+	//void BindEmissive();
+	//void BindSpecularPower();
+	//void BindOpacity();
 
-	void BindAmbient();
-	void BindDiffuse();
-	void BindSpecular();
-	void BindEmissive();
-	void BindSpecularPower();
-	void BindOpacity();
-
-	bool LoadMaterial(const char* a_FileName);
-	bool LoadShader(const char* a_FileName);
-	bool LoadTexture(const char* a_FileName);
-
-
+	//bool LoadMaterial(const char* a_FileName);
+	//bool LoadShader(const char* a_FileName);
+	//bool LoadTexture(const char* a_FileName);
 };
 
+using MaterialHandle = std::shared_ptr<RMaterial>;

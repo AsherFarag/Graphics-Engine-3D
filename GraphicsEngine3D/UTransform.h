@@ -21,11 +21,11 @@ public:
     UTransform(vec3 a_Position, quat a_Rotation, vec3 a_Scale);
     UTransform(vec3 a_Position, quat a_Rotation, float a_Scale);
 
-    mat4& GetTransform()     { return m_Transform; }
-    vec3& GetPosition()      { return m_Position; }
-    quat& GetRotation()      { return m_Rotation; }
-    vec3& GetRotationEular() { return glm::eulerAngles(m_Rotation); }
-    vec3& GetScale()         { return m_Scale; }
+    auto& GetTransform()     { return m_Transform; }
+    auto& GetPosition()      { return m_Position; }
+    auto& GetRotation()      { return m_Rotation; }
+    auto& GetRotationEular() { return glm::eulerAngles(m_Rotation); }
+    auto& GetScale()         { return m_Scale; }
     vec3& GetForward();
 
     void SetTransform(const mat4& a_Transform);

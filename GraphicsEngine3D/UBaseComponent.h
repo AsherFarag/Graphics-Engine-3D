@@ -21,6 +21,7 @@ protected:
     virtual void OnDestroyed() {};
 
 public:
+    const auto& GetOwner() const { return m_Owner; }
     void SetOwner(AActor* a_Owner);
 
 #pragma region ImGui

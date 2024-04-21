@@ -4,7 +4,7 @@
 #include "OBJMesh.h"
 
 // --- Engine ---
-#include "RMaterial.h"
+#include "RMaterialInstance.h"
 class RenderingManager;
 
 class URenderer :
@@ -17,7 +17,7 @@ public:
     virtual void Draw(mat4 a_ProjectionViewMatrix) = 0;
 
 protected:
-    RMaterial* m_Material = nullptr;
+    MaterialInstanceHandle m_Material = nullptr;
 
     // Owning Rendering Manager
     RenderingManager* m_RenderingManager;
@@ -28,8 +28,8 @@ protected:
 public:
     void SetRenderingManager(RenderingManager* a_RenderingManager);
 
-    RMaterial* GetMaterial() const { return m_Material; }
-    void SetMaterial(RMaterial* a_Material) { m_Material = a_Material; }
+    MaterialInstanceHandle GetMaterial() const { return m_Material; }
+    void SetMaterial( MaterialInstanceHandle a_Material) { m_Material = a_Material; }
 
 #pragma region ImGui
 
