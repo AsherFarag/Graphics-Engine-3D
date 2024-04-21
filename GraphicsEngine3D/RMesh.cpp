@@ -13,7 +13,7 @@ void RMesh::Draw()
 		m_MeshChunks[ i ].Draw();
 }
 
-bool RMesh::Load( string Path, bool a_GenerateMaterials, unsigned int ProcessSteps )
+bool RMesh::Load( string Path, bool a_GenerateMaterials, int ProcessSteps )
 {
 	Assimp::Importer Import;
 	const aiScene* Scene = Import.ReadFile( Path, ProcessSteps );
@@ -28,6 +28,11 @@ bool RMesh::Load( string Path, bool a_GenerateMaterials, unsigned int ProcessSte
 
 	ProcessNode( Scene->mRootNode, Scene );
 	return true;
+}
+
+void RMesh::Load( aiScene* a_Scene )
+{
+	
 }
 
 void RMesh::ProcessNode( aiNode* a_Node, const aiScene* a_Scene )

@@ -1,4 +1,5 @@
 #include "MeshLoader.h"
+#include "glm/ext.hpp"
 
 MeshLoader::MeshLoader()
 {
@@ -37,4 +38,51 @@ MeshHandle MeshLoader::LoadMesh( const string& a_Path, bool a_GenerateMaterials 
 MeshHandle MeshLoader::GetMesh( const string& a_Name )
 {
     return m_LoadedMeshes.find( a_Name )->second;
+}
+
+template < typename Func >
+void ForEachBoneDescendent( const aiNode* a_Node, Func&& Function )
+{
+    for ( int i = 0; i < a_Node->mNumChildren; ++i )
+    {
+        Function( a_Node );
+        ForEachBoneDescendent( a_Node->mChildren[ i ], Function );
+    }
+}
+
+
+SkeletonHandle MeshLoader::LoadSkeleton( const aiNode* a_BoneRootNode )
+{
+    SkeletonHandle skeleton = std::make_shared<RSkeleton>();
+
+    skeleton->m_Bones.emplace_back().Name = a_BoneRootNode->mName.C_Str();
+
+    ForEachBoneDescendent( a_BoneRootNode,
+        [&skeleton]( const aiNode* a_Node )
+        {
+            
+            auto it = std::find_if( skeleton->m_Bones.begin(), skeleton->m_Bones.end(),
+                [a_Node]( const Bone& a )
+                {
+                    return a.Name == a_Node->mParent->mName.C_Str();
+                } );
+
+            if ( it == skeleton->m_Bones.end() )
+            {
+                LOG( Error, ( "Child Bone doesn't have parent" + string( a_Node->mName.C_Str() ) ).c_str() );
+                return;
+            }
+
+            int parent = it - skeleton->m_Bones.begin();
+
+            auto& bone = skeleton->m_Bones.emplace_back();
+            bone.Name = a_Node->mName.C_Str();
+            bone.Parent = parent;
+
+            // Assimp loads matricies as Row Major so we must convert it to Column major
+            bone.BindTransform = glm::transpose( glm::make_mat4x4( ( &a_Node->mTransformation.a1 ) ) );
+        }
+    );
+
+    return skeleton;
 }

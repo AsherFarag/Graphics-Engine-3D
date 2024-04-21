@@ -174,3 +174,21 @@
 //}
 //
 //#pragma endregion
+
+bool Resource::LoadFBX( const std::string& a_Path, std::vector<MeshHandle>& o_Meshes, std::vector<AnimationHandle>& o_Animations, std::vector<MaterialHandle>& o_Materials, std::vector<TextureHandle>& o_Textures, int a_ProcessSteps )
+{
+
+	Assimp::Importer Import;
+	const aiScene* Scene = Import.ReadFile( a_Path, a_ProcessSteps );
+
+	if ( !Scene || Scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !Scene->mRootNode )
+	{
+		LOG( Error, Import.GetErrorString() );
+		return false;
+	}
+
+
+
+
+	return true;
+}

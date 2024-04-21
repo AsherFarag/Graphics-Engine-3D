@@ -215,6 +215,9 @@
     <ClCompile Include="AnimationLoader.cpp">
       <Filter>Source Files\Engine\Resources\Loaders</Filter>
     </ClCompile>
+    <ClCompile Include="RSkeleton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsEngine3DApp.h">
@@ -345,6 +348,9 @@
     </ClInclude>
     <ClInclude Include="AnimationLoader.h">
       <Filter>Header Files\Engine\Resources\Loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="RSkeleton.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

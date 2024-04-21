@@ -200,6 +200,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="RMaterial.cpp" />
     <ClCompile Include="RResource.cpp" />
+    <ClCompile Include="RSkeleton.cpp" />
     <ClCompile Include="RTexture.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
@@ -244,6 +245,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RMaterial.h" />
     <ClInclude Include="RResource.h" />
+    <ClInclude Include="RSkeleton.h" />
     <ClInclude Include="RTexture.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderLoader.h" />

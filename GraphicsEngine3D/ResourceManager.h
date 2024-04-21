@@ -20,6 +20,7 @@ using std::map;
 #include "ShaderLoader.h"
 #include "MaterialLoader.h"
 #include "TextureLoader.h"
+#include "AnimationLoader.h"
 
 //class ResourceManager
 //{
@@ -82,6 +83,6 @@ namespace Resource
 	static TextureHandle LoadTexture( const string& a_Path, GLenum a_Target, GLenum a_InternalFormat, bool a_srgb = false ) { return TextureLoader::GetInstance()->LoadTexture( a_Path, a_Target, a_InternalFormat, a_srgb ); }
 	static TextureHandle GetTexture( const std::string& a_Name ) { return TextureLoader::GetInstance()->GetTexture( a_Name ); }
 
-	//static void LoadScene( const std::string& a_Path, std::vector< MeshHandle >& o_Meshes, std::vector< MaterialHandle >& o_Materials, std::vector< TextureHandle >& o_Textures );
+	static bool LoadFBX( const std::string& a_Path, std::vector< MeshHandle >& o_Meshes, std::vector< AnimationHandle >& o_Animations, std::vector< MaterialHandle >& o_Materials, std::vector< TextureHandle >& o_Textures, int a_ProcessSteps = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals | aiProcess_CalcTangentSpace );
 }
 

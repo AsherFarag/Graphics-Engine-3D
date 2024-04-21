@@ -17,6 +17,8 @@
 // --- Engine ---
 class World;
 class RenderManager;
+class RSkeleton;
+using SkeletonHandle = std::shared_ptr<RSkeleton>;
 
 class GraphicsEngine3DApp
 	: public aie::Application
@@ -39,6 +41,8 @@ public:
 	virtual void draw();
 
 	static RenderManager* GetRenderManager() { return GetInstance()->m_RenderManager; }
+
+	SkeletonHandle skellie;
 
 protected:
 	friend class World;

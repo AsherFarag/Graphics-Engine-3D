@@ -30,7 +30,7 @@ struct Vertex
 	vec3 Bitangent;	// Added to attribute location 4
 
 	//bone indexes which will influence this vertex
-	int m_BoneIDs[ MAX_BONE_INFLUENCE ];
+	int32_t m_BoneIDs[ MAX_BONE_INFLUENCE ];
 	//weights from each bone
 	float m_Weights[ MAX_BONE_INFLUENCE ];
 };
@@ -54,7 +54,7 @@ public:
 	std::vector<Vertex>       Vertices;
 	std::vector<unsigned int> Indices;
 
-	unsigned int MaterialID;
+	size_t MaterialID;
 
 private:
 	unsigned int VAO = 0; // The Vertex Array Object
@@ -72,9 +72,10 @@ class RMesh
 private:
 
 	std::vector<MeshChunk> m_MeshChunks;
-	MaterialInstanceHandle m_Material;
+	std::vector<MaterialInstanceHandle> m_Materials;
 
-	bool Load( string Path, bool a_GenerateMaterials, unsigned int ProcessSteps = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
+	bool Load( string Path, bool a_GenerateMaterials, int ProcessSteps = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
+	void Load( aiScene* a_Scene );
 	// Assimp
 	void ProcessNode( aiNode* a_Node, const aiScene* a_Scene );
 	MeshChunk ProcessMeshChunk( aiMesh* a_Mesh, const aiScene* a_Scene, int a_Index );
@@ -106,8 +107,8 @@ public:
 	// Will fail if it cannot find the file OR a mesh has already been loaded in this instance
 	//bool Load( const char* a_FileName, bool a_LoadTextures = true, bool a_FlipTextures = false );
 
-	MaterialInstanceHandle GetMaterial() { return m_Material; }
-	void SetMaterial( MaterialInstanceHandle a_Material ) { m_Material = a_Material; }
+	//MaterialInstanceHandle GetMaterial() { return m_Material; }
+	//void SetMaterial( MaterialInstanceHandle a_Material ) { m_Material = a_Material; }
 
 	// Material access
 	//size_t GetMaterialCount() const { return m_Materials.size(); }

@@ -1,5 +1,6 @@
 #pragma once
 #include "RMesh.h"
+#include "RSkeleton.h"
 
 #include <map>
 
@@ -16,7 +17,10 @@ public:
 	static MeshLoader* GetInstance();
 
 	std::map<string, MeshHandle> m_LoadedMeshes;
+	std::map<string, SkeletonHandle> m_LoadedSkeletons;
 
 	MeshHandle LoadMesh( const string& a_Path, bool a_GenerateMaterials );
 	MeshHandle GetMesh( const string& a_Name );
+
+	SkeletonHandle LoadSkeleton( const aiNode* a_BoneRootNode );
 };

@@ -88,7 +88,6 @@ struct BoneAnimation
 class Animation : public RResource
 {
 public:
-
 	std::map< string, BoneAnimation > BoneAnimations;
 };
 

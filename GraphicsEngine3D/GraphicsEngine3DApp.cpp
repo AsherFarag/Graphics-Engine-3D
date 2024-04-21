@@ -25,10 +25,19 @@ using glm::vec4;
 using glm::mat4;
 using glm::quat;
 using aie::Gizmos;
+void DebugPrint( const aiNode* Node, int Indent = 0 )
+{
+	std::string String( Indent, ' ' );
+	String += Node->mName.C_Str();
+	LOG( Default, String.c_str() );
 
+	for ( int i = 0; i < Node->mNumChildren; ++i )
+	{
+		DebugPrint( Node->mChildren[ i ], Indent + 1 );
+	}
+}
 GraphicsEngine3DApp::GraphicsEngine3DApp()
 {
-
 }
 
 GraphicsEngine3DApp::~GraphicsEngine3DApp()
@@ -72,6 +81,16 @@ bool GraphicsEngine3DApp::startup()
 
 	if ( !m_World->Begin() )
 		return false;
+
+	Assimp::Importer Import; Import.SetPropertyBool( AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false );
+	const aiScene* Scene = Import.ReadFile( "Content/Mesh/TheBoss.fbx", aiPostProcessSteps::aiProcess_Debone | aiPostProcessSteps::aiProcess_OptimizeMeshes | aiPostProcessSteps::aiProcess_RemoveRedundantMaterials );
+	
+	skellie = MeshLoader::GetInstance()->LoadSkeleton( Scene->mRootNode->FindNode("mixamorig:Hips"));
+
+	AnimationHandle Anim = AnimationLoader::GetInstance()-> LoadAnimation( "SomeAnim", Scene, 0 );
+	
+	
+	DebugPrint( Scene->mRootNode );
 
 	return true;
 }

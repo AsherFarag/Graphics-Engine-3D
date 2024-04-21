@@ -40,7 +40,7 @@ bool World::Begin()
     {
         Actor->Begin();
     }
-
+    
     return true;
 }
 
@@ -63,7 +63,9 @@ void World::Draw()
     // Draw whatever you want here
     // ======================================================
 
-    Gizmos::addSphere( vec3( 0 ), 10, 10, 10, vec4( 1 ) );
+    GraphicsEngine3DApp::GetInstance()->skellie->Draw();
+
+    //Gizmos::addSphere( vec3( 0 ), 10, 10, 10, vec4( 1 ) );
 
     // ======================================================
 
