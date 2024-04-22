@@ -100,7 +100,7 @@ SkeletonHandle MeshLoader::LoadSkeleton( const string& a_Path, const string& a_N
             bone.Parent = parentIndex;
 
             // Assimp loads matricies as Row Major so we must convert it to Column major
-            bone.BindTransform = glm::transpose( glm::make_mat4x4( ( &a_Node->mTransformation.a1 ) ) );
+            bone.BindTransform = glm::transpose( glm::make_mat4x4( ( ( ai_real* ) & a_Node->mTransformation )) );
         }
     );
 

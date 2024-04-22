@@ -21,6 +21,7 @@ AnimationHandle AnimationLoader::LoadAnimation( const string& a_Path, const stri
 
 	Result->m_Duration = a_Scene->mAnimations[ a_Index ]->mDuration;
 	Result->m_TicksPerSecond = a_Scene->mAnimations[ a_Index ]->mTicksPerSecond;
+	TimeType InverseTicksPerSecond = ( TimeType )1.0 / Result->m_TicksPerSecond;
 
 	aiAnimation* Anim = a_Scene->mAnimations[ a_Index ];
 
@@ -40,8 +41,7 @@ AnimationHandle AnimationLoader::LoadAnimation( const string& a_Path, const stri
 				PositionKey.mValue.x,
 				PositionKey.mValue.y,
 				PositionKey.mValue.z },
-				(TimeType)PositionKey.mTime
-				} );
+				(TimeType)PositionKey.mTime * InverseTicksPerSecond } );
 		}
 
 		// Rotation keys
@@ -55,7 +55,7 @@ AnimationHandle AnimationLoader::LoadAnimation( const string& a_Path, const stri
 				RotationKey.mValue.x,
 				RotationKey.mValue.y,
 				RotationKey.mValue.z },
-				(TimeType)RotationKey.mTime } );
+				(TimeType)RotationKey.mTime * InverseTicksPerSecond } );
 		}
 
 		// Scale keys
@@ -68,7 +68,7 @@ AnimationHandle AnimationLoader::LoadAnimation( const string& a_Path, const stri
 				ScaleKey.mValue.x,
 				ScaleKey.mValue.y,
 				ScaleKey.mValue.z },
-				(TimeType)ScaleKey.mTime } );
+				(TimeType)ScaleKey.mTime * InverseTicksPerSecond } );
 		}
 	}
 

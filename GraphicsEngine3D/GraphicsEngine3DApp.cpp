@@ -80,8 +80,8 @@ bool GraphicsEngine3DApp::startup()
 	unsigned int propertyFlags = aiProcess_GlobalScale
 							   | aiProcess_Debone
 							   | aiProcess_OptimizeMeshes
-							   | aiProcess_RemoveRedundantMaterials;
-							   //| aiProcess_PopulateArmatureData;
+							   | aiProcess_RemoveRedundantMaterials
+							   | aiProcess_PopulateArmatureData;
 
 	const aiScene* Scene = importer.ReadFile( "Content/Mesh/HipHop.fbx", propertyFlags );
 	skellie = MeshLoader::GetInstance()->LoadSkeleton( "Content/Mesh/HipHop.fbx", "HipHop_Skeleton", Scene->mRootNode->FindNode("mixamorig:Hips"));

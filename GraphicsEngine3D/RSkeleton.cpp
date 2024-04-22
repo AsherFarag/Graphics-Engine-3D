@@ -95,23 +95,25 @@ void RSkeleton::EvaluatePose( AnimationHandle a_Anim, TimeType a_Time, std::vect
 		auto& scaleAnim = boneAnim.ScaleTrack.GetData( a_Time );
 
 		// Create a translation matrix
-		mat4 translationMatrix = glm::translate( mat4( 1 ), posAnim );
+		//mat4 translationMatrix = glm::translate( mat4( 1 ), posAnim );
 
 		// Convert quaternion rotation to rotation matrix
-		mat4 rotationMatrix = glm::toMat4( rotAnim );
+		//mat4 rotationMatrix = glm::toMat4( rotAnim );
 
 		// Create a scale matrix with identity matrix
-		mat4 scaleMatrix = glm::scale( mat4( 1 ), scaleAnim );
+		//mat4 scaleMatrix = glm::scale( mat4( 1 ), scaleAnim );
 
 		// Combine the translation, rotation, and scale matrices
-		mat4 eval = translationMatrix * rotationMatrix * scaleMatrix;
+		mat4 eval;// = translationMatrix * rotationMatrix * scaleMatrix;
+		a_Anim->GetBoneMatrix( m_Bones[ i ].Name, eval, a_Time );
+		//mat4 eval = scaleMatrix* rotationMatrix * translationMatrix;
 
 		if ( m_Bones[ i ].Parent == NO_PARENT_INDEX )
 		{
 			o_Pose[ i ] = eval * bind;
 			continue;
 		}
-		o_Pose[ i ] = eval * glm::inverse( ( m_Bones[ m_Bones[ i ].Parent ].WorldTransform  ) * bind );
+		o_Pose[ i ] = o_Pose[ m_Bones[ i ].Parent ] * eval;
 	}
 }
 
