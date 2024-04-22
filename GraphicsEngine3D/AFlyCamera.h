@@ -21,7 +21,7 @@ public:
     float m_MaxMoveSpeedMultiplier = 100.f;
 
     float m_LookSensitivity = 1.f;
-    float m_MouseScrollSensitivity = 1.f;
+    float m_MouseScrollSensitivity = 0.1f;
 
 private:
     float m_LastMouseScroll = 0.f;

@@ -17,6 +17,24 @@ MeshLoader* MeshLoader::GetInstance()
     return &Instance;
 }
 
+MeshHandle MeshLoader::LoadMesh( const string& a_Path, const string& a_Name, const aiScene* a_Scene )
+{
+    auto meshName = a_Path.substr( a_Path.find_last_of( '/' ) + 1 );
+    meshName = meshName.substr( 0, meshName.find_last_of( '.' ) );
+    // Check if this mesh has already been loaded
+    auto& foundMesh = m_LoadedMeshes.find( meshName );
+    if ( foundMesh != m_LoadedMeshes.end() )
+        return foundMesh->second;
+
+    MeshHandle mesh = std::make_shared< RMesh >();
+    if ( !mesh->Load( a_Path, false ) )
+        return nullptr;
+
+    m_LoadedMeshes.emplace( mesh->GetResourceName(), mesh );
+
+    return mesh;
+}
+
 MeshHandle MeshLoader::LoadMesh( const string& a_Path, bool a_GenerateMaterials )
 {
     auto meshName = a_Path.substr( a_Path.find_last_of( '/' ) + 1 );
@@ -51,7 +69,7 @@ void ForEachBoneDescendent( const aiNode* a_Node, Func&& Function )
 }
 
 
-SkeletonHandle MeshLoader::LoadSkeleton( const aiNode* a_BoneRootNode )
+SkeletonHandle MeshLoader::LoadSkeleton( const string& a_Path, const string& a_Name, const aiNode* a_BoneRootNode )
 {
     SkeletonHandle skeleton = std::make_shared<RSkeleton>();
     
@@ -82,9 +100,13 @@ SkeletonHandle MeshLoader::LoadSkeleton( const aiNode* a_BoneRootNode )
             bone.Parent = parentIndex;
 
             // Assimp loads matricies as Row Major so we must convert it to Column major
-            bone.LocalTransform = glm::transpose( glm::make_mat4x4( ( &a_Node->mTransformation.a1 ) ) );
+            bone.BindTransform = glm::transpose( glm::make_mat4x4( ( &a_Node->mTransformation.a1 ) ) );
         }
     );
+
+    skeleton->GenerateBoneData();
+
+    skeleton->ConstuctResourceInfo( a_Path, a_Name );
 
     return skeleton;
 }

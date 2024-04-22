@@ -31,9 +31,9 @@ World::~World()
 bool World::Begin()
 {
     m_MainCamera = new AFlyCamera();
-    auto mesh = new AStaticMesh();
-    mesh->GetMesh()->SetMesh( Resource::LoadMesh( "Box.obj", false ) );
-    mesh->GetMesh()->SetMaterial( Resource::GetMaterialInstance( "Default" ) );
+    //auto mesh = new AStaticMesh();
+    //mesh->GetMesh()->SetMesh( Resource::LoadMesh( "Box.obj", false ) );
+    //mesh->GetMesh()->SetMaterial( Resource::GetMaterialInstance( "Default" ) );
 
 
     for (auto Actor : m_Actors)
@@ -56,16 +56,30 @@ void World::Update()
 
 void World::Draw()
 { 
-    auto renderManager =GraphicsEngine3DApp::GetInstance()->m_RenderManager;
+    auto renderManager = GraphicsEngine3DApp::GetInstance()->m_RenderManager;
 
     renderManager->RenderPreProcess( m_MainCamera );
 
     // Draw whatever you want here
     // ======================================================
+    auto& skellie = GraphicsEngine3DApp::GetInstance()->skellie;
+    skellie->Draw();
 
-    GraphicsEngine3DApp::GetInstance()->skellie->Draw();
+    auto& anim = AnimationLoader::GetInstance()->GetAnimation( "SomeAnim" );
+    //skellie->EvaluatePose( anim, 0, skellie->m_Pose );
+    timestep += m_DeltaTime;
+    if ( timestep >= (1.f / anim->GetTickRate() ) )
+    {
+        animTime += m_DeltaTime;
+        skellie->EvaluatePose( anim, animTime, skellie->m_Pose );
+        if ( animTime >= anim->GetPlayLength() )
+        {
+            animTime = 0.f;
+        }
+        timestep = 0.f;
+    }
 
-    //Gizmos::addSphere( vec3( 0 ), 10, 10, 10, vec4( 1 ) );
+    Gizmos::addSphere( vec3( 0 ), 0.01f, 10, 10, vec4( 0,1,0,1 ) );
 
     // ======================================================
 

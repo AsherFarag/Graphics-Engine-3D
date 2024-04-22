@@ -212,6 +212,7 @@
     <ClCompile Include="ULight.cpp" />
     <ClCompile Include="UMeshRenderer.cpp" />
     <ClCompile Include="URenderer.cpp" />
+    <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="UTransform.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
@@ -258,6 +259,7 @@
     <ClInclude Include="ULight.h" />
     <ClInclude Include="UMeshRenderer.h" />
     <ClInclude Include="URenderer.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="UTransform.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>

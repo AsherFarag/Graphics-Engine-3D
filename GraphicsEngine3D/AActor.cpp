@@ -123,19 +123,15 @@ void AActor::Draw_ImGui()
 
 	//#pragma endregion
 
-	OnDraw_ImGui();
-
 	// - Components -
 	if (m_Components.size() > 0)
 	{
-		if (ImGui::TreeNode("Components"))
+		for ( auto C : m_Components )
 		{
-			for (auto C : m_Components)
-			{
-				C.second->Draw_ImGui();
-			}
-			ImGui::TreePop();
+			C.second->Draw_ImGui();
 		}
 	}
+
+	OnDraw_ImGui();
 }
 

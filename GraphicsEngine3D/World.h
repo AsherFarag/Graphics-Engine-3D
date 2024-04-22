@@ -87,5 +87,8 @@ protected:
 	// Probably temporary idk
 protected:
 	ALight* m_AmbientLight;
+
+	float timestep = 0.f;
+	float animTime = 0.f;
 };
 

@@ -19,23 +19,14 @@
 #include "ResourceManager.h"
 #include "RMaterial.h"
 #include "World.h"
+#include "Utilities.h"
 
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
 using glm::quat;
 using aie::Gizmos;
-void DebugPrint( const aiNode* Node, int Indent = 0 )
-{
-	std::string String( Indent, ' ' );
-	String += Node->mName.C_Str();
-	LOG( Default, String.c_str() );
 
-	for ( int i = 0; i < Node->mNumChildren; ++i )
-	{
-		DebugPrint( Node->mChildren[ i ], Indent + 1 );
-	}
-}
 GraphicsEngine3DApp::GraphicsEngine3DApp()
 {
 }
@@ -89,14 +80,15 @@ bool GraphicsEngine3DApp::startup()
 	unsigned int propertyFlags = aiProcess_GlobalScale
 							   | aiProcess_Debone
 							   | aiProcess_OptimizeMeshes
-							   | aiProcess_RemoveRedundantMaterials
-							   | aiProcess_PopulateArmatureData;
+							   | aiProcess_RemoveRedundantMaterials;
+							   //| aiProcess_PopulateArmatureData;
 
-	const aiScene* Scene = importer.ReadFile( "Content/Mesh/TheBoss.fbx", propertyFlags );
-	skellie = MeshLoader::GetInstance()->LoadSkeleton( Scene->mRootNode->FindNode("mixamorig:Hips"));
+	const aiScene* Scene = importer.ReadFile( "Content/Mesh/HipHop.fbx", propertyFlags );
+	skellie = MeshLoader::GetInstance()->LoadSkeleton( "Content/Mesh/HipHop.fbx", "HipHop_Skeleton", Scene->mRootNode->FindNode("mixamorig:Hips"));
 	
-	AnimationHandle Anim = AnimationLoader::GetInstance()-> LoadAnimation( "SomeAnim", Scene, 0 );
+	AnimationHandle Anim = AnimationLoader::GetInstance()->LoadAnimation( "Content/Mesh/HipHop.fbx", "SomeAnim", Scene, 0 );
 	
+
 	
 	DebugPrint( Scene->mRootNode );
 

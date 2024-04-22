@@ -73,6 +73,9 @@ void RenderManager::Render( ACamera* a_Camera )
 
 	for ( unsigned int i = 0; i < m_DrawBuffer.size(); ++i )
 	{
+		if ( m_DrawBuffer[ i ]->GetMaterial() == nullptr )
+			continue;
+
 		UseMaterialInstance( m_DrawBuffer[ i ]->GetMaterial() );
 
 		auto& ModelMatrix = m_DrawBuffer[ i ]->GetOwner()->GetTransform().GetTransform();

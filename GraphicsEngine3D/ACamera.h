@@ -41,7 +41,7 @@ protected:
 
     float m_AspectRatio = 16 / 9;
     float m_FOVDegrees = 90.f;
-    float m_Near = 0.1f;
+    float m_Near = 0.001f;
     float m_Far = 1000.f;
 
     mat4 m_ViewTransform;

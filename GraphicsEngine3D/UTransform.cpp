@@ -39,7 +39,6 @@ void UTransform::SetTransform(const mat4& a_Transform)
 	m_Scale.x = glm::length(vec3(m_Transform[0])); // Basis vector X
 	m_Scale.y = glm::length(vec3(m_Transform[1])); // Basis vector Y
 	m_Scale.z = glm::length(vec3(m_Transform[2])); // Basis vector Z
-
 }
 
 void UTransform::SetPosition(const vec3& a_Position)

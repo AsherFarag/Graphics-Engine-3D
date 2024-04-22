@@ -10,7 +10,7 @@ AnimationLoader* AnimationLoader::GetInstance()
 	return &Instance;
 }
 
-AnimationHandle AnimationLoader::LoadAnimation( const string& a_Name, const aiScene* a_Scene, size_t a_Index )
+AnimationHandle AnimationLoader::LoadAnimation( const string& a_Path, const string& a_Name, const aiScene* a_Scene, size_t a_Index )
 {
 	if ( !a_Scene->HasAnimations() || a_Index >= a_Scene->mNumAnimations )
 	{
@@ -18,6 +18,9 @@ AnimationHandle AnimationLoader::LoadAnimation( const string& a_Name, const aiSc
 	}
 
 	AnimationHandle Result = std::make_shared< Animation >();
+
+	Result->m_Duration = a_Scene->mAnimations[ a_Index ]->mDuration;
+	Result->m_TicksPerSecond = a_Scene->mAnimations[ a_Index ]->mTicksPerSecond;
 
 	aiAnimation* Anim = a_Scene->mAnimations[ a_Index ];
 
@@ -37,7 +40,7 @@ AnimationHandle AnimationLoader::LoadAnimation( const string& a_Name, const aiSc
 				PositionKey.mValue.x,
 				PositionKey.mValue.y,
 				PositionKey.mValue.z },
-				PositionKey.mTime
+				(TimeType)PositionKey.mTime
 				} );
 		}
 
@@ -52,7 +55,7 @@ AnimationHandle AnimationLoader::LoadAnimation( const string& a_Name, const aiSc
 				RotationKey.mValue.x,
 				RotationKey.mValue.y,
 				RotationKey.mValue.z },
-				RotationKey.mTime } );
+				(TimeType)RotationKey.mTime } );
 		}
 
 		// Scale keys
@@ -62,17 +65,21 @@ AnimationHandle AnimationLoader::LoadAnimation( const string& a_Name, const aiSc
 		{
 			aiVectorKey ScaleKey = NodeAnim->mScalingKeys[ j ];
 			BoneTrack.ScaleTrack.KeyFrames.emplace_back( ScaleKeyFrame{ vec3{
-					ScaleKey.mValue.x,
-					ScaleKey.mValue.y,
-					ScaleKey.mValue.z },
-				ScaleKey.mTime } );
+				ScaleKey.mValue.x,
+				ScaleKey.mValue.y,
+				ScaleKey.mValue.z },
+				(TimeType)ScaleKey.mTime } );
 		}
 	}
+
+	Result->ConstuctResourceInfo( a_Path, a_Name );
+
+	m_Animations.emplace( a_Name, Result );
 
 	return Result;
 }
 
 AnimationHandle AnimationLoader::GetAnimation( const string& a_Name )
 {
-	return {};
+	return m_Animations.find(a_Name)->second;
 }

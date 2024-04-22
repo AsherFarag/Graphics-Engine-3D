@@ -5,14 +5,16 @@
 using std::string;
 
 // --- GLM ---
-#include "glm/common.hpp"
 #include "glm/glm.hpp"
+#include "glm/common.hpp"
+#include <glm/gtc/quaternion.hpp>
 using glm::vec2;
 using glm::vec3;
 using glm::vec4;
 using glm::mat2;
 using glm::mat3;
 using glm::mat4;
+using glm::quat;
 
 #define RESOURCE_PATH "Resources/"
 
@@ -31,6 +33,10 @@ protected:
 	string m_FileType;		 // The File Extension		E.g. '.obj'
 
 	void ConstuctResourceInfo( const string& a_Path );
+	void ConstuctResourceInfo( const string& a_Path, const string& a_ResourceName );
+	void SetFilePath( const string& a_Path );
+	void SetResourceName( const string& a_ResourceName );
+	void SetFileType( const string& a_FileType );
 
 public:
 	const string GetFilePath()		const { return m_FilePath; }

@@ -44,3 +44,4 @@ enum TODO_PRIORITY_LEVEL
 #endif // PRINT_TODO_MESSAGES
 
 #define LOG( Level, Message ) GraphicsEngine3DApp::GetInstance()->m_DebugLog.PrintMessage(Debug::DebugMessage(true, Message, Debug::Level ))
+#define LOG_NO_TIME( Level, Message ) GraphicsEngine3DApp::GetInstance()->m_DebugLog.PrintMessage(Debug::DebugMessage(false, Message, Debug::Level ))
