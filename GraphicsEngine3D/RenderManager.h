@@ -89,6 +89,7 @@ protected:
 public:
 	bool AddLight(ALight* a_Light);
 	bool RemoveLight(ALight* a_Light);
+	void DrawLightGizmos();
 
 #pragma endregion
 

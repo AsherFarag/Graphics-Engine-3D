@@ -1,5 +1,5 @@
 #pragma once
-#include "Animation.h"
+#include "RSkeletalAnim.h"
 #include "assimp/scene.h"
 
 class AnimationLoader
@@ -10,7 +10,7 @@ private:
 	AnimationLoader() = default;
 	~AnimationLoader() = default;
 
-	std::map< string, AnimationHandle > m_Animations;
+	std::map< string, SkeletalAnimHandle > m_SkeletalAnimations;
 
 public:
 	AnimationLoader( AnimationLoader& Other ) = delete;
@@ -18,6 +18,6 @@ public:
 
 	static AnimationLoader* GetInstance();
 
-	AnimationHandle LoadAnimation( const string& a_Path, const string& a_Name, const aiScene* a_Scene, size_t a_Index = 0 );
-	AnimationHandle GetAnimation( const string& a_Name );
+	SkeletalAnimHandle LoadAnimation( const string& a_Path, const string& a_Name, const aiScene* a_Scene, size_t a_Index = 0 );
+	SkeletalAnimHandle GetAnimation( const string& a_Name );
 };

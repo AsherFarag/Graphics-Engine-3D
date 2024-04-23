@@ -72,7 +72,7 @@ void RSkeleton::Draw()
 	}
 }
 
-void RSkeleton::EvaluatePose( AnimationHandle a_Anim, TimeType a_Time, std::vector<mat4>& o_Pose )
+void RSkeleton::EvaluatePose( SkeletalAnimHandle a_Anim, TimeType a_Time, std::vector<mat4>& o_Pose )
 {
 	if ( o_Pose.size() < m_Bones.size() )
 	{
@@ -81,36 +81,13 @@ void RSkeleton::EvaluatePose( AnimationHandle a_Anim, TimeType a_Time, std::vect
 
 	for (int i = 0; i < o_Pose.size(); ++i )
 	{
-		TODO( "This only needs to be calculated once" );
-		mat4 bind = ( m_Bones[ i ].WorldTransform );
-		//mat4 bind = m_Bones[i].BindTransform;
-
-		auto j = a_Anim->BoneAnimations.find( m_Bones[ i ].Name );
-		if ( j == a_Anim->BoneAnimations.end() )
-			continue;
-		BoneAnimation& boneAnim = j->second;
-
-		auto& posAnim = boneAnim.PositionTrack.GetData( a_Time );
-		auto& rotAnim = boneAnim.RotationTrack.GetData( a_Time );
-		auto& scaleAnim = boneAnim.ScaleTrack.GetData( a_Time );
-
-		// Create a translation matrix
-		//mat4 translationMatrix = glm::translate( mat4( 1 ), posAnim );
-
-		// Convert quaternion rotation to rotation matrix
-		//mat4 rotationMatrix = glm::toMat4( rotAnim );
-
-		// Create a scale matrix with identity matrix
-		//mat4 scaleMatrix = glm::scale( mat4( 1 ), scaleAnim );
-
-		// Combine the translation, rotation, and scale matrices
-		mat4 eval;// = translationMatrix * rotationMatrix * scaleMatrix;
+		// Get the transform of the bone in the animation
+		mat4 eval;
 		a_Anim->GetBoneMatrix( m_Bones[ i ].Name, eval, a_Time );
-		//mat4 eval = scaleMatrix* rotationMatrix * translationMatrix;
 
 		if ( m_Bones[ i ].Parent == NO_PARENT_INDEX )
 		{
-			o_Pose[ i ] = eval * bind;
+			o_Pose[ i ] = eval * m_Bones[ i ].WorldTransform;
 			continue;
 		}
 		o_Pose[ i ] = o_Pose[ m_Bones[ i ].Parent ] * eval;

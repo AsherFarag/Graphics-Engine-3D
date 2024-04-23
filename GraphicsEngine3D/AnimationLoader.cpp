@@ -10,14 +10,14 @@ AnimationLoader* AnimationLoader::GetInstance()
 	return &Instance;
 }
 
-AnimationHandle AnimationLoader::LoadAnimation( const string& a_Path, const string& a_Name, const aiScene* a_Scene, size_t a_Index )
+SkeletalAnimHandle AnimationLoader::LoadAnimation( const string& a_Path, const string& a_Name, const aiScene* a_Scene, size_t a_Index )
 {
 	if ( !a_Scene->HasAnimations() || a_Index >= a_Scene->mNumAnimations )
 	{
 		return {};
 	}
 
-	AnimationHandle Result = std::make_shared< Animation >();
+	SkeletalAnimHandle Result = std::make_shared< RSkeletalAnim >();
 
 	Result->m_Duration = a_Scene->mAnimations[ a_Index ]->mDuration;
 	Result->m_TicksPerSecond = a_Scene->mAnimations[ a_Index ]->mTicksPerSecond;
@@ -28,7 +28,7 @@ AnimationHandle AnimationLoader::LoadAnimation( const string& a_Path, const stri
 	for ( size_t i = 0; i < Anim->mNumChannels; ++i ) 
 	{
 		aiNodeAnim* NodeAnim = Anim->mChannels[ i ];
-		auto& BoneTrack = Result->BoneAnimations[ NodeAnim->mNodeName.C_Str() ];
+		auto& BoneTrack = Result->m_BoneAnimations[ NodeAnim->mNodeName.C_Str() ];
 
 		// Position keys
 		BoneTrack.PositionTrack.KeyFrames.reserve( NodeAnim->mNumPositionKeys );
@@ -74,12 +74,12 @@ AnimationHandle AnimationLoader::LoadAnimation( const string& a_Path, const stri
 
 	Result->ConstuctResourceInfo( a_Path, a_Name );
 
-	m_Animations.emplace( a_Name, Result );
+	m_SkeletalAnimations.emplace( a_Name, Result );
 
 	return Result;
 }
 
-AnimationHandle AnimationLoader::GetAnimation( const string& a_Name )
+SkeletalAnimHandle AnimationLoader::GetAnimation( const string& a_Name )
 {
-	return m_Animations.find(a_Name)->second;
+	return m_SkeletalAnimations.find(a_Name)->second;
 }

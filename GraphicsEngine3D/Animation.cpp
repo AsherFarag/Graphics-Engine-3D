@@ -1,5 +1,5 @@
 #include "Animation.h"
 
-Animation::Animation()
+RAnimation::RAnimation()
 {
 }

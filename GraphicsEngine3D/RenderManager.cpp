@@ -158,7 +158,7 @@ void RenderManager::BindLights( ShaderHandle a_Shader )
 	vector<vec3>  LightColours;
 	vector<float> LightFallOffs;
 
-	vec3 AmbientLight(0);
+	vec3 AmbientLight(1,0,0);
 
 	for ( auto Light : m_Lights )
 	{
@@ -306,10 +306,22 @@ void RenderManager::RemoveMeshRenderer( UMeshRenderer* a_Renderer )
 
 bool RenderManager::AddLight( ALight* a_Light )
 {
-	return false;
+	m_Lights.push_back( a_Light );
+	return true;
 }
 
 bool RenderManager::RemoveLight( ALight* a_Light )
 {
 	return false;
+}
+
+void RenderManager::DrawLightGizmos()
+{
+	for ( auto& light : m_Lights )
+	{
+		if ( light->IsEnabled() )
+		{
+			aie::Gizmos::addSphere( light->GetActorPosition(), 1, 5, 5, vec4( light->GetColour(), 1 ) );
+		}
+	}
 }

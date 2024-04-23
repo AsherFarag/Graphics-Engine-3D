@@ -1,6 +1,6 @@
 #pragma once
 #include "RResource.h"
-#include "Animation.h"
+#include "RSkeletalAnim.h"
 
 constexpr int NO_PARENT_INDEX = ~0;
 
@@ -24,7 +24,7 @@ public:
 
     void Draw();
 
-    void EvaluatePose( AnimationHandle a_Anim, TimeType a_Time, std::vector<mat4>& o_Pose );
+    void EvaluatePose( SkeletalAnimHandle a_Anim, TimeType a_Time, std::vector<mat4>& o_Pose );
 
     std::vector<Bone> m_Bones;
 

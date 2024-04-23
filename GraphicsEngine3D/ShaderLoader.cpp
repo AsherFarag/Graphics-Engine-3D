@@ -4,6 +4,7 @@
 ShaderLoader::ShaderLoader()
 {
 	m_PhongShader = LoadShader( "Content/Shaders/Phong" );
+	//m_PhongShader = LoadShader( "Content/Shaders/Test/Diffuse" );
 }
 
 ShaderLoader* ShaderLoader::GetInstance()

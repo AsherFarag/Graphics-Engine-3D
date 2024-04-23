@@ -37,11 +37,13 @@ void RMesh::Load( aiScene* a_Scene )
 
 void RMesh::ProcessNode( aiNode* a_Node, const aiScene* a_Scene )
 {
+	m_MeshChunks.resize( a_Scene->mNumMeshes );
+
 	// process all the node's meshes (if any)
 	for ( unsigned int i = 0; i < a_Node->mNumMeshes; i++ )
 	{
 		aiMesh* mesh = a_Scene->mMeshes[ a_Node->mMeshes[ i ] ];
-		m_MeshChunks.push_back( ProcessMeshChunk( mesh, a_Scene, i ) );
+		ProcessMeshChunk( m_MeshChunks[ i ], mesh, a_Scene, i );
 	}
 	// then do the same for each of its children
 	for ( unsigned int i = 0; i < a_Node->mNumChildren; i++ )
@@ -50,10 +52,10 @@ void RMesh::ProcessNode( aiNode* a_Node, const aiScene* a_Scene )
 	}
 }
 
-MeshChunk RMesh::ProcessMeshChunk( aiMesh* a_Mesh, const aiScene* a_Scene, int a_Index )
+void RMesh::ProcessMeshChunk( MeshChunk& o_Mesh, const aiMesh* a_Mesh, const aiScene* a_Scene, int a_Index )
 {
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
+	std::vector<Vertex>& vertices = o_Mesh.Vertices;
+	std::vector<unsigned int>& indices = o_Mesh.Indices;
 
 	// Process Verticies
 	for ( unsigned int i = 0; i < a_Mesh->mNumVertices; ++i )
@@ -107,13 +109,10 @@ MeshChunk RMesh::ProcessMeshChunk( aiMesh* a_Mesh, const aiScene* a_Scene, int a
 
 	if ( a_Mesh->mMaterialIndex >= 0 )
 	{
-		//a_Scene.tex
+		TODO( "Process Materials when loading meshes" );
 	}
 
-	// Process Materials
-	TODO( "Process Materials when loading meshes" );
-	MeshChunk Temp( vertices, indices );
-	return std::move(Temp);
+	o_Mesh.Initialise();
 }
 
 //void RMesh::Initialise(unsigned int a_VertexCount, const Vertex* a_Vertices, unsigned int a_IndexCount, unsigned int* a_Indices)
@@ -375,20 +374,6 @@ MeshChunk RMesh::ProcessMeshChunk( aiMesh* a_Mesh, const aiScene* a_Scene, int a
 //		glDrawArrays(GL_TRIANGLES, 0, 3 * m_MeshChunk.m_TriCount);
 //	}
 //}
-
-MeshChunk::MeshChunk( MeshChunk&& a_MeshChunk )
-	: Vertices( std::move( a_MeshChunk.Vertices ) )
-	, Indices( std::move( a_MeshChunk.Indices ) )
-	, MaterialID( a_MeshChunk.MaterialID )
-	, VAO( a_MeshChunk.VAO )
-	, VBO( a_MeshChunk.VBO )
-	, IBO( a_MeshChunk.IBO )
-{
-	a_MeshChunk.MaterialID = 0;
-	a_MeshChunk.VAO = 0;
-	a_MeshChunk.VBO = 0;
-	a_MeshChunk.IBO = 0;
-}
 
 MeshChunk::MeshChunk( std::vector<Vertex> a_Vertices, std::vector<unsigned int> a_Indices )
 {

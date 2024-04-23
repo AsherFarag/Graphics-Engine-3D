@@ -19,16 +19,21 @@ MeshLoader* MeshLoader::GetInstance()
 
 MeshHandle MeshLoader::LoadMesh( const string& a_Path, const string& a_Name, const aiScene* a_Scene )
 {
-    auto meshName = a_Path.substr( a_Path.find_last_of( '/' ) + 1 );
-    meshName = meshName.substr( 0, meshName.find_last_of( '.' ) );
     // Check if this mesh has already been loaded
-    auto& foundMesh = m_LoadedMeshes.find( meshName );
+    auto& foundMesh = m_LoadedMeshes.find( a_Name );
     if ( foundMesh != m_LoadedMeshes.end() )
         return foundMesh->second;
 
     MeshHandle mesh = std::make_shared< RMesh >();
-    if ( !mesh->Load( a_Path, false ) )
-        return nullptr;
+
+    // === Load Mesh ===
+
+    mesh->ProcessNode( a_Scene->mRootNode, a_Scene );
+
+    // =================
+
+
+    mesh->ConstuctResourceInfo( a_Path, a_Name );
 
     m_LoadedMeshes.emplace( mesh->GetResourceName(), mesh );
 

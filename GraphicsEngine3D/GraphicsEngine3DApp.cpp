@@ -69,26 +69,36 @@ bool GraphicsEngine3DApp::startup()
 
 	m_RenderManager = new RenderManager();
 	m_World = new World();
-
-	if ( !m_World->Begin() )
-		return false;
 	
 	Assimp::Importer importer;
 	importer.SetPropertyBool( AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false );
 	importer.SetPropertyFloat( AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f );
 
-	unsigned int propertyFlags = aiProcess_GlobalScale
-							   | aiProcess_Debone
-							   | aiProcess_OptimizeMeshes
-							   | aiProcess_RemoveRedundantMaterials
-							   | aiProcess_PopulateArmatureData;
+	//unsigned int propertyFlags = aiProcess_GlobalScale | aiProcess_OptimizeMeshes | aiProcess_RemoveRedundantMaterials | aiProcess_PopulateArmatureData | aiProcess_Triangulate;
 
-	const aiScene* Scene = importer.ReadFile( "Content/Mesh/HipHop.fbx", propertyFlags );
-	skellie = MeshLoader::GetInstance()->LoadSkeleton( "Content/Mesh/HipHop.fbx", "HipHop_Skeleton", Scene->mRootNode->FindNode("mixamorig:Hips"));
+	unsigned int propertyFlags = aiProcess_GlobalScale |
+		aiProcess_CalcTangentSpace | // calculate tangents and bitangents if possible
+		aiProcess_JoinIdenticalVertices | // join identical vertices/ optimize indexing
+		//aiProcess_ValidateDataStructure  | // perform a full validation of the loader's output
+		aiProcess_Triangulate | // Ensure all verticies are triangulated (each 3 vertices are triangle)
+		//aiProcess_ConvertToLeftHanded | // convert everything to D3D left handed space (by default right-handed, for OpenGL)
+		aiProcess_RemoveRedundantMaterials | // remove redundant materials
+		aiProcess_FindDegenerates | // remove degenerated polygons from the import
+		aiProcess_GenUVCoords | // convert spherical, cylindrical, box and planar mapping to proper UVs
+		aiProcess_TransformUVCoords | // preprocess UV transformations (scaling, translation ...)
+		aiProcess_OptimizeMeshes | // join small meshes, if possible;
+		aiProcess_PreTransformVertices | //-- fixes the transformation issue.
+		0;
+
+	const aiScene* Scene = importer.ReadFile( "Content/Mesh/TheBoss.fbx", propertyFlags );
+	auto mesh = MeshLoader::GetInstance()->LoadMesh( "Content/Mesh/TheBoss.fbx", "HipHop_Mesh", Scene );
+	//skellie = MeshLoader::GetInstance()->LoadSkeleton( "Content/Mesh/TheBoss.fbx", "HipHop_Skeleton", Scene->mRootNode->FindNode("mixamorig:Hips"));
 	
-	AnimationHandle Anim = AnimationLoader::GetInstance()->LoadAnimation( "Content/Mesh/HipHop.fbx", "SomeAnim", Scene, 0 );
+	//AnimationHandle Anim = AnimationLoader::GetInstance()->LoadAnimation( "Content/Mesh/TheBoss.fbx", "SomeAnim", Scene, 0 );
 	
 
+	if ( !m_World->Begin() )
+		return false;
 	
 	DebugPrint( Scene->mRootNode );
 

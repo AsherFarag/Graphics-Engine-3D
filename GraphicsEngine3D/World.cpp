@@ -31,10 +31,11 @@ World::~World()
 bool World::Begin()
 {
     m_MainCamera = new AFlyCamera();
-    //auto mesh = new AStaticMesh();
-    //mesh->GetMesh()->SetMesh( Resource::LoadMesh( "Box.obj", false ) );
-    //mesh->GetMesh()->SetMaterial( Resource::GetMaterialInstance( "Default" ) );
+    auto mesh = new AStaticMesh();
+    mesh->GetMesh()->SetMesh( Resource::GetMesh( "HipHop_Mesh" ) );
+    mesh->GetMesh()->SetMaterial( Resource::GetMaterialInstance( "Default" ) );
 
+    GraphicsEngine3DApp::GetRenderManager()->AddLight( new ALight() );
 
     for (auto Actor : m_Actors)
     {
@@ -62,30 +63,34 @@ void World::Draw()
 
     // Draw whatever you want here
     // ======================================================
-    auto& skellie = GraphicsEngine3DApp::GetInstance()->skellie;
-    auto& anim = AnimationLoader::GetInstance()->GetAnimation( "SomeAnim" );
-    skellie->Draw();
 
-    static float CurrentSkellieTime = 0.0f;
-    CurrentSkellieTime += m_DeltaTime;
-    skellie->EvaluatePose( anim, CurrentSkellieTime, skellie->m_Pose );
+    //auto& skellie = GraphicsEngine3DApp::GetInstance()->skellie;
+   // auto& anim = AnimationLoader::GetInstance()->GetAnimation( "SomeAnim" );
+    //skellie->Draw();
 
-    ////skellie->EvaluatePose( anim, 0, skellie->m_Pose );
-    //timestep += m_DeltaTime;
-    //if ( timestep >= (1.f / anim->GetTickRate() ) )
-    //{
-    //    animTime += ( 1.f / anim->GetTickRate() );
-    //    skellie->EvaluatePose( anim, animTime, skellie->m_Pose );
-    //    if ( animTime >= anim->GetPlayLength() )
+    //ImGui::Begin( "Animator" );
+    //    static float CurrentSkellieTime = 0.0f;
+    //    static float AnimSpeedMultiplier = 1.f;
+    //    ImGui::SliderFloat( "Play Speed", &AnimSpeedMultiplier, 0.f, 5.f );
+
+    //    static bool shouldAnimate;
+    //    ImGui::Checkbox( "Animate", &shouldAnimate );
+    //    if ( shouldAnimate )
     //    {
-    //        animTime = 0.f;
+    //        CurrentSkellieTime += m_DeltaTime * AnimSpeedMultiplier;
+    //        skellie->EvaluatePose( anim, CurrentSkellieTime, skellie->m_Pose );
     //    }
-    //    timestep = 0.f;
-    //}
 
-
+    //    static float animTime;
+    //    if ( ImGui::SliderFloat( "Time", &CurrentSkellieTime, 0.f, anim->GetPlayLength() ) )
+    //    {
+    //        skellie->EvaluatePose( anim, CurrentSkellieTime, skellie->m_Pose );
+    //    }
+    //ImGui::End();
 
     Gizmos::addSphere( vec3( 0 ), 0.01f, 10, 10, vec4( 0,1,0,1 ) );
+
+    GraphicsEngine3DApp::GetRenderManager()->DrawLightGizmos();
 
     // ======================================================
 

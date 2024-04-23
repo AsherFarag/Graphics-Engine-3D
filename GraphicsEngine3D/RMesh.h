@@ -39,17 +39,11 @@ class MeshChunk
 {
 public:
 	MeshChunk() = default;
-	MeshChunk(const MeshChunk& ) = default;
-	MeshChunk( MeshChunk&& a_MeshChunk );
-
-	MeshChunk& operator=( const MeshChunk& ) = default;
-	MeshChunk& operator=( MeshChunk&& ) = default;
-
 	MeshChunk( std::vector<Vertex> a_Vertices, std::vector<unsigned int> a_Indices );
-
 	~MeshChunk();
 
 	void Draw();
+	void Initialise();
 
 	std::vector<Vertex>       Vertices;
 	std::vector<unsigned int> Indices;
@@ -60,8 +54,6 @@ private:
 	unsigned int VAO = 0; // The Vertex Array Object
 	unsigned int VBO = 0; // The Vertex Buffer Object
 	unsigned int IBO = 0; // The Index Buffer Object
-
-	void Initialise();
 };
 
 class RMesh
@@ -78,7 +70,7 @@ private:
 	void Load( aiScene* a_Scene );
 	// Assimp
 	void ProcessNode( aiNode* a_Node, const aiScene* a_Scene );
-	MeshChunk ProcessMeshChunk( aiMesh* a_Mesh, const aiScene* a_Scene, int a_Index );
+	void ProcessMeshChunk( MeshChunk& o_Mesh, const aiMesh* a_Mesh, const aiScene* a_Scene, int a_Index );
 
 public:
 	void Draw();
