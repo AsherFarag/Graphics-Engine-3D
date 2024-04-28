@@ -14,7 +14,7 @@ public:
     URenderer(AActor* a_Owner);
     virtual ~URenderer();
 
-    virtual void Draw(mat4 a_ProjectionViewMatrix) = 0;
+    virtual void Draw() = 0;
 
 protected:
     MaterialInstanceHandle m_Material = nullptr;

@@ -29,7 +29,6 @@ public:
 protected:
 	UTransform* m_Transform;
 
-	// --- Components ---
 	//					  Type_Hash, Component Ref
     std::vector<std::pair<size_t, UBaseComponent*>> m_Components;
 
@@ -37,7 +36,6 @@ protected:
 
 	std::string m_Name;
 
-// === Getter Functions ===
 public:
 
 	#pragma region --- Transforms ---

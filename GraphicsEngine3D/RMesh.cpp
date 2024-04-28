@@ -2,6 +2,7 @@
 // --- GLM ---
 #include "gl_core_4_4.h"
 #include <glm/geometric.hpp>
+#include "glm/ext.hpp"
 
 // --- ASSIMP ---
 #include <assimp/scene.h>
@@ -11,6 +12,54 @@ void RMesh::Draw()
 {
 	for ( unsigned int i = 0; i < m_MeshChunks.size(); i++ )
 		m_MeshChunks[ i ].Draw();
+}
+
+void RMesh::ExtractBoneWeightForVertices( std::vector<Vertex>& a_Vertices, const aiMesh* a_Mesh, const aiScene* a_Scene )
+{
+	// Iterate through each bone
+	for ( int boneIndex = 0; boneIndex < a_Mesh->mNumBones; ++boneIndex )
+	{
+		int boneID = -1;
+		std::string boneName = a_Mesh->mBones[ boneIndex ]->mName.C_Str();
+		if ( m_BoneInfoMap.find( boneName ) == m_BoneInfoMap.end() )
+		{
+			BoneInfo newBoneInfo;
+			newBoneInfo.ID = m_BoneCounter;
+			newBoneInfo.Offset = glm::transpose( glm::make_mat4x4( ( (ai_real*)&a_Mesh->mBones[ boneIndex ]->mOffsetMatrix ) ) );
+			m_BoneInfoMap[ boneName ] = newBoneInfo;
+			boneID = m_BoneCounter;
+			m_BoneCounter++;
+		}
+		else
+		{
+			boneID = m_BoneInfoMap[ boneName ].ID;
+		}
+
+		assert( boneID != -1 );
+		auto weights = a_Mesh->mBones[ boneIndex ]->mWeights;
+		int numWeights = a_Mesh->mBones[ boneIndex ]->mNumWeights;
+
+		for ( int weightIndex = 0; weightIndex < numWeights; ++weightIndex )
+		{
+			int vertexId = weights[ weightIndex ].mVertexId;
+			float weight = weights[ weightIndex ].mWeight;
+			assert( vertexId <= a_Vertices.size() );
+			SetVertexBoneData( a_Vertices[ vertexId ], boneID, weight );
+		}
+	}
+}
+
+void RMesh::SetVertexBoneData( Vertex& a_Vertex, int a_BoneID, float a_Weight )
+{
+	for ( int i = 0; i < MAX_BONE_INFLUENCE; ++i )
+	{
+		if ( a_Vertex.m_BoneIDs[ i ] < 0 )
+		{
+			a_Vertex.m_Weights[ i ] = a_Weight;
+			a_Vertex.m_BoneIDs[ i ] = a_BoneID;
+			break;
+		}
+	}
 }
 
 bool RMesh::Load( string Path, bool a_GenerateMaterials, int ProcessSteps )
@@ -43,7 +92,7 @@ void RMesh::ProcessNode( aiNode* a_Node, const aiScene* a_Scene )
 	for ( unsigned int i = 0; i < a_Node->mNumMeshes; i++ )
 	{
 		aiMesh* mesh = a_Scene->mMeshes[ a_Node->mMeshes[ i ] ];
-		ProcessMeshChunk( m_MeshChunks[ i ], mesh, a_Scene, i );
+		ProcessMeshChunk( m_MeshChunks[ i ], mesh, a_Scene );
 	}
 	// then do the same for each of its children
 	for ( unsigned int i = 0; i < a_Node->mNumChildren; i++ )
@@ -52,34 +101,16 @@ void RMesh::ProcessNode( aiNode* a_Node, const aiScene* a_Scene )
 	}
 }
 
-void RMesh::ProcessMeshChunk( MeshChunk& o_Mesh, const aiMesh* a_Mesh, const aiScene* a_Scene, int a_Index )
+void RMesh::ProcessMeshChunk( MeshChunk& o_Mesh, const aiMesh* a_Mesh, const aiScene* a_Scene )
 {
-	std::vector<Vertex>& vertices = o_Mesh.Vertices;
 	std::vector<unsigned int>& indices = o_Mesh.Indices;
+
+	o_Mesh.Vertices.resize( a_Mesh->mNumVertices );
 
 	// Process Verticies
 	for ( unsigned int i = 0; i < a_Mesh->mNumVertices; ++i )
 	{
-		Vertex vertex;
-		vertex.Position	= vec4( a_Mesh->mVertices[ i ].x, a_Mesh->mVertices[ i ].y, a_Mesh->mVertices[ i ].z, 1 );
-
-		if ( a_Mesh->HasNormals() )
-		{
-			vertex.Normal = vec4( a_Mesh->mNormals[ i ].x, a_Mesh->mNormals[ i ].y, a_Mesh->mNormals[ i ].z, 1 );
-		}
-
-		if ( a_Mesh->HasTangentsAndBitangents() )
-		{
-			vertex.Tangent = vec3( a_Mesh->mTangents[ i ].x, a_Mesh->mTangents[ i ].y, a_Mesh->mTangents[ i ].z );
-			vertex.Bitangent = vec3( a_Mesh->mBitangents[ i ].x, a_Mesh->mBitangents[ i ].y, a_Mesh->mBitangents[ i ].z );
-		}
-
-		if ( a_Mesh->HasTextureCoords( i ) )
-		{
-			vertex.TexCoord = vec2( a_Mesh->mTextureCoords[ i ]->x, a_Mesh->mTextureCoords[ i ]->y );
-		}
-
-		vertices.push_back( vertex );
+		ProcessVertex( o_Mesh.Vertices[i], a_Mesh, i);
 	}
 
 	// now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
@@ -91,28 +122,36 @@ void RMesh::ProcessMeshChunk( MeshChunk& o_Mesh, const aiMesh* a_Mesh, const aiS
 			indices.push_back( face.mIndices[ j ] );
 	}
 
-	//// Process Indicies
-	//for ( int i = 0; i < a_Mesh->mNumFaces; i++ )
-	//{
-	//	indices.push_back( a_Mesh->mFaces[ i ].mIndices[ 0 ] );
-	//	indices.push_back( a_Mesh->mFaces[ i ].mIndices[ 2 ] );
-	//	indices.push_back( a_Mesh->mFaces[ i ].mIndices[ 1 ] );
-
-	//	// generate a second triangle for quads
-	//	if ( a_Mesh->mFaces[ i ].mNumIndices == 4 )
-	//	{
-	//		indices.push_back( a_Mesh->mFaces[ i ].mIndices[ 0 ] );
-	//		indices.push_back( a_Mesh->mFaces[ i ].mIndices[ 3 ] );
-	//		indices.push_back( a_Mesh->mFaces[ i ].mIndices[ 2 ] );
-	//	}
-	//}
-
 	if ( a_Mesh->mMaterialIndex >= 0 )
 	{
 		TODO( "Process Materials when loading meshes" );
 	}
 
+	ExtractBoneWeightForVertices( o_Mesh.Vertices, a_Mesh, a_Scene );
+
 	o_Mesh.Initialise();
+}
+
+void RMesh::ProcessVertex( Vertex& o_Vertex, const aiMesh* a_Mesh, const int a_Index )
+{
+	o_Vertex.Position = vec4( a_Mesh->mVertices[ a_Index ].x, a_Mesh->mVertices[ a_Index ].y, a_Mesh->mVertices[ a_Index ].z, 1 );
+
+	if ( a_Mesh->HasNormals() )
+	{
+		o_Vertex.Normal = vec4( a_Mesh->mNormals[ a_Index ].x, a_Mesh->mNormals[ a_Index ].y, a_Mesh->mNormals[ a_Index ].z, 1 );
+	}
+
+	if ( a_Mesh->HasTangentsAndBitangents() )
+	{
+		o_Vertex.Tangent = vec3( a_Mesh->mTangents[ a_Index ].x, a_Mesh->mTangents[ a_Index ].y, a_Mesh->mTangents[ a_Index ].z );
+		o_Vertex.Bitangent = vec3( a_Mesh->mBitangents[ a_Index ].x, a_Mesh->mBitangents[ a_Index ].y, a_Mesh->mBitangents[ a_Index ].z );
+	}
+
+	if ( a_Mesh->mTextureCoords[ 0 ] )
+	{
+		TODO( "Currently only supports one UV channel" );
+		o_Vertex.TexCoord = vec2( a_Mesh->mTextureCoords[ 0 ][ a_Index ].x, a_Mesh->mTextureCoords[ 0 ][ a_Index ].y );
+	}
 }
 
 //void RMesh::Initialise(unsigned int a_VertexCount, const Vertex* a_Vertices, unsigned int a_IndexCount, unsigned int* a_Indices)
@@ -428,7 +467,7 @@ void MeshChunk::Initialise()
 	glVertexAttribPointer( 4, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, Vertex::Bitangent ) );
 	// ids
 	glEnableVertexAttribArray( 5 );
-	glVertexAttribIPointer( 5, 4, GL_INT, sizeof( Vertex ), (void*)offsetof( Vertex, Vertex::m_BoneIDs ) );
+	glVertexAttribIPointer( 5, 4, GL_INT,			 sizeof( Vertex ), (void*)offsetof( Vertex, Vertex::m_BoneIDs ) );
 	// weights
 	glEnableVertexAttribArray( 6 );
 	glVertexAttribPointer( 6, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, Vertex::m_Weights ) );

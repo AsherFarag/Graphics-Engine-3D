@@ -207,6 +207,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="TextureLoader.cpp" />
+    <ClCompile Include="UAnimatorComponent.cpp" />
     <ClCompile Include="UBaseComponent.cpp" />
     <ClCompile Include="UBaseObject.cpp" />
     <ClCompile Include="RMesh.cpp" />
@@ -255,6 +256,7 @@
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="tiny_obj_loader.h" />
+    <ClInclude Include="UAnimatorComponent.h" />
     <ClInclude Include="UBaseComponent.h" />
     <ClInclude Include="UBaseObject.h" />
     <ClInclude Include="RMesh.h" />

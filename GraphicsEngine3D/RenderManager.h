@@ -68,12 +68,12 @@ private:
 	ShaderHandle			m_ShaderInUse			= nullptr;
 	MaterialHandle			m_MaterialInUse			= nullptr;
 	MaterialInstanceHandle	m_MaterialInstanceInUse = nullptr;
-	void UseMaterial( MaterialHandle a_Material);
+	void UseMaterial( MaterialHandle a_Material, bool Force = false );
 	void UseMaterialInstance( MaterialInstanceHandle a_MaterialInstance );
 
 	void BindLights( ShaderHandle a_Shader );
 
-	void BindMaterial( MaterialHandle a_Material);
+	void BindMaterial( MaterialHandle a_Material );
 
 protected:
 

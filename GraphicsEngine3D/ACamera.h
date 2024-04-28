@@ -23,6 +23,8 @@ using std::list;
 class ACamera :
     public AActor
 {
+    friend class RenderManager;
+
 public:
     ACamera(aie::AIERenderTarget* a_RenderTarget = nullptr);
     virtual ~ACamera();
@@ -36,11 +38,13 @@ public:
     float m_Theta = 0.f; // Left & Right
     float m_Phi = 0.f; // Up & Down
 
+    ImGui_Viewport m_Viewport;
+
 protected:
     vec3 m_Forward = vec3();
 
     float m_AspectRatio = 16 / 9;
-    float m_FOVDegrees = 90.f;
+    float m_FOVDegrees = 70.f;
     float m_Near = 0.001f;
     float m_Far = 1000.f;
 
@@ -53,13 +57,6 @@ protected:
     bool m_UsePostProcessing = false;
 
     UMeshRenderer* m_MeshRenderer;
-
-#if IS_EDITOR
-public:
-    ImGui_Viewport m_Viewport;
-    friend class RenderManager;
-
-#endif // IS_EDITOR
 
 protected:
     void BeginRender();

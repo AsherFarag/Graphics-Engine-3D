@@ -23,7 +23,7 @@ public:
 	AStaticMesh(const char* a_FilePath, bool a_LoadTextures = true, bool a_FlipTextureV = false);
 	virtual ~AStaticMesh();
 
-	void Draw(mat4 pvm) { m_MeshRenderer->Draw(pvm); }
+	void Draw() { m_MeshRenderer->Draw(); }
 
 protected:
     UMeshRenderer* m_MeshRenderer;

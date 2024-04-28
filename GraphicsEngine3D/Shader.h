@@ -8,6 +8,8 @@
 #include <glm/mat4x4.hpp>
 #include <memory>
 
+#include "RResource.h"
+
 namespace aie {
 
 // simplified render pipeline shader stages
@@ -52,9 +54,9 @@ protected:
 
 // combines shaders together into a single program for the GPU
 class ShaderProgram
+	: public RResource
 {
 public:
-
 	ShaderProgram() : m_program(0), m_lastError(nullptr) {
 		m_shaders[0] = m_shaders[1] = m_shaders[2] = m_shaders[3] = m_shaders[4] = 0;
 	}
@@ -111,6 +113,8 @@ public:
 	bool bindUniform(const char* name, int count, const glm::mat2* value);
 	bool bindUniform(const char* name, int count, const glm::mat3* value);
 	bool bindUniform(const char* name, int count, const glm::mat4* value);
+
+	void Reload();
 
 private:
 

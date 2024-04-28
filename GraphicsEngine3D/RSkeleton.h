@@ -25,10 +25,10 @@ public:
     void Draw();
 
     void EvaluatePose( SkeletalAnimHandle a_Anim, TimeType a_Time, std::vector<mat4>& o_Pose );
-
+    const std::vector<Bone>& GetBones() const { return m_Bones; }
     std::vector<Bone> m_Bones;
 
-    std::vector<mat4> m_Pose;
+    std::vector<mat4>* m_Pose;
 
     void GenerateBoneData();
 };

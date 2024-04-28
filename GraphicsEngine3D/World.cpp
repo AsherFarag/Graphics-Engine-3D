@@ -15,6 +15,7 @@
 #include "ALight.h"
 #include "RenderManager.h"
 #include "ResourceManager.h"
+#include "UAnimatorComponent.h"
 
 
 
@@ -34,6 +35,14 @@ bool World::Begin()
     auto mesh = new AStaticMesh();
     mesh->GetMesh()->SetMesh( Resource::GetMesh( "HipHop_Mesh" ) );
     mesh->GetMesh()->SetMaterial( Resource::GetMaterialInstance( "Default" ) );
+    animator = mesh->AddComponent<UAnimatorComponent>( mesh );
+    animator->SetSkeleton( GraphicsEngine3DApp::GetInstance()->skellie );
+    animator->PlayAnimation( AnimationLoader::GetInstance()->GetAnimation( "SomeAnim" ) );
+    AnimationLoader::GetInstance()->GetAnimation( "SomeAnim" )->m_BoneInfoMap = Resource::GetMesh( "HipHop_Mesh" )->GetBoneInfoMap();
+
+    //auto soulSpear = new AStaticMesh();
+    //soulSpear->GetMesh()->SetMesh( Resource::GetMesh( "Box" ) );
+    //soulSpear->GetMesh()->SetMaterial( Resource::GetMaterialInstance( "Default" ) );
 
     GraphicsEngine3DApp::GetRenderManager()->AddLight( new ALight() );
 
@@ -64,31 +73,55 @@ void World::Draw()
     // Draw whatever you want here
     // ======================================================
 
-    //auto& skellie = GraphicsEngine3DApp::GetInstance()->skellie;
-   // auto& anim = AnimationLoader::GetInstance()->GetAnimation( "SomeAnim" );
-    //skellie->Draw();
+    auto& skellie = GraphicsEngine3DApp::GetInstance()->skellie;
+    auto& anim = AnimationLoader::GetInstance()->GetAnimation( "SomeAnim" );
 
-    //ImGui::Begin( "Animator" );
-    //    static float CurrentSkellieTime = 0.0f;
-    //    static float AnimSpeedMultiplier = 1.f;
-    //    ImGui::SliderFloat( "Play Speed", &AnimSpeedMultiplier, 0.f, 5.f );
+    if (skellie)
+    {
+        skellie->m_Pose = &animator->GetPose();
+        skellie->Draw();
 
-    //    static bool shouldAnimate;
-    //    ImGui::Checkbox( "Animate", &shouldAnimate );
-    //    if ( shouldAnimate )
-    //    {
-    //        CurrentSkellieTime += m_DeltaTime * AnimSpeedMultiplier;
-    //        skellie->EvaluatePose( anim, CurrentSkellieTime, skellie->m_Pose );
-    //    }
+        ImGui::Begin( "Animator" );
+            ImGui::SliderFloat( "Play Speed", &animator->GetPlayRate(), 0.f, 5.f);
 
-    //    static float animTime;
-    //    if ( ImGui::SliderFloat( "Time", &CurrentSkellieTime, 0.f, anim->GetPlayLength() ) )
-    //    {
-    //        skellie->EvaluatePose( anim, CurrentSkellieTime, skellie->m_Pose );
-    //    }
-    //ImGui::End();
+            static bool shouldAnimate;
+            ImGui::Checkbox( "Animate", &shouldAnimate );
+            if ( shouldAnimate )
+            {
+                animator->UpdateAnimation( m_DeltaTime );
+            }
 
-    Gizmos::addSphere( vec3( 0 ), 0.01f, 10, 10, vec4( 0,1,0,1 ) );
+            static float animTime;
+            if ( ImGui::SliderFloat( "Time", &animator->GetTime(), 0.f, anim->GetPlayLength()) )
+            {
+                //skellie->EvaluatePose( anim, CurrentSkellieTime, skellie->m_Pose );
+            }
+        ImGui::End();
+    }
+
+    auto& mesh = MeshLoader::GetInstance()->GetMesh( "HipHop_Mesh" );
+    if ( mesh )
+    {
+        ImGui::Begin( "Mesh Verts" );
+        {
+            for ( int meshChunkIndex = 0; meshChunkIndex < mesh->GetMeshChunks().size(); ++meshChunkIndex )
+            {
+                auto& meshChunk = mesh->GetMeshChunks()[ meshChunkIndex ];
+                if ( ImGui::TreeNode("Mesh Chunk") )
+                {
+                    for ( int i = 0; i < meshChunk.Vertices.size(); ++i )
+                    {
+                        auto& vert = meshChunk.Vertices[ i ];
+                        ImGui::Text( "%i BoneIds: %f, %f, %f, %f", i, vert.m_Weights[ 0 ], vert.m_Weights[ 1 ], vert.m_Weights[ 2 ], vert.m_Weights[ 3 ] );
+                    }
+
+                    ImGui::TreePop();
+                }
+            }
+        }
+        ImGui::End();
+    }
+
 
     GraphicsEngine3DApp::GetRenderManager()->DrawLightGizmos();
 

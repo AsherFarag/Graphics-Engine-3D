@@ -20,8 +20,8 @@ public:
 	std::map<string, SkeletonHandle> m_LoadedSkeletons;
 
 	MeshHandle LoadMesh( const string& a_Path, const string& a_Name, const aiScene* a_Scene );
-	MeshHandle LoadMesh( const string& a_Path, bool a_GenerateMaterials );
+	MeshHandle LoadMesh( const string& a_Path);
 	MeshHandle GetMesh( const string& a_Name );
 
-	SkeletonHandle LoadSkeleton( const string& a_Path, const string& a_Name, const aiNode* a_BoneRootNode );
+	SkeletonHandle LoadSkeleton( const string& a_Path, const string& a_Name, const aiNode* a_BoneRootNode, const aiScene* a_Scene );
 };

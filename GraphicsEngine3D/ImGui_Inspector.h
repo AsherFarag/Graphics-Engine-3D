@@ -13,7 +13,7 @@ public:
     void* InspectedActor;
 
 private:
-    Inspector m_Inspector;
+    //Inspector m_Inspector;
 
 protected:
     virtual void BeginDraw();

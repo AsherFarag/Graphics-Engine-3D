@@ -19,6 +19,7 @@ class AActor;
 class ACamera;
 class AFlyCamera;
 class AStaticMesh;
+class UAnimatorComponent;
 
 // A World is a scene object that stores and handles all the objects inside of it.
 // It handles the destruction and creation of objects.
@@ -86,9 +87,9 @@ protected:
 	// --- SCENE DATA ---
 	// Probably temporary idk
 protected:
-	ALight* m_AmbientLight;
+	UAnimatorComponent* animator = nullptr;
 
-	float timestep = 0.f;
-	float animTime = 0.f;
+
+
 };
 

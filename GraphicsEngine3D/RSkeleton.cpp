@@ -13,47 +13,50 @@ RSkeleton::RSkeleton()
 
 void RSkeleton::Draw()
 {
-	for ( auto& bone : m_Pose )
+	//for ( auto& bone : m_Pose )
+	//{
+	//	//mat4 parentWorldTransform = mat4(1);
+
+	//	//int parent = bone.Parent;
+	//	//while ( parent != NO_PARENT_INDEX )
+	//	//{
+	//	//	parentWorldTransform *= glm::inverse( m_Bones[ parent ].BindTransform );
+	//	//	parent = m_Bones[parent].Parent;
+	//	//}
+	//	//parentWorldTransform = glm::inverse( parentWorldTransform );
+
+
+
+
+	//	//vec3 p0;
+	//	//vec3 p1;
+
+	//	//// If bone is the Root Bone
+	//	//if ( &bone - m_Bones.data() == 0 )
+	//	//{
+	//	//	p1 = ( bone.WorldTransform * bone.BindTransform )[ 3 ];
+	//	//	aie::Gizmos::addSphere( p1, 0.035f, 2, 4, {1,1,0,1});
+	//	//}
+	//	//else
+	//	//{
+	//	//	aie::Gizmos::addSphere( p1, 0.015f, 2, 4, { 1,0,0,1 } );
+	//	//	p0 = m_Bones[ bone.Parent ].WorldTransform[ 3 ];
+	//	//	p1 = ( m_Bones[ bone.Parent ].WorldTransform * bone.BindTransform )[ 3 ];
+	//	//	aie::Gizmos::addLine( p0, p1, vec4( 1 ) );
+	//	//}
+	//}
+
+	for ( int i = 0; i < m_Pose->size(); ++i )
 	{
-		//mat4 parentWorldTransform = mat4(1);
+		if ( i >= m_Bones.size() )
+			break;
 
-		//int parent = bone.Parent;
-		//while ( parent != NO_PARENT_INDEX )
-		//{
-		//	parentWorldTransform *= glm::inverse( m_Bones[ parent ].BindTransform );
-		//	parent = m_Bones[parent].Parent;
-		//}
-		//parentWorldTransform = glm::inverse( parentWorldTransform );
-
-
-
-
-		//vec3 p0;
-		//vec3 p1;
-
-		//// If bone is the Root Bone
-		//if ( &bone - m_Bones.data() == 0 )
-		//{
-		//	p1 = ( bone.WorldTransform * bone.BindTransform )[ 3 ];
-		//	aie::Gizmos::addSphere( p1, 0.035f, 2, 4, {1,1,0,1});
-		//}
-		//else
-		//{
-		//	aie::Gizmos::addSphere( p1, 0.015f, 2, 4, { 1,0,0,1 } );
-		//	p0 = m_Bones[ bone.Parent ].WorldTransform[ 3 ];
-		//	p1 = ( m_Bones[ bone.Parent ].WorldTransform * bone.BindTransform )[ 3 ];
-		//	aie::Gizmos::addLine( p0, p1, vec4( 1 ) );
-		//}
-	}
-
-	for ( int i = 0; i < m_Pose.size(); ++i )
-	{
-		auto& bonePose = m_Pose[ i ];
+		auto& bonePose = ( *m_Pose )[ i ];
 		//auto& bonePose = m_Bones[ i ].WorldTransform;
 
 		vec3 p0;
 		vec3 p1;
-		p1 = ( bonePose )[ 3 ];
+		p1 = bonePose[ 3 ];
 		// If bone is the Root Bone
 		if ( i == 0 )
 		{
@@ -63,12 +66,11 @@ void RSkeleton::Draw()
 		else
 		{
 			aie::Gizmos::addSphere( p1, 0.015f, 2, 4, { 1.f, 0, 0,1 } );
-			auto& boneParentPose = m_Pose[ m_Bones[ i ].Parent ];
-			//auto& boneParentPose = m_Bones[ m_Bones[ i ].Parent ].WorldTransform;
+			auto& boneParentPose = ( *m_Pose )[ m_Bones[ i ].Parent ];
 			p0 = boneParentPose[ 3 ];
-			//p1 = ( m_Bones[ bone.Parent ].WorldTransform * bone.BindTransform )[ 3 ];
 			aie::Gizmos::addLine( p0, p1, vec4( 1 ) );
 		}
+
 	}
 }
 
@@ -87,7 +89,7 @@ void RSkeleton::EvaluatePose( SkeletalAnimHandle a_Anim, TimeType a_Time, std::v
 
 		if ( m_Bones[ i ].Parent == NO_PARENT_INDEX )
 		{
-			o_Pose[ i ] = eval * m_Bones[ i ].WorldTransform;
+			o_Pose[ i ] = eval;
 			continue;
 		}
 		o_Pose[ i ] = o_Pose[ m_Bones[ i ].Parent ] * eval;
@@ -96,25 +98,39 @@ void RSkeleton::EvaluatePose( SkeletalAnimHandle a_Anim, TimeType a_Time, std::v
 
 void RSkeleton::GenerateBoneData()
 {
-	TODO( "Redoes calculations multiple times, optimise here" );
+	//TODO( "Redoes calculations multiple times, optimise here" );
+	//for ( int i = 0; i < m_Bones.size(); ++i )
+	//{
+	//	auto& bone = m_Bones[ i ];
+
+	//	mat4 parentWorldTransform = mat4( 1 );
+
+	//	int parent = bone.Parent;
+	//	while ( parent != NO_PARENT_INDEX )
+	//	{
+	//		parentWorldTransform *= glm::inverse( m_Bones[ parent ].BindTransform );
+	//		parent = m_Bones[ parent ].Parent;
+	//	}
+	//	parentWorldTransform = glm::inverse( parentWorldTransform );
+
+	//	bone.WorldTransform = parentWorldTransform * bone.BindTransform;
+
+	//	//m_Pose.resize( m_Bones.size() );
+	//	//m_Pose[ i ] = bone.WorldTransform;
+
+	//}
+
 	for ( int i = 0; i < m_Bones.size(); ++i )
 	{
-		auto& bone = m_Bones[ i ];
+		auto& Bone = m_Bones[ i ];
 
-		mat4 parentWorldTransform = mat4( 1 );
-
-		int parent = bone.Parent;
-		while ( parent != NO_PARENT_INDEX )
+		if ( Bone.Parent == NO_PARENT_INDEX )
 		{
-			parentWorldTransform *= glm::inverse( m_Bones[ parent ].BindTransform );
-			parent = m_Bones[ parent ].Parent;
+			Bone.WorldTransform = mat4( 1 );
+			continue;
 		}
-		parentWorldTransform = glm::inverse( parentWorldTransform );
 
-		bone.WorldTransform = parentWorldTransform * bone.BindTransform;
-
-		m_Pose.resize( m_Bones.size() );
-		m_Pose[ i ] = bone.WorldTransform;
-
+		Bone.WorldTransform = m_Bones[ Bone.Parent ].WorldTransform * Bone.BindTransform;
 	}
+
 }

@@ -27,6 +27,8 @@ using glm::quat;
 
 class RResource
 {
+
+	friend class ShaderLoader;
 protected:
 	string m_FilePath;		 // Full File path			E.g. 'FilePath/Soulspear.obj'
 	string m_ResourceName;	 //	The File name			E.g. 'Soulspear'

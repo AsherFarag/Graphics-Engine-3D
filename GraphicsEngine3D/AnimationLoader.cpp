@@ -23,6 +23,8 @@ SkeletalAnimHandle AnimationLoader::LoadAnimation( const string& a_Path, const s
 	Result->m_TicksPerSecond = a_Scene->mAnimations[ a_Index ]->mTicksPerSecond;
 	TimeType InverseTicksPerSecond = ( TimeType )1.0 / Result->m_TicksPerSecond;
 
+	Result->ReadHeirarchyData( Result->m_RootNode, a_Scene->mRootNode->FindNode( "mixamorig:Hips" ));
+
 	aiAnimation* Anim = a_Scene->mAnimations[ a_Index ];
 
 	for ( size_t i = 0; i < Anim->mNumChannels; ++i ) 
@@ -81,5 +83,8 @@ SkeletalAnimHandle AnimationLoader::LoadAnimation( const string& a_Path, const s
 
 SkeletalAnimHandle AnimationLoader::GetAnimation( const string& a_Name )
 {
-	return m_SkeletalAnimations.find(a_Name)->second;
+	auto it = m_SkeletalAnimations.find( a_Name );
+	if ( it != m_SkeletalAnimations.end() )
+		return it->second;
+	return nullptr;
 }

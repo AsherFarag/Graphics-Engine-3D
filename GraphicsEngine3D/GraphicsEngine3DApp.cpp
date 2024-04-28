@@ -74,33 +74,31 @@ bool GraphicsEngine3DApp::startup()
 	importer.SetPropertyBool( AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false );
 	importer.SetPropertyFloat( AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f );
 
-	//unsigned int propertyFlags = aiProcess_GlobalScale | aiProcess_OptimizeMeshes | aiProcess_RemoveRedundantMaterials | aiProcess_PopulateArmatureData | aiProcess_Triangulate;
+	unsigned int propertyFlags = aiProcess_GlobalScale
+		| aiProcess_OptimizeMeshes
+		| aiProcess_RemoveRedundantMaterials
+		| aiProcess_PopulateArmatureData
+		| aiProcess_Triangulate
+		| aiPostProcessSteps::aiProcess_LimitBoneWeights
+		| aiPostProcessSteps::aiProcess_PopulateArmatureData
+		//| aiPostProcessSteps::aiProcess_GenSmoothNormals
+		//| aiProcess_ForceGenNormals 
+		| aiPostProcessSteps::aiProcess_SplitByBoneCount
+		| aiPostProcessSteps::aiProcess_CalcTangentSpace;
 
-	unsigned int propertyFlags = aiProcess_GlobalScale |
-		aiProcess_CalcTangentSpace | // calculate tangents and bitangents if possible
-		aiProcess_JoinIdenticalVertices | // join identical vertices/ optimize indexing
-		//aiProcess_ValidateDataStructure  | // perform a full validation of the loader's output
-		aiProcess_Triangulate | // Ensure all verticies are triangulated (each 3 vertices are triangle)
-		//aiProcess_ConvertToLeftHanded | // convert everything to D3D left handed space (by default right-handed, for OpenGL)
-		aiProcess_RemoveRedundantMaterials | // remove redundant materials
-		aiProcess_FindDegenerates | // remove degenerated polygons from the import
-		aiProcess_GenUVCoords | // convert spherical, cylindrical, box and planar mapping to proper UVs
-		aiProcess_TransformUVCoords | // preprocess UV transformations (scaling, translation ...)
-		aiProcess_OptimizeMeshes | // join small meshes, if possible;
-		aiProcess_PreTransformVertices | //-- fixes the transformation issue.
-		0;
-
-	const aiScene* Scene = importer.ReadFile( "Content/Mesh/TheBoss.fbx", propertyFlags );
-	auto mesh = MeshLoader::GetInstance()->LoadMesh( "Content/Mesh/TheBoss.fbx", "HipHop_Mesh", Scene );
-	//skellie = MeshLoader::GetInstance()->LoadSkeleton( "Content/Mesh/TheBoss.fbx", "HipHop_Skeleton", Scene->mRootNode->FindNode("mixamorig:Hips"));
+	const aiScene* Scene = importer.ReadFile( "Content/Mesh/MutantDance.fbx", propertyFlags );
+	auto mesh = MeshLoader::GetInstance()->LoadMesh( "Content/Mesh/MutantDance.fbx", "HipHop_Mesh", Scene );
+	skellie = MeshLoader::GetInstance()->LoadSkeleton( "Content/Mesh/MutantDance.fbx", "HipHop_Skeleton", Scene->mRootNode->FindNode("mixamorig:Hips"), Scene);
 	
-	//AnimationHandle Anim = AnimationLoader::GetInstance()->LoadAnimation( "Content/Mesh/TheBoss.fbx", "SomeAnim", Scene, 0 );
-	
+	AnimationHandle Anim = AnimationLoader::GetInstance()->LoadAnimation( "Content/Mesh/MutantDance.fbx", "SomeAnim", Scene, 0 );
 
+	DebugPrint( Scene->mRootNode );
+
+	Scene = importer.ReadFile( "Content/Mesh/soulspear/soulspear.obj", propertyFlags );
+	MeshLoader::GetInstance()->LoadMesh( "Content/Mesh/soulspear/soulspear.obj", "SoulSpear", Scene );
+	
 	if ( !m_World->Begin() )
 		return false;
-	
-	DebugPrint( Scene->mRootNode );
 
 	return true;
 }
@@ -287,7 +285,10 @@ void GraphicsEngine3DApp::draw()
 
 	if ( ImGui::Button( "Reload Shaders" ) )
 	{
-		//ResourceManager::ReloadShaders();
+		auto& loadedShaders = ShaderLoader::GetInstance()->m_LoadedShaders;
+		for ( auto& shader : loadedShaders )
+			shader.second->Reload();
+
 		LOG( Default, " --- Reloaded Shaders ---" );
 	}
 

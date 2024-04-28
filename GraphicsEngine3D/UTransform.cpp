@@ -84,22 +84,26 @@ void UTransform::Update()
 	m_Transform = translationMatrix * rotationMatrix * scaleMatrix;
 }
 
+#if IS_EDITOR
 void UTransform::Draw_ImGui()
 {
-	if (ImGui::TreeNode("Transform"))
+	if ( ImGui::TreeNode( "Transform" ) )
 	{
 		vec3 Position = m_Position;
-		if (ImGui::DragFloatXYZ(false, "Position", &Position[0], 0.01f))
-			SetPosition(Position);
+		if ( ImGui::DragFloatXYZ( false, "Position", &Position[ 0 ], 0.01f ) )
+			SetPosition( Position );
 
 		vec3 Rotation = GetRotationEular();
-		if (ImGui::DragFloatXYZ(false, "Rotation", &Rotation[0], 0.1f))
-			SetRotation(Rotation);
+		if ( ImGui::DragFloatXYZ( false, "Rotation", &Rotation[ 0 ], 0.1f ) )
+			SetRotation( Rotation );
 
 		vec3 Scale = m_Scale;
-		if (ImGui::DragFloatXYZ(false, "Scale", &Scale[0], 0.01f))
-			SetScale(Scale);
+		if ( ImGui::DragFloatXYZ( false, "Scale", &Scale[ 0 ], 0.01f ) )
+			SetScale( Scale );
 
 		ImGui::TreePop();
 	}
 }
+#endif // IS_EDITOR
+
+

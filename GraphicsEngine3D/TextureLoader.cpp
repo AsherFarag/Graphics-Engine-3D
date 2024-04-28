@@ -5,6 +5,7 @@
 TextureLoader::TextureLoader()
 {
 	LoadTexture( "Content/Textures/Black.tga", GL_TEXTURE_2D, GL_RGBA );
+	LoadTexture( "Content/Textures/Gray.tga", GL_TEXTURE_2D, GL_RGBA );
 	LoadTexture( "Content/Textures/White.tga", GL_TEXTURE_2D, GL_RGBA );
 	LoadTexture( "Content/Textures/Normal.tga", GL_TEXTURE_2D, GL_RGBA );
 	LoadTexture( "Content/Textures/Sky.jpeg", GL_TEXTURE_2D, GL_RGBA );

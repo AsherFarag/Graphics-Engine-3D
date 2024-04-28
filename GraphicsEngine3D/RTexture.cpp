@@ -74,8 +74,8 @@ void RTexture::Bind( int Unit )
 {
 	if ( Unit >= 0 )
 		glActiveTexture( GL_TEXTURE0 + Unit );
-	else
-		glBindTexture( m_Target, ID );
+
+	glBindTexture( m_Target, ID );
 }
 
 void RTexture::Unbind()

@@ -10,62 +10,16 @@ using std::map;
 #include "assimp/Importer.hpp"
 
 // --- Engine ---
-#include "OBJMesh.h"
-#include "RMaterial.h"
-#include "RTexture.h"
-
-#include "Shader.h"
-
 #include "MeshLoader.h"
 #include "ShaderLoader.h"
 #include "MaterialLoader.h"
 #include "TextureLoader.h"
 #include "AnimationLoader.h"
 
-//class ResourceManager
-//{
-//private:
-//	ResourceManager();
-//	~ResourceManager();
-//
-//	// Allow access to destructor
-//	friend class GraphicsEngine3DApp;
-//
-//public:
-//	ResourceManager(ResourceManager& Other) = delete;
-//	void operator=(const ResourceManager&) = delete;
-//
-//	static ResourceManager* GetInstance();
-//
-//private:
-//	aie::ShaderProgram* m_MainShader;
-//
-//	map<string, OBJMesh*> m_LoadedOBJMeshes;
-//	map<string, RMaterial*> m_LoadedMaterials;
-//	map<string, ShaderProgram*> m_LoadedShaders;
-//
-//public:
-//	static auto&	GetLoadedOBJMeshes() { return GetInstance()->m_LoadedOBJMeshes; }
-//	static OBJMesh* LoadOBJMesh(const string& a_MeshName, RMaterial* a_Material = nullptr, bool a_LoadTextures = true, bool a_FlipTexturesV = false);
-//	static OBJMesh* GetLoadedOBJMesh(const string& a_MeshName);
-//
-//	static auto& GetLoadedMaterials() { return GetInstance()->m_LoadedMaterials; }
-//	static RMaterial* InstantiateMaterial( const string& a_MaterialName, aie::ShaderProgram* a_ShaderProgram = nullptr );
-//	static RMaterial* GetMaterial( const string& a_MaterialName );
-//
-//	static void ReloadShaders();
-//	static ShaderProgram* LoadShader( const string& a_FileName );
-//	static ShaderProgram* GetShader( const string& a_ShaderName );
-//
-//	static void SetMainShader( ShaderProgram* a_Shader ) { GetInstance()->m_MainShader = a_Shader; }
-//};
-//
-//static ResourceManager* s_ResourceInstance;
-
 namespace Resource
 {
 	// - Meshes -
-	static MeshHandle LoadMesh( const std::string& a_Path, bool a_GenerateMaterials ) { return MeshLoader::GetInstance()->LoadMesh( a_Path, a_GenerateMaterials ); }
+	static MeshHandle LoadMesh( const std::string& a_Path ) { return MeshLoader::GetInstance()->LoadMesh( a_Path ); }
 	static MeshHandle GetMesh( const std::string& a_Name ) { return MeshLoader::GetInstance()->GetMesh( a_Name ); }
 
 	// - Shaders -

@@ -319,6 +319,18 @@ bool ShaderProgram::bindUniform(const char* name, int count, const glm::mat4* va
 	return true;
 }
 
+void ShaderProgram::Reload()
+{
+	loadShader( aie::eShaderStage::VERTEX, ( m_FilePath + ".vert" ).c_str() );
+	loadShader( aie::eShaderStage::FRAGMENT, ( m_FilePath + ".frag" ).c_str() );
+
+	if ( link() == false )
+	{
+		printf( ( m_ResourceName + " Shader Error: %s\n" ).c_str(), getLastError() );
+		LOG( Error, ( "Unable to link shader: " + m_ResourceName ).c_str() );
+	}
+}
+
 void ShaderProgram::bindUniform(int ID, int value) {
 	assert(m_program > 0 && "Invalid shader program");
 	assert(ID >= 0 && "Invalid shader uniform");

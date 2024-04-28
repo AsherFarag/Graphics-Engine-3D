@@ -17,10 +17,9 @@ UMeshRenderer::~UMeshRenderer()
 	GraphicsEngine3DApp::GetRenderManager()->RemoveMeshRenderer( this );
 }
 
-void UMeshRenderer::Draw(mat4 a_ProjectionViewMatrix)
+void UMeshRenderer::Draw()
 {
 	m_Mesh->Draw();
-	//m_OldMesh->draw(false);
 }
 
 void UMeshRenderer::OnEnabled()
@@ -44,9 +43,9 @@ bool UMeshRenderer::SetMesh(const char* a_MeshName, bool a_LoadTextures, bool a_
 	return m_OldMesh != nullptr;
 }
 
-bool UMeshRenderer::SetMesh( const string& a_Name, bool a_GenerateMaterials )
+bool UMeshRenderer::SetMesh( const string& a_Name )
 {
-	m_Mesh = Resource::LoadMesh( a_Name, a_GenerateMaterials );
+	m_Mesh = Resource::LoadMesh( a_Name );
 	return m_Mesh != nullptr;
 }
 

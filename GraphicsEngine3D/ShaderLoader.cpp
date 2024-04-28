@@ -3,7 +3,8 @@
 
 ShaderLoader::ShaderLoader()
 {
-	m_PhongShader = LoadShader( "Content/Shaders/Phong" );
+	m_PhongShader = LoadShader( "Content/Shaders/SkeletalAnim" );
+	//m_PhongShader = LoadShader( "Content/Shaders/Phong" );
 	//m_PhongShader = LoadShader( "Content/Shaders/Test/Diffuse" );
 }
 
@@ -33,6 +34,8 @@ ShaderHandle ShaderLoader::LoadShader( const std::string& a_Path )
 		LOG( Error, ( "Unable to link shader: " + shaderName ).c_str() );
 		return nullptr;
 	}
+
+	shader->ConstuctResourceInfo( a_Path, shaderName );
 
 	m_LoadedShaders.emplace( shaderName, shader );
 

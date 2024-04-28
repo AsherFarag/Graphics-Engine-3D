@@ -7,13 +7,14 @@ RMaterialInstance::RMaterialInstance( MaterialHandle a_MasterMaterial)
 {
 	m_MasterMaterial = a_MasterMaterial;
 	auto whiteTex  = Resource::GetTexture( "White" );
+	auto grayTex   = Resource::GetTexture( "Gray" );
 	auto blackTex  = Resource::GetTexture( "Black" );
 	auto normalTex = Resource::GetTexture( "Normal" );
 
-	DiffuseTexture			 = whiteTex;
+	DiffuseTexture			 = grayTex;
 	AlphaTexture			 = blackTex;
-	AmbientTexture			 = blackTex;
-	SpecularTexture			 = blackTex;
+	AmbientTexture			 = grayTex;
+	SpecularTexture			 = grayTex;
 	SpecularHighlightTexture = blackTex;
 	NormalTexture			 = normalTex;
 	DisplacementTexture		 = blackTex;
@@ -56,14 +57,14 @@ void RMaterialInstance::Bind()
 		SpecularTexture->Bind(3);
 		Shader->bindUniform("SpecularTexture", 3);
 	}
-	if (SpecularHighlightTexture)
+	if ( SpecularHighlightTexture )
 	{
-		SpecularHighlightTexture->Bind(4);
-		Shader->bindUniform("SpecularHighlightTexture", 4);
+		SpecularHighlightTexture->Bind( 4 );
+		Shader->bindUniform( "SpecularHighlightTexture", 4 );
 	}
 	if (NormalTexture)
 	{
-		NormalTexture->Bind(5);
+		NormalTexture->Bind( 5 );
 		Shader->bindUniform("NormalTexture", 5);
 	}
 	if (DisplacementTexture)

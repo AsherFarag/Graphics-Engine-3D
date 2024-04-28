@@ -17,7 +17,7 @@ public:
     UMeshRenderer(AActor* a_Owner);
     virtual ~UMeshRenderer();
 
-    virtual void Draw(mat4 a_ProjectionViewMatrix) override;
+    virtual void Draw() override;
 
 protected:
     aie::OBJMesh* m_OldMesh = nullptr;
@@ -30,7 +30,7 @@ protected:
 public:
     MeshHandle GetMesh() { return m_Mesh; }
     bool SetMesh(const char* a_MeshName, bool a_LoadTextures = true, bool a_FlipTextureV = false);
-    bool SetMesh( const string& a_Name, bool a_GenerateMaterials );
+    bool SetMesh( const string& a_Name );
     void SetMesh( MeshHandle a_Mesh );
 
 #pragma region ImGui

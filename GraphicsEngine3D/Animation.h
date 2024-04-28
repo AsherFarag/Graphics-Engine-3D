@@ -5,7 +5,12 @@
 #include "glm/ext.hpp"
 #include "RResource.h"
 
-using TimeType = float;
+namespace Animation
+{
+	using TimeType = float;
+}
+
+using namespace Animation;
 
 template < typename T >
 struct KeyFrame
@@ -106,7 +111,8 @@ using PositionAnimationTrack = AnimationTrack< PositionKeyFrame >;
 using RotationAnimationTrack = AnimationTrack< RotationKeyFrame >;
 using ScaleAnimationTrack = AnimationTrack< ScaleKeyFrame >;
 
-class RAnimation : public RResource
+class RAnimation 
+	: public RResource
 {
 	friend class AnimationLoader;
 
@@ -114,13 +120,13 @@ public:
 
 	RAnimation();
 
-	// Duration in ticks.
+	// Duration in ticks
 	const auto GetDuration() { return m_Duration; }
 
-	// Ticks per second.
+	// Ticks per second
 	const auto GetTickRate() { return m_TicksPerSecond; }
 
-	// Duration in seconds.
+	// Duration in seconds
 	const TimeType GetPlayLength() { return (TimeType)( m_Duration / m_TicksPerSecond ); }
 
 protected:

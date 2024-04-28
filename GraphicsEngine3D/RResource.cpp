@@ -4,12 +4,19 @@ void RResource::ConstuctResourceInfo( const string& a_Path )
 {
 	SetFilePath( a_Path );
 
-	// Get the name of the File with the file extension
-	string fileNameWithExt = a_Path.substr( a_Path.find_last_of( '/' ) + 1 );
-	SetResourceName( fileNameWithExt.substr( 0, fileNameWithExt.find_last_of( '.' ) ) );
+	size_t offIndex;
 
+	// Get the name of the File with the file extension
+	string fileName = a_Path.substr( a_Path.find_last_of( '/' ) + 1 );
+	offIndex = fileName.find_last_of( '.' );
+	if ( offIndex < fileName.size() )
+		fileName = fileName.substr( 0, offIndex );
+	SetResourceName( fileName );
+
+	offIndex = a_Path.find_last_of( '.' );
 	// Get the file extension
-	SetFileType( a_Path.substr( a_Path.find_last_of( '.' ) ) );
+	if ( offIndex < a_Path.size() )
+		SetFileType( a_Path.substr( offIndex ) );
 }
 
 void RResource::ConstuctResourceInfo( const string& a_Path, const string& a_ResourceName )
@@ -19,7 +26,9 @@ void RResource::ConstuctResourceInfo( const string& a_Path, const string& a_Reso
 	SetResourceName( a_ResourceName );
 
 	// Get the file extension
-	SetFileType( a_Path.substr( a_Path.find_last_of( '.' ) ) );
+	size_t offIndex = a_Path.find_last_of( '.' );
+	if ( offIndex < a_Path.size() )
+		SetFileType( a_Path.substr( offIndex ) );
 }
 
 void RResource::SetFilePath( const string& a_Path )

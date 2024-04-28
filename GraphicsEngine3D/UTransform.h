@@ -21,7 +21,7 @@ public:
     UTransform(vec3 a_Position, quat a_Rotation, vec3 a_Scale);
     UTransform(vec3 a_Position, quat a_Rotation, float a_Scale);
 
-    auto& GetTransform()     { return m_Transform; }
+    auto& GetTransformation()     { return m_Transform; }
     auto& GetPosition()      { return m_Position; }
     auto& GetRotation()      { return m_Rotation; }
     auto& GetRotationEular() { return glm::eulerAngles(m_Rotation); }

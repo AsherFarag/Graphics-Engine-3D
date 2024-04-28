@@ -12,16 +12,15 @@ out vec3 vTangent;
 out vec3 vBiTangent;
 out float vDepth;
 
-uniform mat4 ModelMatrix;
-
 uniform mat4 ProjectionViewModel;
+uniform mat4 ModelMatrix;
 
 void main()
 {
       vPosition    = ModelMatrix * Position;
-      vNormal      = ((ModelMatrix) * Normal).xyz; //(MatrixModel * Normal).xyz; 
+      vNormal      = vec3(Normal.x, Normal.y, Normal.z);//((ModelMatrix) * Normal).xyz; //normalize(inverse(ModelMatrix) * Normal).xyz; 
       vTexCoords   = TexCoords;
-      vTangent     = (inverse(ModelMatrix) * vec4(Tangent.xyz,0)).xyz;
+      vTangent     = (inverse(ModelMatrix) * vec4(Tangent.xyz, 1)).xyz;
       vBiTangent   = cross(vNormal, vTangent) * Tangent.w;
 
       gl_Position  = ProjectionViewModel * Position;

@@ -50,7 +50,6 @@ void main()
       vec3 T = normalize(vTangent);
       vec3 B = normalize(vBiTangent);
       vec3 N = normalize(vNormal);
-      //vec3 L = normalize(AmbientLightDirection);
 
       // Extract values from Texture Coordinates
       vec3 TextureDiffuse  = texture(DiffuseTex,  vTexCoords).rgb;
@@ -66,8 +65,8 @@ void main()
       // Calculate the Modified Normal from the Texture with the Local Tangent Basis Matrix
       N = TBN * (TextureNormal * 2 - 1);
 
-      vec3 DiffuseTotal;//Diffuse(AmbientLight, N, L);
-      vec3 SpecularTotal;//Specular(AmbientLight, N, L, V);
+      vec3 DiffuseTotal;
+      vec3 SpecularTotal;
 
       for (int i = 0; i < NumOfLights; i++)
       {
@@ -94,4 +93,7 @@ void main()
 
       // Test Outputs
       //FragColour = vec4(N, 1 );
+      //FragColour = vec4((TextureNormal), 1);
+      //FragColour = vec4(texture(DiffuseTex,   vTexCoords).rgb, 1);
+      //FragColour = vec4(vec2(vTexCoords), 0, 1);
 }

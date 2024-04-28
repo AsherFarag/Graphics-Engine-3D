@@ -3,7 +3,9 @@
 //#include <chrono>
 #include "GraphicsEngine3DApp.h"
 
-#define PRINT_TODO_MESSAGES 1
+#define PRINT_TODO_MESSAGES 0
+#define PRINT_LOGS 0
+
 enum TODO_PRIORITY_LEVEL
 {
 	LOW,
@@ -43,5 +45,13 @@ enum TODO_PRIORITY_LEVEL
 
 #endif // PRINT_TODO_MESSAGES
 
+#if PRINT_LOGS
+
 #define LOG( Level, Message ) GraphicsEngine3DApp::GetInstance()->m_DebugLog.PrintMessage(Debug::DebugMessage(true, Message, Debug::Level ))
 #define LOG_NO_TIME( Level, Message ) GraphicsEngine3DApp::GetInstance()->m_DebugLog.PrintMessage(Debug::DebugMessage(false, Message, Debug::Level ))
+
+#else
+#define LOG( Level, Message )
+#define LOG_NO_TIME( Level, Message )
+#endif // PRINT_LOGS
+

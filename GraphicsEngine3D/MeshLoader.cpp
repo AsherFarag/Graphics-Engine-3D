@@ -1,14 +1,15 @@
 #include "MeshLoader.h"
 #include "glm/ext.hpp"
+#include <assimp/scene.h>
 
 MeshLoader::MeshLoader()
 {
     // Load Primitive Shapes
-    LoadMesh( "Content/Mesh/Primitives/Box.obj", false );
-    LoadMesh( "Content/Mesh/Primitives/Cone.obj", false );
-    LoadMesh( "Content/Mesh/Primitives/Cylinder.obj", false );
-    LoadMesh( "Content/Mesh/Primitives/Pyramid.obj", false );
-    LoadMesh( "Content/Mesh/Primitives/Sphere.obj", false );
+    LoadMesh( "Content/Mesh/Primitives/Box.obj" );
+    LoadMesh( "Content/Mesh/Primitives/Cone.obj" );
+    LoadMesh( "Content/Mesh/Primitives/Cylinder.obj" );
+    LoadMesh( "Content/Mesh/Primitives/Pyramid.obj" );
+    LoadMesh( "Content/Mesh/Primitives/Sphere.obj" );
 }
 
 MeshLoader* MeshLoader::GetInstance()
@@ -40,27 +41,40 @@ MeshHandle MeshLoader::LoadMesh( const string& a_Path, const string& a_Name, con
     return mesh;
 }
 
-MeshHandle MeshLoader::LoadMesh( const string& a_Path, bool a_GenerateMaterials )
+MeshHandle MeshLoader::LoadMesh( const string& a_Path )
 {
-    auto meshName = a_Path.substr( a_Path.find_last_of( '/' ) + 1 );
-    meshName = meshName.substr( 0, meshName.find_last_of( '.' ) );
-    // Check if this mesh has already been loaded
-    auto& foundMesh = m_LoadedMeshes.find( meshName );
-    if ( foundMesh != m_LoadedMeshes.end() )
-        return foundMesh->second;
+    Assimp::Importer importer;
+    importer.SetPropertyBool( AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false );
+    importer.SetPropertyFloat( AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f );
 
-    MeshHandle mesh = std::make_shared< RMesh >();
-    if ( !mesh->Load( a_Path, a_GenerateMaterials ) )
-        return nullptr;
+    unsigned int propertyFlags = aiProcess_GlobalScale
+        | aiProcess_OptimizeMeshes
+        | aiProcess_RemoveRedundantMaterials
+        | aiProcess_PopulateArmatureData
+        | aiProcess_Triangulate
+        | aiPostProcessSteps::aiProcess_LimitBoneWeights
+        //| aiPostProcessSteps::aiProcess_GenSmoothNormals
+        //| aiProcess_ForceGenNormals 
+        | aiPostProcessSteps::aiProcess_CalcTangentSpace
+        | 0;
 
-    m_LoadedMeshes.emplace( mesh->GetResourceName(), mesh );
+    const aiScene* Scene = importer.ReadFile( a_Path, propertyFlags);
 
-    return mesh;
+    // Get the name of the File without the file extension
+    string fileName = a_Path.substr( a_Path.find_last_of( '/' ) + 1 );
+    fileName = fileName.substr( 0, fileName.find_last_of( '.' ) );
+
+
+    return LoadMesh(a_Path, fileName, Scene);
 }
 
 MeshHandle MeshLoader::GetMesh( const string& a_Name )
 {
-    return m_LoadedMeshes.find( a_Name )->second;
+    if ( auto it = m_LoadedMeshes.find( a_Name ); it != m_LoadedMeshes.end() )
+    {
+        return it->second;
+    }
+    return nullptr;
 }
 
 template < typename Func >
@@ -74,7 +88,7 @@ void ForEachBoneDescendent( const aiNode* a_Node, Func&& Function )
 }
 
 
-SkeletonHandle MeshLoader::LoadSkeleton( const string& a_Path, const string& a_Name, const aiNode* a_BoneRootNode )
+SkeletonHandle MeshLoader::LoadSkeleton( const string& a_Path, const string& a_Name, const aiNode* a_BoneRootNode, const aiScene* a_Scene )
 {
     SkeletonHandle skeleton = std::make_shared<RSkeleton>();
     
@@ -83,7 +97,7 @@ SkeletonHandle MeshLoader::LoadSkeleton( const string& a_Path, const string& a_N
 
     // Recursive loop for adding each child bone 
     ForEachBoneDescendent( a_BoneRootNode,
-        [&skeleton]( const aiNode* a_Node )
+        [&skeleton,a_Scene]( const aiNode* a_Node )
         {
             
             auto it = std::find_if( skeleton->m_Bones.begin(), skeleton->m_Bones.end(),
@@ -105,10 +119,11 @@ SkeletonHandle MeshLoader::LoadSkeleton( const string& a_Path, const string& a_N
             bone.Parent = parentIndex;
 
             // Assimp loads matricies as Row Major so we must convert it to Column major
-            bone.BindTransform = glm::transpose( glm::make_mat4x4( ( ( ai_real* ) & a_Node->mTransformation )) );
+            bone.BindTransform = glm::transpose( glm::make_mat4x4( ( a_Node->mTransformation[0] )));
+           // bone.WorldTransform = glm::transpose(  glm::make_mat4x4(  a_Scene->mSkeletons[ 0 ]->mBones[ parentIndex + 1 ]->mOffsetMatrix[0] ) );
         }
     );
-
+    
     skeleton->GenerateBoneData();
 
     skeleton->ConstuctResourceInfo( a_Path, a_Name );

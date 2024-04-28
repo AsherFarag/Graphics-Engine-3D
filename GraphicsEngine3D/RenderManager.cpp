@@ -6,6 +6,7 @@
 #include "RMaterialInstance.h"
 #include "ALight.h"
 #include "RenderTarget.h"
+#include "UAnimatorComponent.h"
 
 RenderManager::RenderManager()
 {
@@ -78,11 +79,46 @@ void RenderManager::Render( ACamera* a_Camera )
 
 		UseMaterialInstance( m_DrawBuffer[ i ]->GetMaterial() );
 
-		auto& ModelMatrix = m_DrawBuffer[ i ]->GetOwner()->GetTransform().GetTransform();
+		auto& ModelMatrix = m_DrawBuffer[ i ]->GetOwner()->GetTransform().GetTransformation();
 		m_ShaderInUse->bindUniform( "ProjectionViewModel", ProjectionViewMatrix * ModelMatrix );
 		m_ShaderInUse->bindUniform( "ModelMatrix", ModelMatrix );
 
-		m_DrawBuffer[ i ]->Draw( ProjectionViewMatrix );
+		// ===== Animation Data =====
+		if ( auto animator = m_DrawBuffer[ i ]->GetOwner()->GetComponent<UAnimatorComponent>(); animator->GetPose().size() > 0 )
+		{
+			std::vector<glm::mat4> Transforms = animator->GetPose();
+
+			auto Skeleton = animator->GetSkeleton();
+			auto& BindPoseBones = Skeleton->GetBones();
+			std::vector<glm::mat4> InverseBindPoseTransforms( BindPoseBones.size() );
+
+			// Create an array of transforms that will take a model space vertex into local bone space for each of the bones IN BIND POSE.
+			for ( int i = 0; i < BindPoseBones.size(); ++i )
+			{
+				//InverseBindPoseTransforms[ i ] = BindPoseBones[ i ].WorldTransform;
+				InverseBindPoseTransforms[ i ] = glm::inverse( BindPoseBones[ i ].WorldTransform );
+			}
+
+			// Take MeshSpaceVertex into BindPoseBoneSpace
+			// Vlocal = InverseBindPoseTransforms[i] * Vmesh
+			
+			// Take BindPoseBoneSpaceVertex into MeshSpace after animation has occurred.
+			// Vfinal = Transforms[i] * Vlocal
+
+			// Vfinal = Transforms[i] * (Vlocal)
+			// Vfinal = Transforms[i] * InverseBindPoseTransforms[i] * Vmesh
+
+			for ( int i = 0; i < Transforms.size(); ++i )
+			{
+				Transforms[ i ] = Transforms[ i ] * InverseBindPoseTransforms[ i ];
+			}
+
+
+			m_ShaderInUse->bindUniform( "FinalBonesMatrices", animator->GetPose().size(), &Transforms[ 0 ] );
+		}
+			
+
+		m_DrawBuffer[ i ]->Draw();
 	}
 
 	TODO( "Implement Instancing" );
@@ -103,6 +139,10 @@ void RenderManager::Render( ACamera* a_Camera )
 
 	a_Camera->EndRender();
 
+	m_ShaderInUse = nullptr;
+	m_MaterialInUse = nullptr;
+	m_MaterialInstanceInUse = nullptr;
+
 	DEBUG_RENDER_STAT( RenderTime, =, DEBUG_TIME_END( 1000.f ) );
 }
 
@@ -114,16 +154,16 @@ void RenderManager::RenderPostProcess( RenderTarget* a_Target )
 	DEBUG_RENDER_STAT( PostProcessTime, =, DEBUG_TIME_END( 1000.f ) );
 }
 
-void RenderManager::UseMaterial( MaterialHandle a_Material )
+void RenderManager::UseMaterial( MaterialHandle a_Material, bool Force )
 {
-	if ( a_Material == m_MaterialInUse )
+	if ( a_Material == m_MaterialInUse && !Force)
 		return;
 
 	m_MaterialInUse = a_Material;
 
 	// If this is a different shader, 
 	// then use the shader program
-	if ( m_MaterialInUse->m_Shader != m_ShaderInUse )
+	if ( m_MaterialInUse->m_Shader != m_ShaderInUse || Force )
 	{
 		m_ShaderInUse = m_MaterialInUse->m_Shader;
 		m_ShaderInUse->bind();
@@ -321,7 +361,7 @@ void RenderManager::DrawLightGizmos()
 	{
 		if ( light->IsEnabled() )
 		{
-			aie::Gizmos::addSphere( light->GetActorPosition(), 1, 5, 5, vec4( light->GetColour(), 1 ) );
+			aie::Gizmos::addSphere( light->GetActorPosition(), 0.05f, 5, 5, vec4( light->GetColour(), 1 ) );
 		}
 	}
 }

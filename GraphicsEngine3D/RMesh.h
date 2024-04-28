@@ -10,6 +10,7 @@
 #include "gl_core_4_4.h"
 
 // --- STD ---
+#include <map>
 #include <vector>
 
 // --- Engine ---
@@ -19,8 +20,26 @@
 
 constexpr auto MAX_BONE_INFLUENCE = 4;
 
+struct BoneInfo
+{
+	/* The the index in FinalBoneMatrices */
+	unsigned int ID;
+
+	/* The offset matrix transforms vertex from model space to bone space */
+	mat4 Offset;
+};
+
 struct Vertex
 {
+	Vertex()
+	{
+		for ( int i = 0; i < MAX_BONE_INFLUENCE; i++ )
+		{
+			m_BoneIDs[ i ] = -1;
+			m_Weights[ i ] = 0.0f;
+		}
+	}
+
 	vec4 Position;	// Added to attribute location 0
 	vec4 Normal;	// Added to attribute location 1
 	vec2 TexCoord;	// Added to attribute location 2
@@ -30,7 +49,7 @@ struct Vertex
 	vec3 Bitangent;	// Added to attribute location 4
 
 	//bone indexes which will influence this vertex
-	int32_t m_BoneIDs[ MAX_BONE_INFLUENCE ];
+	int m_BoneIDs[ MAX_BONE_INFLUENCE ];
 	//weights from each bone
 	float m_Weights[ MAX_BONE_INFLUENCE ];
 };
@@ -61,7 +80,7 @@ class RMesh
 {
 	friend class MeshLoader;
 
-private:
+protected:
 
 	std::vector<MeshChunk> m_MeshChunks;
 	std::vector<MaterialInstanceHandle> m_Materials;
@@ -70,10 +89,25 @@ private:
 	void Load( aiScene* a_Scene );
 	// Assimp
 	void ProcessNode( aiNode* a_Node, const aiScene* a_Scene );
-	void ProcessMeshChunk( MeshChunk& o_Mesh, const aiMesh* a_Mesh, const aiScene* a_Scene, int a_Index );
+	virtual void ProcessMeshChunk( MeshChunk& o_Mesh, const aiMesh* a_Mesh, const aiScene* a_Scene );
+	virtual void ProcessVertex( Vertex& o_Vertex, const aiMesh* a_Mesh, const int a_Index );
 
 public:
 	void Draw();
+
+	// --- SK MESH ---
+public:
+	auto& GetBoneInfoMap() { return m_BoneInfoMap; }
+	int&  GetBoneCount()   { return m_BoneCounter; }
+	auto& GetMeshChunks()  { return m_MeshChunks; }
+
+private:
+	std::map<string, BoneInfo> m_BoneInfoMap;
+	int m_BoneCounter = 0;
+
+
+	void ExtractBoneWeightForVertices( std::vector<Vertex>& a_Vertices, const aiMesh* a_Mesh, const aiScene* a_Scene );
+	void SetVertexBoneData( Vertex& a_Vertex, int a_BoneID, float a_Weight );
 
 #pragma region Legacy
 
@@ -109,3 +143,11 @@ public:
 };
 
 using MeshHandle = std::shared_ptr< RMesh >;
+
+class RSkeletalMesh
+	: public RMesh
+{
+	virtual void ProcessMeshChunk( MeshChunk& o_Mesh, const aiMesh* a_Mesh, const aiScene* a_Scene ) override {}
+};
+
+using SkeletalMeshHandle = std::shared_ptr< RSkeletalMesh >;

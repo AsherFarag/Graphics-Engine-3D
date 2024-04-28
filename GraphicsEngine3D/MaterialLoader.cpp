@@ -26,7 +26,7 @@ MaterialHandle MaterialLoader::InstantiateMaterial( const string& a_Name, Shader
     auto& foundMaterial = m_Materials.find( a_Name );
     if ( foundMaterial != m_Materials.end() )
     {
-        printf( "Cannot instantiate new material with name: [%s] as a material with this name already exists", a_Name );
+        printf( R"(Cannot instantiate new material with name: [%s] as a material with this name already exists)", a_Name );
         LOG( Default, ( "Cannot instantiate new material with name: " + a_Name + " as a material with this name already exists" ).c_str());
         return foundMaterial->second;
     }
@@ -47,7 +47,7 @@ MaterialInstanceHandle MaterialLoader::InstantiateMaterialInstance( MaterialHand
     auto& foundInstance = m_MaterialInstances.find( a_Name );
     if ( foundInstance != m_MaterialInstances.end() )
     {
-        printf( "Cannot instantiate new material instance with name: [%s] as a material instance with this name already exists", a_Name );
+        printf( R"(Cannot instantiate new material instance with name: [%s] as a material instance with this name already exists)", a_Name );
         LOG( Default, ( "Cannot instantiate new material instance with name: " + a_Name + " as a material instance with this name already exists" ).c_str() );
         return foundInstance->second;
     }
