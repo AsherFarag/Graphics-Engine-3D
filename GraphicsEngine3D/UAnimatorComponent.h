@@ -24,6 +24,7 @@ public:
 
     auto& GetPlayRate() { return m_PlayRate; }
     auto& GetTime() { return m_CurrentTime;  }
+    void  SetTime( const TimeType a_Time );
 
     // Gets array of transforms to transform bone space vertex into model space.
     auto& GetPose() { return m_SkeletonPose; }

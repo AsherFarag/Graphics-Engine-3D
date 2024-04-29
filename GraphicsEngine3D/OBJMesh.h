@@ -7,10 +7,6 @@ using std::string;
 #include <vector>
 #include <map>
 
-// --- GLM ---
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
 
 // --- AIE ---
 #include "Texture.h"

@@ -4,9 +4,6 @@
 // --- STD ---
 #include <string>
 
-// --- GLM ---
-#include <glm/mat4x4.hpp>
-
 // --- AIE ---
 #include "Shader.h"
 

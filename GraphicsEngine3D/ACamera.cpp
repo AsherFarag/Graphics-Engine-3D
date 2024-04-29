@@ -3,10 +3,6 @@
 // --- OpenGL ---
 #include "gl_core_4_4.h"
 
-// --- GLM ---
-#include "glm/common.hpp"
-#include "glm/ext.hpp"
-
 
 // --- AIE ---
 #include "Shader.h"

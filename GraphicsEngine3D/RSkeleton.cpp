@@ -2,10 +2,6 @@
 #include "Gizmos.h"
 
 #include <cmath>
-#include <glm/gtc/matrix_transform.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
 
 RSkeleton::RSkeleton()
 {
@@ -34,25 +30,25 @@ void RSkeleton::Draw()
 	//	//// If bone is the Root Bone
 	//	//if ( &bone - m_Bones.data() == 0 )
 	//	//{
-	//	//	p1 = ( bone.WorldTransform * bone.BindTransform )[ 3 ];
+	//	//	p1 = ( bone.OffsetMatrix * bone.BindTransform )[ 3 ];
 	//	//	aie::Gizmos::addSphere( p1, 0.035f, 2, 4, {1,1,0,1});
 	//	//}
 	//	//else
 	//	//{
 	//	//	aie::Gizmos::addSphere( p1, 0.015f, 2, 4, { 1,0,0,1 } );
-	//	//	p0 = m_Bones[ bone.Parent ].WorldTransform[ 3 ];
-	//	//	p1 = ( m_Bones[ bone.Parent ].WorldTransform * bone.BindTransform )[ 3 ];
+	//	//	p0 = m_Bones[ bone.Parent ].OffsetMatrix[ 3 ];
+	//	//	p1 = ( m_Bones[ bone.Parent ].OffsetMatrix * bone.BindTransform )[ 3 ];
 	//	//	aie::Gizmos::addLine( p0, p1, vec4( 1 ) );
 	//	//}
 	//}
 
-	for ( int i = 0; i < m_Pose->size(); ++i )
+	for ( int i = 0; i < m_Pose.size(); ++i )
 	{
 		if ( i >= m_Bones.size() )
 			break;
 
-		auto& bonePose = ( *m_Pose )[ i ];
-		//auto& bonePose = m_Bones[ i ].WorldTransform;
+		auto& bonePose = ( m_Pose )[ i ];
+		//auto& bonePose = m_Bones[ i ].OffsetMatrix;
 
 		vec3 p0;
 		vec3 p1;
@@ -66,7 +62,7 @@ void RSkeleton::Draw()
 		else
 		{
 			aie::Gizmos::addSphere( p1, 0.015f, 2, 4, { 1.f, 0, 0,1 } );
-			auto& boneParentPose = ( *m_Pose )[ m_Bones[ i ].Parent ];
+			auto& boneParentPose = ( m_Pose )[ m_Bones[ i ].Parent ];
 			p0 = boneParentPose[ 3 ];
 			aie::Gizmos::addLine( p0, p1, vec4( 1 ) );
 		}
@@ -86,6 +82,9 @@ void RSkeleton::EvaluatePose( SkeletalAnimHandle a_Anim, TimeType a_Time, std::v
 		// Get the transform of the bone in the animation
 		mat4 eval;
 		a_Anim->GetBoneMatrix( m_Bones[ i ].Name, eval, a_Time );
+
+		if ( eval == mat4( 0.f ) )
+			eval = mat4( 1.f );
 
 		if ( m_Bones[ i ].Parent == NO_PARENT_INDEX )
 		{
@@ -113,10 +112,7 @@ void RSkeleton::GenerateBoneData()
 	//	}
 	//	parentWorldTransform = glm::inverse( parentWorldTransform );
 
-	//	bone.WorldTransform = parentWorldTransform * bone.BindTransform;
-
-	//	//m_Pose.resize( m_Bones.size() );
-	//	//m_Pose[ i ] = bone.WorldTransform;
+	//	bone.OffsetMatrix = parentWorldTransform * bone.BindTransform;
 
 	//}
 
@@ -126,11 +122,11 @@ void RSkeleton::GenerateBoneData()
 
 		if ( Bone.Parent == NO_PARENT_INDEX )
 		{
-			Bone.WorldTransform = mat4( 1 );
+			Bone.OffsetMatrix = mat4( 1 );
 			continue;
 		}
 
-		Bone.WorldTransform = m_Bones[ Bone.Parent ].WorldTransform * Bone.BindTransform;
+		Bone.OffsetMatrix = glm::inverse( m_Bones[ Bone.Parent ].OffsetMatrix) * Bone.BindTransform;
 	}
 
 }

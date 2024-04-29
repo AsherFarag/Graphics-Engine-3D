@@ -64,7 +64,7 @@ void main()
       mat3 TBN = mat3(T, B, N);
 
       // Calculate the Modified Normal from the Texture with the Local Tangent Basis Matrix
-      N = TBN * (TextureNormal * 2 - 1);
+      //N = TBN * (TextureNormal * 2 - 1);
 
       vec3 DiffuseTotal;
       vec3 SpecularTotal;
@@ -88,7 +88,7 @@ void main()
       vec3 Diffuse  = Kd * TextureDiffuse  * DiffuseTotal;
       vec3 Specular = Ks * TextureSpecular * SpecularTotal;
 
-      // Output Colour
+      // Output sa
       FragColour = vec4( Ambient + Diffuse + Specular, 1 );
       //FragColour = vec4(vec3(gl_FragCoord.z), 1.0);
 

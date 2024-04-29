@@ -6,9 +6,6 @@
 #include <variant>
 #include <tuple>
 
-#include "glm/common.hpp"
-using namespace glm;
-
 enum class EPropertyType
 {
 	Int,

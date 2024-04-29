@@ -8,14 +8,8 @@ UAnimatorComponent::UAnimatorComponent( AActor* a_Owner )
 void UAnimatorComponent::UpdateAnimation( float DeltaTime )
 {
 	m_DeltaTime = DeltaTime;
-	if ( !m_CurrentAnimation || !m_Skeleton )
-		return;
-
 	m_CurrentTime += m_PlayRate * DeltaTime;
-	m_CurrentTime = fmod( m_CurrentTime, m_CurrentAnimation->GetPlayLength() );
-
-	//CalculateBoneTransform( &m_CurrentAnimation->GetRootNode(), mat4( 1.f ) );
-	m_Skeleton->EvaluatePose( m_CurrentAnimation, m_CurrentTime, m_SkeletonPose );
+	SetTime( m_CurrentTime );
 }
 
 void UAnimatorComponent::PlayAnimation( SkeletalAnimHandle a_Animation, TimeType a_Time, float a_PlayRate, bool a_Looping, EAnimationPlayMethod a_PlayMethod )
@@ -25,6 +19,15 @@ void UAnimatorComponent::PlayAnimation( SkeletalAnimHandle a_Animation, TimeType
 	m_PlayRate         = a_PlayRate;
 	m_Looping          = a_Looping;
 	m_PlayMethod       = a_PlayMethod;
+}
+
+void UAnimatorComponent::SetTime( const TimeType a_Time )
+{
+	m_CurrentTime = fmod( a_Time, m_CurrentAnimation->GetPlayLength() );
+	if ( !m_CurrentAnimation || !m_Skeleton )
+		return;
+
+	m_Skeleton->EvaluatePose( m_CurrentAnimation, m_CurrentTime, m_SkeletonPose );
 }
 
 void UAnimatorComponent::SetSkeleton( SkeletonHandle a_Skeleton )

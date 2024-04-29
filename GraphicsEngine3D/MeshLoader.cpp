@@ -1,5 +1,4 @@
 #include "MeshLoader.h"
-#include "glm/ext.hpp"
 #include <assimp/scene.h>
 
 MeshLoader::MeshLoader()
@@ -119,8 +118,8 @@ SkeletonHandle MeshLoader::LoadSkeleton( const string& a_Path, const string& a_N
             bone.Parent = parentIndex;
 
             // Assimp loads matricies as Row Major so we must convert it to Column major
-            bone.BindTransform = glm::transpose( glm::make_mat4x4( ( a_Node->mTransformation[0] )));
-           // bone.WorldTransform = glm::transpose(  glm::make_mat4x4(  a_Scene->mSkeletons[ 0 ]->mBones[ parentIndex + 1 ]->mOffsetMatrix[0] ) );
+            bone.BindTransform = Math::AssimpMatToGLM( a_Node->mTransformation );
+            //bone.OffsetMatrix = Math::AssimpMatToGLM(  a_Scene->mSkeletons[ 0 ]->mBones[ parentIndex + 1 ]->mOffsetMatrix );
         }
     );
     

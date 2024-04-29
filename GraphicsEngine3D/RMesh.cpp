@@ -1,8 +1,6 @@
 #include "RMesh.h"
-// --- GLM ---
+
 #include "gl_core_4_4.h"
-#include <glm/geometric.hpp>
-#include "glm/ext.hpp"
 
 // --- ASSIMP ---
 #include <assimp/scene.h>
@@ -25,7 +23,7 @@ void RMesh::ExtractBoneWeightForVertices( std::vector<Vertex>& a_Vertices, const
 		{
 			BoneInfo newBoneInfo;
 			newBoneInfo.ID = m_BoneCounter;
-			newBoneInfo.Offset = glm::transpose( glm::make_mat4x4( ( (ai_real*)&a_Mesh->mBones[ boneIndex ]->mOffsetMatrix ) ) );
+			newBoneInfo.Offset = Math::AssimpMatToGLM( a_Mesh->mBones[ boneIndex ]->mOffsetMatrix );
 			m_BoneInfoMap[ boneName ] = newBoneInfo;
 			boneID = m_BoneCounter;
 			m_BoneCounter++;

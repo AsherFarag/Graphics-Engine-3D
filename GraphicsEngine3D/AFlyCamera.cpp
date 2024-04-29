@@ -1,8 +1,5 @@
 #include "AFlyCamera.h"
 
-// --- GLM ---
-#include "glm/ext.hpp"
-
 
 // --- AIE ---
 #include "World.h"

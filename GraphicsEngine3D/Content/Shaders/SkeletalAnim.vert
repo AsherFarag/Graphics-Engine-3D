@@ -29,32 +29,33 @@ void main()
         vTangent     = (inverse(ModelMatrix) * vec4(Tangent.xyz, 1)).xyz;
         vBiTangent   = cross(vNormal, vTangent) * Tangent.w;
 
-      /* vec4 totalPosition = vec4(0.f);
-      for(int i = 0 ; i < MAX_BONE_INFLUENCE ; i++)
-      {
-          if(BoneIds[i] == -1) 
-              continue;
-          
-          vec4 localPosition = Position * FinalBonesMatrices[BoneIds[i]];
-          totalPosition += localPosition * Weights[i];
-          vec3 localNormal = ((FinalBonesMatrices[BoneIds[i]]) * Normal).xyz;
-      } */
 
-        vec4 totalPosition = Position;
+        vec4 totalPosition = vec4(0.f);
+        vec3 totalNormal = vec3(0.f);
+
         for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
         {
-            int BoneIndex = BoneIds[i] - 0;
+            int BoneIndex = BoneIds[i];
             if (BoneIndex < 0)
             {
+                //totalPosition = Position;
                 continue;
             }
+
             float Weight = Weights[i];
             mat4 BoneTransform = FinalBonesMatrices[BoneIndex];
             vec4 InfluencedVertexPosition = BoneTransform * Position;
             vec4 Influence = InfluencedVertexPosition * Weight;
             totalPosition += Influence;
+            totalNormal += (FinalBonesMatrices[BoneIndex] * Normal).xyz * Weight;
         }
+        if (totalPosition == vec4(0.f))
+        {
+            totalPosition = Position;
+        }
+
         vPosition = ModelMatrix * totalPosition;
+        vNormal = Normal.xyz;//(ModelMatrix * vec4(totalNormal, 1.f)).xyz;
         gl_Position = ProjectionViewModel * totalPosition;
 
         // Skeleton is a chain of matrices from origin to a bone

@@ -76,48 +76,25 @@ void World::Draw()
     auto& skellie = GraphicsEngine3DApp::GetInstance()->skellie;
     auto& anim = AnimationLoader::GetInstance()->GetAnimation( "SomeAnim" );
 
-    if (skellie)
+    if ( skellie )
     {
-        skellie->m_Pose = &animator->GetPose();
+        skellie->m_Pose = animator->GetPose();
         skellie->Draw();
 
         ImGui::Begin( "Animator" );
-            ImGui::SliderFloat( "Play Speed", &animator->GetPlayRate(), 0.f, 5.f);
+        ImGui::SliderFloat( "Play Speed", &animator->GetPlayRate(), 0.f, 5.f );
 
-            static bool shouldAnimate;
-            ImGui::Checkbox( "Animate", &shouldAnimate );
-            if ( shouldAnimate )
-            {
-                animator->UpdateAnimation( m_DeltaTime );
-            }
-
-            static float animTime;
-            if ( ImGui::SliderFloat( "Time", &animator->GetTime(), 0.f, anim->GetPlayLength()) )
-            {
-                //skellie->EvaluatePose( anim, CurrentSkellieTime, skellie->m_Pose );
-            }
-        ImGui::End();
-    }
-
-    auto& mesh = MeshLoader::GetInstance()->GetMesh( "HipHop_Mesh" );
-    if ( mesh )
-    {
-        ImGui::Begin( "Mesh Verts" );
+        static bool shouldAnimate;
+        ImGui::Checkbox( "Animate", &shouldAnimate );
+        if ( shouldAnimate )
         {
-            for ( int meshChunkIndex = 0; meshChunkIndex < mesh->GetMeshChunks().size(); ++meshChunkIndex )
-            {
-                auto& meshChunk = mesh->GetMeshChunks()[ meshChunkIndex ];
-                if ( ImGui::TreeNode("Mesh Chunk") )
-                {
-                    for ( int i = 0; i < meshChunk.Vertices.size(); ++i )
-                    {
-                        auto& vert = meshChunk.Vertices[ i ];
-                        ImGui::Text( "%i BoneIds: %f, %f, %f, %f", i, vert.m_Weights[ 0 ], vert.m_Weights[ 1 ], vert.m_Weights[ 2 ], vert.m_Weights[ 3 ] );
-                    }
+            animator->UpdateAnimation( m_DeltaTime );
+        }
 
-                    ImGui::TreePop();
-                }
-            }
+        static float animTime;
+        if ( ImGui::SliderFloat( "Time", &animator->GetTime(), 0.f, anim->GetPlayLength() ) )
+        {
+            animator->SetTime( animator->GetTime() );
         }
         ImGui::End();
     }

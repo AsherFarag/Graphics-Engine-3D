@@ -5,13 +5,8 @@
 #include "Input.h"
 #include "gl_core_4_4.h"
 
-// --- GLM ---
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-
-#include <glm/fwd.hpp>
-
 // --- Engine ---
+#include "Editor.h"
 #include "AFlyCamera.h"
 #include "RResource.h"
 #include "AStaticMesh.h"
@@ -21,10 +16,6 @@
 #include "World.h"
 #include "Utilities.h"
 
-using glm::vec3;
-using glm::vec4;
-using glm::mat4;
-using glm::quat;
 using aie::Gizmos;
 
 GraphicsEngine3DApp::GraphicsEngine3DApp()
@@ -49,7 +40,7 @@ bool GraphicsEngine3DApp::startup()
 {
 	#if IS_EDITOR
 
-	Editor::SetEditorStyle( ES_MIDNIGHT );
+	Editor::SetEditorStyle( Editor::ES_MIDNIGHT );
 
 	m_DebugLog = Debug::ImGui_DebugLog();
 	m_DebugLog.PrintMessage( Debug::DebugMessage( false, "===== Begin World =====", Debug::Default, ImVec4( 0, 1, 0, 1 ) ) );
@@ -74,28 +65,29 @@ bool GraphicsEngine3DApp::startup()
 	importer.SetPropertyBool( AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false );
 	importer.SetPropertyFloat( AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.f );
 
-	unsigned int propertyFlags = aiProcess_GlobalScale
+	unsigned int propertyFlags = 
+		aiProcess_GlobalScale
 		| aiProcess_OptimizeMeshes
+		| aiProcess_OptimizeGraph
 		| aiProcess_RemoveRedundantMaterials
 		| aiProcess_PopulateArmatureData
 		| aiProcess_Triangulate
-		| aiPostProcessSteps::aiProcess_LimitBoneWeights
-		| aiPostProcessSteps::aiProcess_PopulateArmatureData
-		//| aiPostProcessSteps::aiProcess_GenSmoothNormals
-		//| aiProcess_ForceGenNormals 
-		| aiPostProcessSteps::aiProcess_SplitByBoneCount
-		| aiPostProcessSteps::aiProcess_CalcTangentSpace;
+		| aiProcess_LimitBoneWeights
+		| aiProcess_SplitByBoneCount
+		| aiProcess_CalcTangentSpace;
 
-	const aiScene* Scene = importer.ReadFile( "Content/Mesh/MutantDance.fbx", propertyFlags );
-	auto mesh = MeshLoader::GetInstance()->LoadMesh( "Content/Mesh/MutantDance.fbx", "HipHop_Mesh", Scene );
-	skellie = MeshLoader::GetInstance()->LoadSkeleton( "Content/Mesh/MutantDance.fbx", "HipHop_Skeleton", Scene->mRootNode->FindNode("mixamorig:Hips"), Scene);
+	//const char* file = "Content/Mesh/Mutant Punch.fbx";
+	const char* file = "Content/Mesh/Mutant Dying.fbx";
+
+	const aiScene* Scene = importer.ReadFile( file, propertyFlags );
+
+	auto mesh = MeshLoader::GetInstance()->LoadMesh( file, "HipHop_Mesh", Scene );
+	skellie = MeshLoader::GetInstance()->LoadSkeleton( file, "HipHop_Skeleton", Scene->mRootNode->FindNode("mixamorig:Hips"), Scene);
+
 	
-	AnimationHandle Anim = AnimationLoader::GetInstance()->LoadAnimation( "Content/Mesh/MutantDance.fbx", "SomeAnim", Scene, 0 );
+	auto Anim = AnimationLoader::GetInstance()->LoadAnimation( file, "SomeAnim", Scene, 0 );
 
 	DebugPrint( Scene->mRootNode );
-
-	Scene = importer.ReadFile( "Content/Mesh/soulspear/soulspear.obj", propertyFlags );
-	MeshLoader::GetInstance()->LoadMesh( "Content/Mesh/soulspear/soulspear.obj", "SoulSpear", Scene );
 	
 	if ( !m_World->Begin() )
 		return false;
@@ -184,6 +176,23 @@ void GraphicsEngine3DApp::draw()
 
 			ImGui::EndMenu();
 		}
+		if ( ImGui::BeginMenu( "Options" ) )
+		{
+			if ( ImGui::BeginMenu( "Editor Style" ) )
+			{
+				for ( auto style : Editor::s_EditorStyles )
+				{
+					if ( ImGui::MenuItem( style.second.c_str() ) )
+					{
+						Editor::SetEditorStyle( style.first );
+					}
+				}
+
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+
 		ImGui::EndMainMenuBar();
 	}
 

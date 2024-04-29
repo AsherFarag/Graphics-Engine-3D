@@ -24,9 +24,6 @@
     <Filter Include="Header Files\Engine\Provided">
       <UniqueIdentifier>{8713d3c4-48b7-4d53-9964-8ac05db1905d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Engine\MathF">
-      <UniqueIdentifier>{51d2bb1e-9285-4005-accd-671c41177508}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine\Objects">
       <UniqueIdentifier>{41228c60-37d3-44ff-af12-7ed1800223f8}</UniqueIdentifier>
     </Filter>
@@ -230,6 +227,9 @@
     <ClCompile Include="UAnimatorComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsEngine3DApp.h">
@@ -264,9 +264,6 @@
     </ClInclude>
     <ClInclude Include="AFlyCamera.h">
       <Filter>Header Files\Engine\Objects\Actors\Cameras</Filter>
-    </ClInclude>
-    <ClInclude Include="MathF.h">
-      <Filter>Header Files\Engine\MathF</Filter>
     </ClInclude>
     <ClInclude Include="AOrbitCamera.h">
       <Filter>Header Files\Engine\Objects\Actors\Cameras</Filter>
@@ -371,6 +368,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UAnimatorComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

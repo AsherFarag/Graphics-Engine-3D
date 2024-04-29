@@ -8,13 +8,6 @@ using std::list;
 // --- AIE ---
 #include "AIERenderTarget.h"
 
-// --- GLM ---
-#include "glm/trigonometric.hpp"
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
-
 // --- Engine ---
 #include "ImGui_Viewport.h"
 #include "URenderer.h"

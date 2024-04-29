@@ -95,8 +95,7 @@ void RenderManager::Render( ACamera* a_Camera )
 			// Create an array of transforms that will take a model space vertex into local bone space for each of the bones IN BIND POSE.
 			for ( int i = 0; i < BindPoseBones.size(); ++i )
 			{
-				//InverseBindPoseTransforms[ i ] = BindPoseBones[ i ].WorldTransform;
-				InverseBindPoseTransforms[ i ] = glm::inverse( BindPoseBones[ i ].WorldTransform );
+				InverseBindPoseTransforms[ i ] = ( BindPoseBones[ i ].OffsetMatrix );
 			}
 
 			// Take MeshSpaceVertex into BindPoseBoneSpace
@@ -111,8 +110,18 @@ void RenderManager::Render( ACamera* a_Camera )
 			for ( int i = 0; i < Transforms.size(); ++i )
 			{
 				Transforms[ i ] = Transforms[ i ] * InverseBindPoseTransforms[ i ];
+				//if ( BindPoseBones[ i ].Parent >= 0 )
+				//{
+				//	vec3 p0 = Transforms[ BindPoseBones[ i ].Parent ][ 3 ];
+				//	aie::Gizmos::addLine( p0, Transforms[ i ][ 3 ], vec4( 0,1,0,1 ) );
+				//}
+				//else
+				//{
+				//	aie::Gizmos::addSphere( Transforms[ i ][ 3 ], 0.04f, 5, 5, vec4( 0, 1, 1, 1 ) );
+				//	continue;
+				//}
+				//aie::Gizmos::addSphere( Transforms[ i ][ 3 ], 0.04f, 5, 5, vec4( 0, 0, 1, 1 ) );
 			}
-
 
 			m_ShaderInUse->bindUniform( "FinalBonesMatrices", animator->GetPose().size(), &Transforms[ 0 ] );
 		}

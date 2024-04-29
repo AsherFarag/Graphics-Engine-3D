@@ -7,9 +7,6 @@
 #include <type_traits>
 #include <string>
 
-// --- GLM ---
-#include <glm/gtc/matrix_transform.hpp>
-
 // --- Engine ---
 #include "UTransform.h"
 class UBaseComponent;

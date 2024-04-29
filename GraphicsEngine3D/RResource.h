@@ -4,18 +4,6 @@
 #include <string>
 using std::string;
 
-// --- GLM ---
-#include "glm/glm.hpp"
-#include "glm/common.hpp"
-#include <glm/gtc/quaternion.hpp>
-using glm::vec2;
-using glm::vec3;
-using glm::vec4;
-using glm::mat2;
-using glm::mat3;
-using glm::mat4;
-using glm::quat;
-
 #define RESOURCE_PATH "Resources/"
 
 #define DEFINE_CONSTRUCTORS( Name ) \

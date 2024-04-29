@@ -3,8 +3,8 @@
 //#include <chrono>
 #include "GraphicsEngine3DApp.h"
 
-#define PRINT_TODO_MESSAGES 0
-#define PRINT_LOGS 0
+#define PRINT_TODO_MESSAGES 1
+#define PRINT_LOGS 1
 
 enum TODO_PRIORITY_LEVEL
 {

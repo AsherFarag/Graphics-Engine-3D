@@ -6,9 +6,6 @@
 // --- OpenGL ---
 #include "gl_core_4_4.h"
 
-// --- GLM ---
-#include <glm/geometric.hpp>
-
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 

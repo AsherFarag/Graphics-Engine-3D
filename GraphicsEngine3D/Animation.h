@@ -2,7 +2,6 @@
 #include <map>
 #include <vector>
 #include <type_traits>
-#include "glm/ext.hpp"
 #include "RResource.h"
 
 namespace Animation

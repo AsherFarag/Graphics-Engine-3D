@@ -11,7 +11,7 @@ struct Bone
     // The transformation of this bone in the bind pose
     mat4 BindTransform = mat4( 1 );
     // In Model Space
-    mat4 WorldTransform = mat4( 1 );
+    mat4 OffsetMatrix = mat4( 1 );
 };
 
 class RSkeleton :
@@ -28,7 +28,7 @@ public:
     const std::vector<Bone>& GetBones() const { return m_Bones; }
     std::vector<Bone> m_Bones;
 
-    std::vector<mat4>* m_Pose;
+    std::vector<mat4> m_Pose;
 
     void GenerateBoneData();
 };
