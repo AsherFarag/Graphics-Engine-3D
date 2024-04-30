@@ -4,17 +4,19 @@
 // --- OpenGL ---
 #include "gl_core_4_4.h"
 
+#pragma region Texture
+
 enum ETextureType
 {
-	ETT_DEFAULT,
-	ETT_DIFFUSE,
-	ETT_ALPHA,
-	ETT_AMBIENT,
-	ETT_SPECULAR,
-	ETT_SPECULAR_HIGHLIGHT,
-	ETT_NORMAL,
-	ETT_DISPLACEMENT,
-	ETT_TEXTURE_TYPE_COUNT
+	TEXTURE_DEFAULT,
+	TEXTURE_DIFFUSE,
+	TEXTURE_ALPHA,
+	TEXTURE_AMBIENT,
+	TEXTURE_SPECULAR,
+	TEXTURE_EMISSIVE,
+	TEXTURE_NORMAL,
+	TEXTURE_DISPLACEMENT,
+	TEXTURE_TEXTURE_TYPE_COUNT
 };
 
 enum ETextureFormat : unsigned int
@@ -25,8 +27,7 @@ enum ETextureFormat : unsigned int
 	RGBA = GL_RGBA
 };
 
-class RTexture :
-	public RResource
+class RTexture : public RResource
 {
 	friend class TextureLoader;
 
@@ -34,11 +35,11 @@ public:
 	RTexture();
 
 	// 1D texture generation
-	void Generate( unsigned int a_Width, GLenum a_InternalFormat, GLenum a_Format, GLenum a_Type, void* a_Data );
+	void Generate( unsigned int a_Width, void* a_Data, GLenum a_InternalFormat = GL_RGBA, GLenum a_Format = GL_RGBA, GLenum a_Type = GL_UNSIGNED_BYTE );
 	// 2D texture generation
-	void Generate( unsigned int a_Width, unsigned int a_Height, GLenum a_InternalFormat, GLenum a_Format, GLenum a_Type, void* a_Data );
+	void Generate( unsigned int a_Width, unsigned int a_Height, void* a_Data, GLenum a_InternalFormat = GL_RGBA, GLenum a_Format = GL_RGBA, GLenum a_Type = GL_UNSIGNED_BYTE );
 	// 3D texture generation                         
-	void Generate( unsigned int a_Width, unsigned int a_Height, unsigned int a_Depth, GLenum a_InternalFormat, GLenum a_Format, GLenum a_Type, void* a_Data );
+	void Generate( unsigned int a_Width, unsigned int a_Height, unsigned int a_Depth, void* a_Data, GLenum a_InternalFormat = GL_RGBA, GLenum a_Format = GL_RGBA, GLenum a_Type = GL_UNSIGNED_BYTE );
 
 	void Bind( int Unit = -1 );
 	void Unbind();
@@ -58,12 +59,12 @@ protected:
 	GLenum m_WrapT			= GL_REPEAT;               // wrapping method of the T coordinate
 	GLenum m_WrapR			= GL_REPEAT;               // wrapping method of the R coordinate
 
-	bool m_Mipmapping	  = true;
+	bool m_Mipmapping	  = false;
 	unsigned int m_Width  = 0;
 	unsigned int m_Height = 0;
 	unsigned int m_Depth  = 0;
 
-	ETextureType m_TextureType = ETT_DEFAULT;
+	ETextureType m_TextureType = TEXTURE_DEFAULT;
 
 public:
 	bool IsUsingMipmapping() { return m_Mipmapping; }
@@ -75,3 +76,28 @@ public:
 };
 
 using TextureHandle = std::shared_ptr< RTexture >;
+
+#pragma endregion
+
+#pragma region Loader
+
+class TextureLoader
+{
+private:
+	TextureLoader();
+	~TextureLoader() = default;
+
+	std::map<string, TextureHandle> m_LoadedTextures;
+
+public:
+	TextureLoader( TextureLoader& Other ) = delete;
+	void operator=( const TextureLoader& ) = delete;
+
+	static TextureLoader* GetInstance();
+
+	TextureHandle LoadTexture( const string& a_Path, GLenum a_Target, GLenum a_InternalFormat, bool a_srgb = false );
+	TextureHandle GetTexture( const std::string& a_Name );
+};
+
+#pragma endregion
+

@@ -140,9 +140,6 @@
     <ClCompile Include="RMesh.cpp">
       <Filter>Source Files\Engine\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="RMaterial.cpp">
-      <Filter>Source Files\Engine\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="World.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
@@ -179,9 +176,6 @@
     <ClCompile Include="Editor.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="RTexture.cpp">
-      <Filter>Source Files\Engine\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="RenderTarget.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
@@ -196,9 +190,6 @@
     </ClCompile>
     <ClCompile Include="RenderManager.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureLoader.cpp">
-      <Filter>Source Files\Engine\Resources\Loaders</Filter>
     </ClCompile>
     <ClCompile Include="MaterialLoader.cpp">
       <Filter>Source Files\Engine\Resources\Loaders</Filter>
@@ -228,6 +219,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -313,14 +313,8 @@
     <ClInclude Include="Editor.h">
       <Filter>Header Files\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="RMaterial.h">
-      <Filter>Header Files\Engine\Resources\Material</Filter>
-    </ClInclude>
     <ClInclude Include="Property.h">
       <Filter>Header Files\Engine\Resources\Material</Filter>
-    </ClInclude>
-    <ClInclude Include="RTexture.h">
-      <Filter>Header Files\Engine\Resources</Filter>
     </ClInclude>
     <ClInclude Include="RenderTarget.h">
       <Filter>Header Files\Engine\Rendering</Filter>
@@ -349,22 +343,13 @@
     <ClInclude Include="ShaderLoader.h">
       <Filter>Header Files\Engine\Resources\Loaders</Filter>
     </ClInclude>
-    <ClInclude Include="TextureLoader.h">
-      <Filter>Header Files\Engine\Resources\Loaders</Filter>
-    </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Header Files\Engine\Resources</Filter>
     </ClInclude>
     <ClInclude Include="AnimationLoader.h">
       <Filter>Header Files\Engine\Resources\Loaders</Filter>
     </ClInclude>
-    <ClInclude Include="RSkeleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Utilities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RSkeletalAnim.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UAnimatorComponent.h">
@@ -372,6 +357,21 @@
     </ClInclude>
     <ClInclude Include="Math.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="RSkeleton.h">
+      <Filter>Header Files\Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="RSkeletalAnim.h">
+      <Filter>Header Files\Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Engine\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -388,5 +388,6 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="GraphicsEngine.cd" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

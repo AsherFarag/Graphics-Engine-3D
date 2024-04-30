@@ -191,8 +191,10 @@
     <ClCompile Include="ImGui_Viewport.cpp" />
     <ClCompile Include="ImGui_Window.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialLoader.cpp" />
     <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
     <ClCompile Include="RMaterialInstance.cpp" />
     <ClCompile Include="OBJMesh.cpp" />
@@ -200,14 +202,12 @@
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="RMaterial.cpp" />
     <ClCompile Include="RResource.cpp" />
     <ClCompile Include="RSkeletalAnim.cpp" />
     <ClCompile Include="RSkeleton.cpp" />
-    <ClCompile Include="RTexture.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
-    <ClCompile Include="TextureLoader.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="UAnimatorComponent.cpp" />
     <ClCompile Include="UBaseComponent.cpp" />
     <ClCompile Include="UBaseObject.cpp" />
@@ -238,8 +238,10 @@
     <ClInclude Include="ImGui_Window.h" />
     <ClInclude Include="Inspector.hpp" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialLoader.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="RMaterialInstance.h" />
     <ClInclude Include="OBJMesh.h" />
@@ -248,14 +250,12 @@
     <ClInclude Include="RenderManager.h" />
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="RMaterial.h" />
     <ClInclude Include="RResource.h" />
     <ClInclude Include="RSkeletalAnim.h" />
     <ClInclude Include="RSkeleton.h" />
-    <ClInclude Include="RTexture.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderLoader.h" />
-    <ClInclude Include="TextureLoader.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="UAnimatorComponent.h" />
     <ClInclude Include="UBaseComponent.h" />
@@ -273,6 +273,7 @@
     <None Include="..\bin\shaders\Phong.vert" />
     <None Include="..\bin\shaders\simple.frag" />
     <None Include="..\bin\shaders\simple.vert" />
+    <None Include="ClassDiagram.cd" />
     <None Include="GraphicsEngine.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -94,7 +94,7 @@ bool OBJMesh::load(const char* filename, bool loadTextures /* = true */, bool fl
 			//m_materials[index]->AmbientTexture.load((folder + m.ambient_texname).c_str());
 			//m_materials[index]->DiffuseTexture.load((folder + m.diffuse_texname).c_str());
 			//m_materials[index]->SpecularTexture.load((folder + m.specular_texname).c_str());
-			//m_materials[index]->SpecularHighlightTexture.load((folder + m.specular_highlight_texname).c_str());
+			//m_materials[index]->EmissiveTexture.load((folder + m.specular_highlight_texname).c_str());
 			//m_materials[index]->NormalTexture.load((folder + m.bump_texname).c_str());
 			//m_materials[index]->DisplacementTexture.load((folder + m.displacement_texname).c_str());
 
@@ -276,8 +276,8 @@ void OBJMesh::draw(bool usePatches /* = false */) {
 				glBindTexture(GL_TEXTURE_2D, 0);
 
 			glActiveTexture(GL_TEXTURE4);
-			if (m_materials[currentMaterial]->SpecularHighlightTexture.getHandle() > 0)
-				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial]->SpecularHighlightTexture.getHandle());
+			if (m_materials[currentMaterial]->EmissiveTexture.getHandle() > 0)
+				glBindTexture(GL_TEXTURE_2D, m_materials[currentMaterial]->EmissiveTexture.getHandle());
 			else if (specHighlightTexUniform >= 0)
 				glBindTexture(GL_TEXTURE_2D, 0);
 

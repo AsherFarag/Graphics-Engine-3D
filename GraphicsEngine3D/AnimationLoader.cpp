@@ -39,6 +39,29 @@ SkeletalAnimHandle AnimationLoader::LoadAnimation( const string& a_Path, const s
 	return Result;
 }
 
+SkeletalAnimHandle AnimationLoader::LoadAnimation( const aiAnimation* a_AssimpAnim )
+{
+	SkeletalAnimHandle Result = std::make_shared< RSkeletalAnim >();
+
+	Result->m_Duration = a_AssimpAnim->mDuration;
+	Result->m_TicksPerSecond = a_AssimpAnim->mTicksPerSecond;
+
+	//Result->ReadHeirarchyData( Result->m_RootNode, a_Scene->mRootNode->FindNode( "mixamorig:Hips" ) );
+
+	for ( size_t i = 0; i < a_AssimpAnim->mNumChannels; ++i )
+	{
+		aiNodeAnim* NodeAnim = a_AssimpAnim->mChannels[ i ];
+		auto& BoneTrack = Result->m_BoneAnimations[ NodeAnim->mNodeName.C_Str() ];
+
+		TimeType InverseTicksPerSecond = (TimeType)1.0 / Result->m_TicksPerSecond;
+		BoneTrack.ExtractKeys( NodeAnim, InverseTicksPerSecond );
+	}
+
+	m_SkeletalAnimations.emplace( a_AssimpAnim->mName, Result );
+
+	return Result;
+}
+
 SkeletalAnimHandle AnimationLoader::GetAnimation( const string& a_Name )
 {
 	auto it = m_SkeletalAnimations.find( a_Name );

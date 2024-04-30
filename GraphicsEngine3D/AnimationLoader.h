@@ -19,5 +19,6 @@ public:
 	static AnimationLoader* GetInstance();
 
 	SkeletalAnimHandle LoadAnimation( const string& a_Path, const string& a_Name, const aiScene* a_Scene, size_t a_Index = 0 );
+	SkeletalAnimHandle LoadAnimation( const aiAnimation* a_AssimpAnim );
 	SkeletalAnimHandle GetAnimation( const string& a_Name );
 };

@@ -13,11 +13,25 @@ using std::map;
 #include "MeshLoader.h"
 #include "ShaderLoader.h"
 #include "MaterialLoader.h"
-#include "TextureLoader.h"
 #include "AnimationLoader.h"
 
 namespace Resource
 {
+	struct ResourcePackage
+	{
+		MeshHandle Mesh = nullptr;
+		std::vector<SkeletonHandle>     Skeletons;
+		std::vector<SkeletalAnimHandle> Animations;
+		std::vector<MaterialHandle>     Materials;
+		std::vector<TextureHandle>      Textures;
+
+		const bool HasMesh()	   const { return Mesh != nullptr; }
+		const bool HasSkeletons()  const { return Skeletons.size() > 0; }
+		const bool HasAnimations() const { return Animations.size() > 0; }
+		const bool HasMaterials()  const { return Materials.size() > 0; }
+		const bool HasTextures()   const { return Textures.size() > 0; }
+	};
+
 	// - Meshes -
 	static MeshHandle LoadMesh( const std::string& a_Path ) { return MeshLoader::GetInstance()->LoadMesh( a_Path ); }
 	static MeshHandle GetMesh( const std::string& a_Name ) { return MeshLoader::GetInstance()->GetMesh( a_Name ); }
@@ -37,6 +51,6 @@ namespace Resource
 	static TextureHandle LoadTexture( const string& a_Path, GLenum a_Target, GLenum a_InternalFormat, bool a_srgb = false ) { return TextureLoader::GetInstance()->LoadTexture( a_Path, a_Target, a_InternalFormat, a_srgb ); }
 	static TextureHandle GetTexture( const std::string& a_Name ) { return TextureLoader::GetInstance()->GetTexture( a_Name ); }
 
-	static bool LoadFBX( const std::string& a_Path, std::vector< MeshHandle >& o_Meshes, std::vector< AnimationHandle >& o_Animations, std::vector< MaterialHandle >& o_Materials, std::vector< TextureHandle >& o_Textures, int a_ProcessSteps = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals | aiProcess_CalcTangentSpace );
+	static bool LoadFBX( const std::string& a_Path, ResourcePackage& o_Package );
 }
 

@@ -264,7 +264,7 @@ void RenderManager::BindMaterial( MaterialHandle a_Material )
 	//int ambientTexUniform		= glGetUniformLocation(program, "AmbientTexture");
 	//int diffuseTexUniform		= glGetUniformLocation(program, "DiffuseTexture");
 	//int specTexUniform			= glGetUniformLocation(program, "SpecularTexture");
-	//int specHighlightTexUniform = glGetUniformLocation(program, "SpecularHighlightTexture");
+	//int specHighlightTexUniform = glGetUniformLocation(program, "EmissiveTexture");
 	//int normalTexUniform		= glGetUniformLocation(program, "NormalTexture");
 	//int dispTexUniform			= glGetUniformLocation(program, "DisplacementTexture");
 
@@ -307,8 +307,8 @@ void RenderManager::BindMaterial( MaterialHandle a_Material )
 	//	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//glActiveTexture(GL_TEXTURE4);
-	//if (a_Material->SpecularHighlightTexture.getHandle() > 0)
-	//	glBindTexture(GL_TEXTURE_2D, a_Material->SpecularHighlightTexture.getHandle());
+	//if (a_Material->EmissiveTexture.getHandle() > 0)
+	//	glBindTexture(GL_TEXTURE_2D, a_Material->EmissiveTexture.getHandle());
 	//else if (specHighlightTexUniform >= 0)
 	//	glBindTexture(GL_TEXTURE_2D, 0);
 

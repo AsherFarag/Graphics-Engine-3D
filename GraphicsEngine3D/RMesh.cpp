@@ -1,4 +1,3 @@
-#include "RMesh.h"
 
 #include "gl_core_4_4.h"
 
@@ -10,41 +9,6 @@ void RMesh::Draw()
 {
 	for ( unsigned int i = 0; i < m_MeshChunks.size(); i++ )
 		m_MeshChunks[ i ].Draw();
-}
-
-void RMesh::ExtractBoneWeightForVertices( std::vector<Vertex>& a_Vertices, const aiMesh* a_Mesh, const aiScene* a_Scene )
-{
-	// Iterate through each bone
-	for ( int boneIndex = 0; boneIndex < a_Mesh->mNumBones; ++boneIndex )
-	{
-		int boneID = -1;
-		std::string boneName = a_Mesh->mBones[ boneIndex ]->mName.C_Str();
-		if ( m_BoneInfoMap.find( boneName ) == m_BoneInfoMap.end() )
-		{
-			BoneInfo newBoneInfo;
-			newBoneInfo.ID = m_BoneCounter;
-			newBoneInfo.Offset = Math::AssimpMatToGLM( a_Mesh->mBones[ boneIndex ]->mOffsetMatrix );
-			m_BoneInfoMap[ boneName ] = newBoneInfo;
-			boneID = m_BoneCounter;
-			m_BoneCounter++;
-		}
-		else
-		{
-			boneID = m_BoneInfoMap[ boneName ].ID;
-		}
-
-		assert( boneID != -1 );
-		auto weights = a_Mesh->mBones[ boneIndex ]->mWeights;
-		int numWeights = a_Mesh->mBones[ boneIndex ]->mNumWeights;
-
-		for ( int weightIndex = 0; weightIndex < numWeights; ++weightIndex )
-		{
-			int vertexId = weights[ weightIndex ].mVertexId;
-			float weight = weights[ weightIndex ].mWeight;
-			assert( vertexId <= a_Vertices.size() );
-			SetVertexBoneData( a_Vertices[ vertexId ], boneID, weight );
-		}
-	}
 }
 
 void RMesh::SetVertexBoneData( Vertex& a_Vertex, int a_BoneID, float a_Weight )

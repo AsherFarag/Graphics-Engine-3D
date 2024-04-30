@@ -17,13 +17,13 @@ uniform vec3 Kd; // diffuse material colour
 uniform vec3 Ks; // specular material colour
 uniform float SpecularPower; // material specular power
 
-uniform sampler2D DiffuseTex;
-uniform sampler2D AlphaTex;
-uniform sampler2D AmbientTex;
+uniform sampler2D DiffuseTexture;
+uniform sampler2D AlphaTexture;
+uniform sampler2D AmbientTexture;
 uniform sampler2D SpecularTexture;
-uniform sampler2D SpecularHighlightTex;
+uniform sampler2D EmissiveTexture;
 uniform sampler2D NormalTexture;
-uniform sampler2D DisplacementTex;
+uniform sampler2D DisplacementTexture;
 
 const int MAX_LIGHTS = 4;
 uniform int   NumOfLights;
@@ -53,7 +53,7 @@ void main()
       //vec3 L = normalize(AmbientLightDirection);
 
       // Extract values from Texture Coordinates
-      vec3 TextureDiffuse  = texture(DiffuseTex,  vTexCoords).rgb;
+      vec3 TextureDiffuse  = texture(DiffuseTexture,  vTexCoords).rgb;
       vec3 TextureSpecular = texture(SpecularTexture, vTexCoords).rgb;
       vec3 TextureNormal   = texture(NormalTexture,   vTexCoords).rgb;
 
@@ -95,7 +95,7 @@ void main()
       // Test Outputs
       //FragColour = vec4(N, 1 );
       //FragColour = vec4((TextureNormal), 1);
-      //FragColour = vec4(texture(DiffuseTex,   vTexCoords).rgb, 1);
+      //FragColour = vec4(texture(DiffuseTexture,   vTexCoords).rgb, 1);
       //FragColour = vec4(vec2(vTexCoords), 0, 1);
       //FragColour = vec4(1);
 }

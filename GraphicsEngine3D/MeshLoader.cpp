@@ -1,5 +1,6 @@
 #include "MeshLoader.h"
 #include <assimp/scene.h>
+#include "Mesh.h"
 
 MeshLoader::MeshLoader()
 {
@@ -65,15 +66,6 @@ MeshHandle MeshLoader::LoadMesh( const string& a_Path )
 
 
     return LoadMesh(a_Path, fileName, Scene);
-}
-
-MeshHandle MeshLoader::GetMesh( const string& a_Name )
-{
-    if ( auto it = m_LoadedMeshes.find( a_Name ); it != m_LoadedMeshes.end() )
-    {
-        return it->second;
-    }
-    return nullptr;
 }
 
 template < typename Func >

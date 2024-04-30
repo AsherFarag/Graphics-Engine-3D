@@ -26,6 +26,11 @@ using glm::quat;
 
 namespace Math
 {
+	vec2 AssimpVecToGLM( const aiVector2D& a_AssimpVec );
+	vec3 AssimpVecToGLM( const aiVector2D& a_AssimpVec, float a_ZElement );
+	vec3 AssimpVecToGLM( const aiVector3D& a_AssimpVec );
+	vec4 AssimpVecToGLM( const aiVector3D& a_AssimpVec, float a_WElement );
+
 	mat3 AssimpMatToGLM( const aiMatrix3x3& a_AssimpMat );
 	mat4 AssimpMatToGLM( const aiMatrix4x4& a_AssimpMat );
 }
