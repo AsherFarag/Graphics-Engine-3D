@@ -6,12 +6,13 @@ Vertex::Vertex()
 {
 	for ( int i = 0; i < MAX_BONE_INFLUENCE; i++ )
 	{
-		m_BoneIDs[ i ] = -1;
-		m_Weights[ i ] = 0.0f;
+		BoneIDs[ i ] = -1;
+		Weights[ i ] = 0.0f;
 	}
 }
 
 Vertex::Vertex( const aiMesh* a_Mesh, const int a_Index )
+	: Vertex()
 {
 	// Position
 	Position = Math::AssimpVecToGLM( a_Mesh->mVertices[ a_Index ], 1.f );
@@ -36,17 +37,16 @@ Vertex::Vertex( const aiMesh* a_Mesh, const int a_Index )
 		if ( a_Mesh->mTextureCoords[ i ] )
 			TexCoords[i] = Math::AssimpVecToGLM( a_Mesh->mTextureCoords[ i ][ a_Index ] );
 	}
-	
 }
 
 void Vertex::SetBoneData( int a_BoneID, float a_Weight )
 {
 	for ( int i = 0; i < MAX_BONE_INFLUENCE; ++i )
 	{
-		if ( m_BoneIDs[ i ] < 0 )
+		if ( BoneIDs[ i ] < 0 )
 		{
-			m_Weights[ i ] = a_Weight;
-			m_BoneIDs[ i ] = a_BoneID;
+			Weights[ i ] = a_Weight;
+			BoneIDs[ i ] = a_BoneID;
 			break;
 		}
 	}
@@ -94,25 +94,25 @@ void RMesh::Initialise()
 
 	// vertex positions
 	glEnableVertexAttribArray( 0 );
-	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)0 );
+	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, Position ) );
 	// vertex normals
 	glEnableVertexAttribArray( 1 );
-	glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, Vertex::Normal ) );
-	// vertex texture coords
-	glEnableVertexAttribArray( 2 );
-	glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, Vertex::TexCoord ) );
+	glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, Normal ) );
 	// vertex tangent
-	glEnableVertexAttribArray( 3 );
-	glVertexAttribPointer( 3, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, Vertex::Tangent ) );
+	glEnableVertexAttribArray( 2 );
+	glVertexAttribPointer( 2, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, Tangent ) );
 	// vertex bitangent
+	glEnableVertexAttribArray( 3 );
+	glVertexAttribPointer( 3, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, Bitangent ) );
+	// vertex texture coords
 	glEnableVertexAttribArray( 4 );
-	glVertexAttribPointer( 4, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, Vertex::Bitangent ) );
-	// ids
+	glVertexAttribPointer( 4, 2 * NUM_UV_CHANNELS, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, TexCoords ) );
+	// Bone Ids
 	glEnableVertexAttribArray( 5 );
-	glVertexAttribIPointer( 5, 4, GL_INT, sizeof( Vertex ), (void*)offsetof( Vertex, Vertex::m_BoneIDs ) );
-	// weights
+	glVertexAttribIPointer( 5, 4, GL_INT, sizeof( Vertex ), (void*)offsetof( Vertex, BoneIDs ) );
+	// Bone Weights
 	glEnableVertexAttribArray( 6 );
-	glVertexAttribPointer( 6, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, Vertex::m_Weights ) );
+	glVertexAttribPointer( 6, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)offsetof( Vertex, Weights ) );
 
 	glBindVertexArray( 0 );
 }
@@ -140,20 +140,20 @@ void RModel::Draw()
 
 #pragma region Helper Functions
 
-void ExtractBoneWeightForVertices( BoneInfoMap a_BoneInfoMap, std::vector<Vertex>& a_Vertices, const aiMesh* a_Mesh )
+void ExtractBoneWeightsForMesh( BoneInfoMap& a_BoneInfoMap, std::vector<Vertex>& a_Vertices, const aiMesh* a_aiMesh )
 {
 	// Iterate through each bone
-	for ( int boneIndex = 0; boneIndex < a_Mesh->mNumBones; ++boneIndex )
+	for ( int boneIndex = 0; boneIndex < a_aiMesh->mNumBones; ++boneIndex )
 	{
 		int boneID = -1;
-		std::string boneName = a_Mesh->mBones[ boneIndex ]->mName.C_Str();
+		std::string boneName = a_aiMesh->mBones[ boneIndex ]->mName.C_Str();
+		// If this bone is not in the bone info map,
+		// Construct a new Bone Info and add it
 		if ( a_BoneInfoMap.find( boneName ) == a_BoneInfoMap.end() )
 		{
-			BoneInfo newBoneInfo;
-			newBoneInfo.ID = a_BoneInfoMap.size() - 1;
-			newBoneInfo.Offset = Math::AssimpMatToGLM( a_Mesh->mBones[ boneIndex ]->mOffsetMatrix );
-			a_BoneInfoMap[ boneName ] = newBoneInfo;
-			boneID = a_BoneInfoMap.size() - 1;
+			boneID = a_BoneInfoMap.size();
+			mat4 offset = Math::AssimpMatToGLM( a_aiMesh->mBones[ boneIndex ]->mOffsetMatrix );
+			a_BoneInfoMap.emplace( boneName, BoneInfo( boneID, offset ) );
 		}
 		else
 		{
@@ -161,9 +161,10 @@ void ExtractBoneWeightForVertices( BoneInfoMap a_BoneInfoMap, std::vector<Vertex
 		}
 
 		assert( boneID != -1 );
-		auto weights = a_Mesh->mBones[ boneIndex ]->mWeights;
-		auto numWeights = a_Mesh->mBones[ boneIndex ]->mNumWeights;
+		auto weights = a_aiMesh->mBones[ boneIndex ]->mWeights;
+		auto numWeights = a_aiMesh->mBones[ boneIndex ]->mNumWeights;
 
+		// Assign the bone ID and corresponding weight to the vertex
 		for ( int weightIndex = 0; weightIndex < numWeights; ++weightIndex )
 		{
 			int vertexId = weights[ weightIndex ].mVertexId;
@@ -223,7 +224,7 @@ ModelHandle MeshLoader::LoadModel( const aiScene* a_Scene )
 	ModelHandle newModel = std::make_shared<RModel>();
 }
 
-ModelHandle MeshLoader::GetModel( const string& a_Name )
+ModelHandle MeshLoader::GetMesh( const string& a_Name )
 {
 	if ( auto it = m_LoadedModels.find( a_Name ); it != m_LoadedModels.end() )
 	{

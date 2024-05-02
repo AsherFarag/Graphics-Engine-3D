@@ -1,5 +1,6 @@
 #pragma once
 #include "RResource.h"
+#include "Texture.h"
 
 #pragma region Material
 class RMaterial :
@@ -54,9 +55,8 @@ public:
 	void operator=( const MaterialLoader& ) = delete;
 
 	static MaterialLoader* GetInstance();
-
 	static MaterialHandle Create( const string& a_Name, ShaderHandle a_Shader = nullptr );
-	MaterialHandle LoadMaterial( const string& a_Path ) { NOT_IMPLEMENTED; }
+	MaterialHandle LoadMaterial( const string& a_Path );
 	MaterialHandle GetMaterial( const string& a_Name );
 };
 #pragma endregion

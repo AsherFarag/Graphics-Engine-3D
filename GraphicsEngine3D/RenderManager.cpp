@@ -23,7 +23,6 @@ void RenderManager::Reset()
 
 	m_ShaderInUse = nullptr;
 	m_MaterialInUse = nullptr;
-	m_MaterialInstanceInUse = nullptr;
 
 	m_NumOfLights = 0;
 	m_Lights.clear();
@@ -77,7 +76,7 @@ void RenderManager::Render( ACamera* a_Camera )
 		if ( m_DrawBuffer[ i ]->GetMaterial() == nullptr )
 			continue;
 
-		UseMaterialInstance( m_DrawBuffer[ i ]->GetMaterial() );
+		UseMaterial( m_DrawBuffer[ i ]->GetMaterial() );
 
 		auto& ModelMatrix = m_DrawBuffer[ i ]->GetOwner()->GetTransform().GetTransformation();
 		m_ShaderInUse->bindUniform( "ProjectionViewModel", ProjectionViewMatrix * ModelMatrix );
@@ -144,7 +143,7 @@ void RenderManager::Render( ACamera* a_Camera )
 	//	}
 	//}
 
-	Gizmos::draw( ProjectionViewMatrix );
+	aie::Gizmos::draw( ProjectionViewMatrix );
 
 	a_Camera->EndRender();
 
@@ -172,9 +171,9 @@ void RenderManager::UseMaterial( MaterialHandle a_Material, bool Force )
 
 	// If this is a different shader, 
 	// then use the shader program
-	if ( m_MaterialInUse->m_Shader != m_ShaderInUse || Force )
+	if ( m_MaterialInUse->GetShader() != m_ShaderInUse || Force )
 	{
-		m_ShaderInUse = m_MaterialInUse->m_Shader;
+		m_ShaderInUse = m_MaterialInUse->GetShader();
 		m_ShaderInUse->bind();
 
 		if ( m_ShaderInUse->UsesLights() )
@@ -184,20 +183,6 @@ void RenderManager::UseMaterial( MaterialHandle a_Material, bool Force )
 	}
 
 	// Bind Material uniforms
-	NOT_IMPLEMENTED;
-}
-
-void RenderManager::UseMaterialInstance( MaterialInstanceHandle a_MaterialInstance )
-{
-	if ( a_MaterialInstance == m_MaterialInstanceInUse )
-		return;
-
-	m_MaterialInstanceInUse = a_MaterialInstance;
-
-	UseMaterial( a_MaterialInstance->GetMaster() );
-
-	m_MaterialInstanceInUse->Bind();
-
 }
 
 void RenderManager::BindLights( ShaderHandle a_Shader )
@@ -237,92 +222,6 @@ void RenderManager::BindLights( ShaderHandle a_Shader )
 		a_Shader->bindUniform( "PointLightPositions", NumOfLights, &LightPositions[ 0 ] );
 		a_Shader->bindUniform( "PointLightFallOffs", NumOfLights, &LightFallOffs[ 0 ] );
 	}
-}
-
-void RenderManager::BindMaterial( MaterialHandle a_Material )
-{
-
-	//int program = -1;
-	//glGetIntegerv(GL_CURRENT_PROGRAM, &program);
-
-	//if (program == -1)
-	//{
-	//	printf("No shader bound!\n");
-	//	return;
-	//}
-
-	//// Pull Uniforms from the shader
-	//int kaUniform = glGetUniformLocation(program, "Ka");
-	//int kdUniform = glGetUniformLocation(program, "Kd");
-	//int ksUniform = glGetUniformLocation(program, "Ks");
-	//int keUniform = glGetUniformLocation(program, "Ke");
-	//int opacityUniform = glGetUniformLocation(program, "Opacity");
-	//int specPowUniform = glGetUniformLocation(program, "SpecularPower");
-
-	//// Pull Texture Uniforms from the shader
-	//int alphaTexUniform			= glGetUniformLocation(program, "AlphaTexture");
-	//int ambientTexUniform		= glGetUniformLocation(program, "AmbientTexture");
-	//int diffuseTexUniform		= glGetUniformLocation(program, "DiffuseTexture");
-	//int specTexUniform			= glGetUniformLocation(program, "SpecularTexture");
-	//int specHighlightTexUniform = glGetUniformLocation(program, "EmissiveTexture");
-	//int normalTexUniform		= glGetUniformLocation(program, "NormalTexture");
-	//int dispTexUniform			= glGetUniformLocation(program, "DisplacementTexture");
-
-	//// bind material
-	//if (kaUniform >= 0)
-	//	glUniform3fv(kaUniform, 1, &a_Material->Ambient[0]);
-	//if (kdUniform >= 0)
-	//	glUniform3fv(kdUniform, 1, &a_Material->Diffuse[0]);
-	//if (ksUniform >= 0)
-	//	glUniform3fv(ksUniform, 1, &a_Material->Specular[0]);
-	//if (keUniform >= 0)
-	//	glUniform3fv(keUniform, 1, &a_Material->Emissive[0]);
-	//if (opacityUniform >= 0)
-	//	glUniform1f(opacityUniform, a_Material->Opacity);
-	//if (specPowUniform >= 0)
-	//	glUniform1f(specPowUniform, a_Material->SpecularPower);
-
-	//glActiveTexture(GL_TEXTURE0);
-	//if (a_Material->DiffuseTexture.getHandle() > 0)
-	//	glBindTexture(GL_TEXTURE_2D, a_Material->DiffuseTexture.getHandle());
-	//else if (diffuseTexUniform >= 0)
-	//	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//glActiveTexture(GL_TEXTURE1);
-	//if (a_Material->AlphaTexture.getHandle() > 0)
-	//	glBindTexture(GL_TEXTURE_2D, a_Material->AlphaTexture.getHandle());
-	//else if (alphaTexUniform >= 0)
-	//	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//glActiveTexture(GL_TEXTURE2);
-	//if (a_Material->AmbientTexture.getHandle() > 0)
-	//	glBindTexture(GL_TEXTURE_2D, a_Material->AmbientTexture.getHandle());
-	//else if (ambientTexUniform >= 0)
-	//	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//glActiveTexture(GL_TEXTURE3);
-	//if (a_Material->SpecularTexture.getHandle() > 0)
-	//	glBindTexture(GL_TEXTURE_2D, a_Material->SpecularTexture.getHandle());
-	//else if (specTexUniform >= 0)
-	//	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//glActiveTexture(GL_TEXTURE4);
-	//if (a_Material->EmissiveTexture.getHandle() > 0)
-	//	glBindTexture(GL_TEXTURE_2D, a_Material->EmissiveTexture.getHandle());
-	//else if (specHighlightTexUniform >= 0)
-	//	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//glActiveTexture(GL_TEXTURE5);
-	//if (a_Material->NormalTexture.getHandle() > 0)
-	//	glBindTexture(GL_TEXTURE_2D, a_Material->NormalTexture.getHandle());
-	//else if (normalTexUniform >= 0)
-	//	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//glActiveTexture(GL_TEXTURE6);
-	//if (a_Material->DisplacementTexture.getHandle() > 0)
-	//	glBindTexture(GL_TEXTURE_2D, a_Material->DisplacementTexture.getHandle());
-	//else if (dispTexUniform >= 0)
-	//	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 bool RenderManager::AddRenderer( URenderer* a_Renderer )

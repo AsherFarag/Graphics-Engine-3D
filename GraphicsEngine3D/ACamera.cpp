@@ -104,7 +104,7 @@ void ACamera::BeginRender()
 	}
 
     // Wipe the gizmos clean for this frame
-    Gizmos::clear();
+    aie::Gizmos::clear();
 
     ClearScreen();
 }

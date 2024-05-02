@@ -69,7 +69,7 @@ void RMaterial::Use()
 
 #pragma region Loader
 
-MaterialHandle MaterialLoader::Create( const string& a_Name, ShaderHandle a_Shader = nullptr )
+MaterialHandle MaterialLoader::Create( const string& a_Name, ShaderHandle a_Shader )
 {
 	if ( auto foundMaterial = GetInstance()->GetMaterial( a_Name ); foundMaterial != nullptr )
 		return foundMaterial;
@@ -79,6 +79,12 @@ MaterialHandle MaterialLoader::Create( const string& a_Name, ShaderHandle a_Shad
 	newMaterial->SetShader( a_Shader );
 
 	return newMaterial;
+}
+
+MaterialHandle MaterialLoader::LoadMaterial( const string& a_Path )
+{
+	TODO( "Add material file Loading" );
+	return nullptr;
 }
 
 MaterialHandle MaterialLoader::GetMaterial( const string& a_Name )

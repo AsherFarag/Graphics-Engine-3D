@@ -22,32 +22,32 @@ void ImGui_ResourceManager::OnDraw()
 {
 	if ( ImGui::TreeNode( "Animations" ) )
 	{
-		if ( auto animLoader = AnimationLoader::GetInstance() )
-		{
-			for ( auto& animIt : animLoader->m_SkeletalAnimations )
-			{
-				if ( ImGui::TreeNode( animIt.first.c_str() ) )
-				{
-					auto& anim = animIt.second;
-					ImGui::Text( "Tick rate: %i FPS", anim->GetTickRate() );
-					ImGui::Text( "Duration: %.3f Key Frames", anim->GetDuration() );
-					ImGui::Text( "Play Length: %.3f seconds", anim->GetPlayLength() );
-					ImGui::Text( "Bone Animation Count: %i", anim->m_BoneAnimations.size() );
+		//if ( auto animLoader = AnimationLoader::GetInstance() )
+		//{
+		//	for ( auto& animIt : animLoader->m_SkeletalAnimations )
+		//	{
+		//		if ( ImGui::TreeNode( animIt.first.c_str() ) )
+		//		{
+		//			auto& anim = animIt.second;
+		//			ImGui::Text( "Tick rate: %i FPS", anim->GetTickRate() );
+		//			ImGui::Text( "Duration: %.3f Key Frames", anim->KeyFrameCount() );
+		//			ImGui::Text( "Play Length: %.3f seconds", anim->GetDuration() );
+		//			ImGui::Text( "Bone Animation Count: %i", anim->m_BoneAnimations.size() );
 
-					if ( ImGui::TreeNode( "Bones" ) )
-					{
-						for ( auto& boneName : anim->m_BoneAnimations )
-						{
-							ImGui::Text( boneName.first.c_str() );
-						}
+		//			if ( ImGui::TreeNode( "Bones" ) )
+		//			{
+		//				for ( auto& boneName : anim->m_BoneAnimations )
+		//				{
+		//					ImGui::Text( boneName.first.c_str() );
+		//				}
 
-						ImGui::TreePop();
-					}
+		//				ImGui::TreePop();
+		//			}
 
-					ImGui::TreePop();
-				}
-			}
-		}
+		//			ImGui::TreePop();
+		//		}
+		//	}
+		//}
 
 		ImGui::TreePop();
 	}

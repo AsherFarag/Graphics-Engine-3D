@@ -23,7 +23,7 @@ void UAnimatorComponent::PlayAnimation( SkeletalAnimHandle a_Animation, TimeType
 
 void UAnimatorComponent::SetTime( const TimeType a_Time )
 {
-	m_CurrentTime = fmod( a_Time, m_CurrentAnimation->GetPlayLength() );
+	m_CurrentTime = fmod( a_Time, m_CurrentAnimation->GetDuration() );
 	if ( !m_CurrentAnimation || !m_Skeleton )
 		return;
 
@@ -35,31 +35,31 @@ void UAnimatorComponent::SetSkeleton( SkeletonHandle a_Skeleton )
 	m_Skeleton = a_Skeleton;
 }
 
-void UAnimatorComponent::CalculateBoneTransform( const AssimpNodeData* node, mat4 parentTransform )
-{
-	string nodeName = node->Name;
-	mat4 nodeTransform = node->Transformation;
-
-	auto boneAnim = m_CurrentAnimation->GetBone( nodeName );
-
-	mat4 boneAnimTransform;
-	if ( boneAnim )
-	{
-		boneAnim->Evaluate( boneAnimTransform, m_CurrentTime );
-	}
-
-	mat4 globalTransformation = parentTransform * nodeTransform;
-
-	auto boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
-	if ( boneInfoMap.find( nodeName ) != boneInfoMap.end() )
-	{
-		int index = boneInfoMap[ nodeName ].ID;
-		mat4 offset = boneInfoMap[ nodeName ].Offset;
-		if ( m_SkeletonPose.size() <= index )
-			m_SkeletonPose.resize( index + 1 );
-		m_SkeletonPose[ index ] = globalTransformation * offset;
-	}
-
-	for ( int i = 0; i < node->ChildrenCount; i++ )
-		CalculateBoneTransform( &node->Children[ i ], mat4(1) );
-}
+//void UAnimatorComponent::CalculateBoneTransform( const AssimpNodeData* node, mat4 parentTransform )
+//{
+//	string nodeName = node->Name;
+//	mat4 nodeTransform = node->Transformation;
+//
+//	auto boneAnim = m_CurrentAnimation->GetBone( nodeName );
+//
+//	mat4 boneAnimTransform;
+//	if ( boneAnim )
+//	{
+//		boneAnim->Evaluate( boneAnimTransform, m_CurrentTime );
+//	}
+//
+//	mat4 globalTransformation = parentTransform * nodeTransform;
+//
+//	auto boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
+//	if ( boneInfoMap.find( nodeName ) != boneInfoMap.end() )
+//	{
+//		int index = boneInfoMap[ nodeName ].ID;
+//		mat4 offset = boneInfoMap[ nodeName ].Offset;
+//		if ( m_SkeletonPose.size() <= index )
+//			m_SkeletonPose.resize( index + 1 );
+//		m_SkeletonPose[ index ] = globalTransformation * offset;
+//	}
+//
+//	for ( int i = 0; i < node->ChildrenCount; i++ )
+//		CalculateBoneTransform( &node->Children[ i ], mat4(1) );
+//}

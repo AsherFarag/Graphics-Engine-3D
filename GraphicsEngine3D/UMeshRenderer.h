@@ -3,15 +3,13 @@
 
 // --- AIE ---
 #include "Shader.h"
-#include "AIERenderTarget.h"
 
 // --- Engine ---
-#include "RMaterial.h"
-#include "RMesh.h"
+#include "Material.h"
+#include "Mesh.h"
 
 
-class UMeshRenderer :
-    public URenderer
+class UMeshRenderer : public URenderer
 {
 public:
     UMeshRenderer(AActor* a_Owner);
@@ -19,18 +17,17 @@ public:
 
     virtual void Draw() override;
 
-protected:
-    aie::OBJMesh* m_OldMesh = nullptr;
+private:
     MeshHandle m_Mesh = nullptr;
+    MaterialHandle m_OverrideMaterial = nullptr;
 
-
-    virtual void OnEnabled();
-    virtual void OnDisabled();
+    virtual void OnEnabled() {};
+    virtual void OnDisabled() {};
 
 public:
-    MeshHandle GetMesh() { return m_Mesh; }
-    bool SetMesh(const char* a_MeshName, bool a_LoadTextures = true, bool a_FlipTextureV = false);
-    bool SetMesh( const string& a_Name );
+    MaterialHandle GetMaterial();
+    void SetMaterial( MaterialHandle a_Material );
+    MeshHandle GetMesh();
     void SetMesh( MeshHandle a_Mesh );
 
 #pragma region ImGui

@@ -14,11 +14,17 @@ public:
     UTransform(vec3 a_Position, quat a_Rotation, vec3 a_Scale);
     UTransform(vec3 a_Position, quat a_Rotation, float a_Scale);
 
-    auto& GetTransformation()     { return m_Transform; }
-    auto& GetPosition()      { return m_Position; }
-    auto& GetRotation()      { return m_Rotation; }
-    auto& GetRotationEular() { return glm::eulerAngles(m_Rotation); }
-    auto& GetScale()         { return m_Scale; }
+    const mat4& GetLocalTransformation() { return m_Transform; }
+    const vec3& GetLocalPosition()       { return m_Position; }
+    const quat& GetLocalRotation()       { return m_Rotation; }
+    const vec3& GetLocalRotationEular()  { return glm::eulerAngles(m_Rotation); }
+    const vec3& GetLocalScale()          { return m_Scale; }
+
+    const mat4& GetTransformation();
+    const vec3& GetPosition();
+    const quat& GetRotation();
+    const vec3& GetRotationEular();
+    const vec3& GetScale();
     vec3& GetForward();
 
     void SetTransform(const mat4& a_Transform);
@@ -30,7 +36,10 @@ public:
     bool IsDirty() { return m_Dirty; }
     void Update();
 
+    void SetParentTransform( UTransform* a_NewParent ) { m_Parent = a_NewParent; }
+
 private:
+    UTransform* m_Parent = nullptr;
     mat4 m_Transform = mat4(1);
     vec3 m_Position  = vec3();
     quat m_Rotation  = quat();

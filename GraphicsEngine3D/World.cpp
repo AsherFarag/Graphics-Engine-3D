@@ -27,10 +27,11 @@ World::World()
 
 World::~World()
 {
+
 }
 
 bool World::Begin()
-{
+{/*
     m_MainCamera = new AFlyCamera();
     auto mesh = new AStaticMesh();
     mesh->GetMesh()->SetMesh( Resource::GetMesh( "HipHop_Mesh" ) );
@@ -38,7 +39,7 @@ bool World::Begin()
     animator = mesh->AddComponent<UAnimatorComponent>( mesh );
     animator->SetSkeleton( GraphicsEngine3DApp::GetInstance()->skellie );
     animator->PlayAnimation( AnimationLoader::GetInstance()->GetAnimation( "SomeAnim" ) );
-    AnimationLoader::GetInstance()->GetAnimation( "SomeAnim" )->m_BoneInfoMap = Resource::GetMesh( "HipHop_Mesh" )->GetBoneInfoMap();
+    AnimationLoader::GetInstance()->GetAnimation( "SomeAnim" )->m_BoneInfoMap = Resource::GetMesh( "HipHop_Mesh" )->GetBoneInfoMap();*/
 
     //auto soulSpear = new AStaticMesh();
     //soulSpear->GetMesh()->SetMesh( Resource::GetMesh( "Box" ) );
@@ -92,7 +93,7 @@ void World::Draw()
         }
 
         static float animTime;
-        if ( ImGui::SliderFloat( "Time", &animator->GetTime(), 0.f, anim->GetPlayLength() ) )
+        if ( ImGui::SliderFloat( "Time", &animator->GetTime(), 0.f, anim->GetDuration() ) )
         {
             animator->SetTime( animator->GetTime() );
         }

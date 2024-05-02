@@ -46,6 +46,6 @@ protected:
     std::vector<mat4> m_SkeletonPose;
 
 protected:
-    void CalculateBoneTransform( const AssimpNodeData* node, mat4 parentTransform );
+    //void CalculateBoneTransform( const AssimpNodeData* node, mat4 parentTransform );
 };
 

@@ -18,6 +18,11 @@ vec4 Math::AssimpVecToGLM( const aiVector3D& a_AssimpVec, float a_WElement )
     return vec4( a_AssimpVec.x, a_AssimpVec.y, a_AssimpVec.z, a_WElement );
 }
 
+quat Math::AssimpQuatToGLM( const aiQuaternion& q )
+{
+    return quat( q.w, q.x, q.y, q.z );
+}
+
 mat3 Math::AssimpMatToGLM( const aiMatrix3x3& a_AssimpMat )
 {
     return glm::transpose( glm::make_mat3x3( ( a_AssimpMat[0] )));

@@ -1,14 +1,11 @@
 #pragma once
 #include "UBaseComponent.h"
 
-#include "OBJMesh.h"
-
 // --- Engine ---
-#include "RMaterialInstance.h"
+#include "UTransform.h"
 class RenderingManager;
 
-class URenderer :
-    public UBaseComponent
+class URenderer : public UBaseComponent
 {
 public:
     URenderer(AActor* a_Owner);
@@ -17,19 +14,19 @@ public:
     virtual void Draw() = 0;
 
 protected:
-    MaterialInstanceHandle m_Material = nullptr;
+    UTransform m_Transform;
+    RenderingManager* m_RenderingManager = nullptr;
 
-    // Owning Rendering Manager
-    RenderingManager* m_RenderingManager;
-
-    virtual void OnEnabled();
-    virtual void OnDisabled();
+    virtual void OnEnabled() {};
+    virtual void OnDisabled() {};
 
 public:
-    void SetRenderingManager(RenderingManager* a_RenderingManager);
+    auto& GetTransform() { return m_Transform; }
+    auto& GetPos()       { return m_Transform.GetPosition(); }
+    auto& GetRot()       { return m_Transform.GetRotation(); }
+    auto& GetScale()     { return m_Transform.GetScale(); }
 
-    MaterialInstanceHandle GetMaterial() const { return m_Material; }
-    void SetMaterial( MaterialInstanceHandle a_Material) { m_Material = a_Material; }
+    void SetRenderingManager(RenderingManager* a_RenderingManager);
 
 #pragma region ImGui
 

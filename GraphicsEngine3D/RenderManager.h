@@ -52,7 +52,7 @@ public:
 private:
 
 	std::vector<UMeshRenderer*> m_MeshRenderers;
-	std::vector<UMeshRenderer*> m_DrawBuffer;
+	std::vector<std::pair<MaterialHandle, MeshHandle>> m_DrawBuffer;
 
 	int m_NumOfLights = 0;
 	std::vector<ALight*> m_Lights;
@@ -65,15 +65,12 @@ private:
 	// Finished up the Render, such as applying post-processing
 	void RenderPostProcess(RenderTarget* a_Target);
 	
-	ShaderHandle			m_ShaderInUse			= nullptr;
-	MaterialHandle			m_MaterialInUse			= nullptr;
-	MaterialInstanceHandle	m_MaterialInstanceInUse = nullptr;
+	ShaderHandle m_ShaderInUse = nullptr;
+	MaterialHandle m_MaterialInUse = nullptr;
 	void UseMaterial( MaterialHandle a_Material, bool Force = false );
-	void UseMaterialInstance( MaterialInstanceHandle a_MaterialInstance );
 
 	void BindLights( ShaderHandle a_Shader );
-
-	void BindMaterial( MaterialHandle a_Material );
+	void BindMaterial( MaterialHandle a_Material ) {}
 
 protected:
 

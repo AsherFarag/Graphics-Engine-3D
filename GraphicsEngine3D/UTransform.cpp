@@ -22,6 +22,26 @@ UTransform::UTransform(vec3 a_Position, quat a_Rotation, float a_Scale)
 
 #pragma endregion
 
+const mat4& UTransform::GetTransformation()
+{
+	return m_Parent == nullptr ? m_Transform : m_Parent->GetTransformation() * m_Transform;
+}
+
+const vec3& UTransform::GetPosition()
+{
+	return m_Parent == nullptr ? m_Position : m_Parent->GetTransformation() * vec4( m_Position, 1 );
+}
+
+const quat& UTransform::GetRotation()
+{
+	return m_Parent == nullptr ? m_Rotation : m_Parent->GetTransformation() * m_Rotation;
+}
+
+const vec3& UTransform::GetRotationEular()
+{
+	// TODO: insert return statement here
+}
+
 vec3& UTransform::GetForward()
 {
 	return vec3(2 * (m_Rotation.x * m_Rotation.z + m_Rotation.w * m_Rotation.y),		// X
@@ -31,6 +51,7 @@ vec3& UTransform::GetForward()
 
 void UTransform::SetTransform(const mat4& a_Transform)
 {
+	NOT_IMPLEMENTED;
 	m_Dirty = false;
 	m_Transform = a_Transform;
 	// Position

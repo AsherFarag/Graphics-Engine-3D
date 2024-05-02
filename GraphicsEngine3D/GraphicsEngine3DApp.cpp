@@ -12,7 +12,6 @@
 #include "AStaticMesh.h"
 #include "RenderManager.h"
 #include "ResourceManager.h"
-#include "RMaterial.h"
 #include "World.h"
 #include "Utilities.h"
 

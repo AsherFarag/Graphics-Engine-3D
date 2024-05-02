@@ -7,7 +7,7 @@
 #include "gl_core_4_4.h"
 
 // --- Engine ---
-#include "RTexture.h"
+#include "Texture.h"
 
 /*
 *	class RenderTarget

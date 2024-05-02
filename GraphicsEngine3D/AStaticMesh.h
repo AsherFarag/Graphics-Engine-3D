@@ -29,6 +29,6 @@ protected:
     UMeshRenderer* m_MeshRenderer;
 
 public:
-	UMeshRenderer* GetMesh() const { return m_MeshRenderer; }
+	UMeshRenderer* GetModel() const { return m_MeshRenderer; }
 };
 

@@ -191,9 +191,6 @@
     <ClCompile Include="RenderManager.cpp">
       <Filter>Source Files\Engine\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="MaterialLoader.cpp">
-      <Filter>Source Files\Engine\Resources\Loaders</Filter>
-    </ClCompile>
     <ClCompile Include="MeshLoader.cpp">
       <Filter>Source Files\Engine\Resources\Loaders</Filter>
     </ClCompile>
@@ -333,12 +330,6 @@
     </ClInclude>
     <ClInclude Include="Log.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MaterialLoader.h">
-      <Filter>Header Files\Engine\Resources\Loaders</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshLoader.h">
-      <Filter>Header Files\Engine\Resources\Loaders</Filter>
     </ClInclude>
     <ClInclude Include="ShaderLoader.h">
       <Filter>Header Files\Engine\Resources\Loaders</Filter>
